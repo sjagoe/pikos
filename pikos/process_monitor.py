@@ -4,35 +4,31 @@ from __future__ import absolute_import
 import csv
 import sys
 import time
+import multiprocessing import Process
 
 from psutil import Popen, NoSuchProcess
 
-from pikos.base_profilers import FunctionProfiler
+from pikos.abstract_monitors import AbstractTimeMonitor
 
 #: CSV file header fields
 _fields = ['time', 'name', 'pid', 'mem', 'cpu', 'threads', 'rss', 'vms', 'user',
            'system', 'read_count', 'write_count', 'read_bytes', 'write_bytes']
 
-class FunctionMonitor(FunctionProfiler):
-    """ Profile an application by sampling the cpu, memory and io status.
+class ProcessMonitor(AbstractTimeMonitor):
+    """ Monitors an application by sampling the cpu, memory and io status.
 
-    The monitor profiler runs the application on a subprocess and monitors
-    the cpu, memory and io status at given intervals. The profiler monitors
-    also the children (first generation) of the application.
+    The monitor runs the code on a separate process and monitors the
+    cpu, memory and io status at given intervals. The class
+    monitors also all the children (i.e subprocesses).
 
     """
-    def __init__(self, command_line, output=None, interval=0.5,
-                 verbose=False):
+    def __init__(self, command_line, output, interval=250):
         """ Class Initialisation.
 
         Arguments
         ---------
         command_line : str
-            The command line to start the application that is going to be
-            monitored.
-
-        options : dict
-            Dictionary of options.
+            The command line to execute.
 
         output : str
             The filename and path where to output the profiling results.
@@ -41,24 +37,19 @@ class FunctionMonitor(FunctionProfiler):
             Time interval in second between process sampling.
 
         """
+        super(ProcessMonitor, self).__init__(interval)
         self.command_line = command_line
         self.interval = float(interval)
-        self.verbose = verbose
-        self.output = name if (output is None) else output
         self.info = []
         self.timer = time.clock
 
-    def run(self):
-        """ Run the profiler.
-
-        """
-        if self.verbose:
-            print "MONITOR PROCESS"
+    def setup(self):
         self.sub_process = Popen(self.command_line, shell=False)
-        while self.sub_process.is_running():
-            self._record_info()
-            time.sleep(self.interval)
+
+    def teardown(self):
         self._save_results()
+
+    def reset_timer(self)
 
     def _record_info(self):
         """ Record the info for sub_process and its chlidren.

@@ -55,7 +55,7 @@ class FunctionLogger(FunctionProfiler):
         record = (event, filename, lineno, function_name)
         self.info.append(record)
 
-    def stop(self):
+    def finalize(self):
         """Overide the default stop method to save the function information.
         """
         super(FunctionLogger, self).stop()
