@@ -56,8 +56,6 @@ class AbstractMonitor(object):
 class AbstractFunctionMonitor(AbstractMonitor):
     """ Abstract monitor on function events using the setprofile interface.
     """
-    def __init__(self, callable):
-        self.item = callable
 
     def setup(self):
         sys.setprofile(self.on_function_event)
@@ -75,10 +73,6 @@ class AbstractFunctionMonitor(AbstractMonitor):
 class AbstractLineMonitor(AbstractMonitor):
     """ Abstract monitor using the settrace interface.
     """
-    def __init__(self, callable):
-        """ Class Initialisation.
-        """
-        self.process = callable
 
     def setup(self):
         sys.settrace(self.on_line_event)
@@ -98,7 +92,8 @@ class AbstractTimeMonitor(AbstractMonitor):
     time itervals.
 
     """
-    def __init__(self, interval):
+    def __init__(self, item, interval):
+        super(AbstractMonitor, self).__init__(item)
         self.interval = interval
 
     @abc.abstractmethod
