@@ -10,7 +10,7 @@ import sys
 from pikos.abstract_monitors import AbstractMonitor
 
 
-__all__ = ['MemoryProfiler']
+__all__ = ['FunctionMemoryProfiler']
 
 
 class AbstractMemoryProfiler(AbstractMonitor):
@@ -53,17 +53,17 @@ class AbstractMemoryProfiler(AbstractMonitor):
         return self._process.get_memory_info()
 
 
-class MemoryProfiler(AbstractMemoryProfiler):
+class FunctionMemoryProfiler(AbstractMemoryProfiler):
 
     _fields = ['Type', 'Filename', 'LineNo', 'Function', 'RSS', 'VMS']
 
     def setup(self):
-        super(MemoryProfiler, self).setup()
+        super(FunctionMemoryProfiler, self).setup()
         sys.setprofile(self.on_function_event)
 
     def teardown(self):
         sys.settrace(None)
-        super(MemoryProfiler, self).teardown()
+        super(FunctionMemoryProfiler, self).teardown()
 
     def on_function_event(self, frame, event, arg):
         usage = self._get_memory_info()
