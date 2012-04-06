@@ -5,14 +5,15 @@ import gc
 import inspect
 import os
 import psutil
+import sys
 
-from pikos.abstract_monitors import AbstractFunctionMonitor
+from pikos.abstract_monitors import AbstractMonitor
 
 
 __all__ = ['MemoryProfiler']
 
 
-class AbstractMemoryProfiler(AbstractFunctionMonitor):
+class AbstractMemoryProfiler(AbstractMonitor):
 
     _fields = None
 
@@ -56,10 +57,8 @@ class AbstractMemoryProfiler(AbstractFunctionMonitor):
         self._process = psutil.Process(os.getpid())
         if self._disable_gc:
             gc.disable()
-        super(AbstractMemoryProfiler, self).setup()
 
     def teardown(self):
-        super(AbstractMemoryProfiler, self).teardown()
         if self._disable_gc:
             gc.enable()
         self._process = None
@@ -73,6 +72,14 @@ class AbstractMemoryProfiler(AbstractFunctionMonitor):
 class MemoryProfiler(AbstractMemoryProfiler):
 
     _fields = ['Type', 'Filename', 'LineNo', 'Function', 'RSS', 'VMS']
+
+    def setup(self):
+        super(MemoryProfiler, self).setup()
+        sys.setprofile(self.on_function_event)
+
+    def teardown(self):
+        sys.settrace(None)
+        super(MemoryProfiler, self).teardown()
 
     def on_function_event(self, frame, event, arg):
         usage = self._get_memory_info()
