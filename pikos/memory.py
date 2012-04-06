@@ -17,7 +17,7 @@ class AbstractMemoryProfiler(AbstractMonitor):
 
     _fields = None
 
-    def __init__(self, function, recorder, disable_gc=False):
+    def __init__(self, function, recorder):
         ''' Initialize the profiler class
 
         Parameters
@@ -27,30 +27,18 @@ class AbstractMemoryProfiler(AbstractMonitor):
 
         recorder :
             An instance of pikos.recorders.AbstractRecorder
-
-        disable_gc : bool
-            Indicates that the profiling should run with the garbage
-            collector disabled
         '''
         super(AbstractMemoryProfiler, self).__init__(function)
         self._recorder = recorder
-        self._disable_gc = disable_gc
         self._process = None
 
     def setup(self):
         self._process = psutil.Process(os.getpid())
-        if self._disable_gc:
-            gc.disable()
         self._recorder.prepare(self._fields)
 
     def teardown(self):
-        if self._disable_gc:
-            gc.enable()
         self._process = None
         self._recorder.finalize()
-
-    def _get_memory_info(self):
-        return self._process.get_memory_info()
 
 
 class FunctionMemoryProfiler(AbstractMemoryProfiler):
@@ -66,7 +54,7 @@ class FunctionMemoryProfiler(AbstractMemoryProfiler):
         super(FunctionMemoryProfiler, self).teardown()
 
     def on_function_event(self, frame, event, arg):
-        usage = self._get_memory_info()
+        usage = self._process.get_memory_info()
         filename, lineno, function, _, _ = inspect.getframeinfo(
             frame, context=0)
         if event.startswith('c_'):
