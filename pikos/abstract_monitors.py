@@ -1,6 +1,10 @@
 import abc
 import sys
 
+
+class PikosError(Exception): pass
+
+
 class AbstractMonitor(object):
     """ The base abstract monitor class.
 
