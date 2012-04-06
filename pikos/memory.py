@@ -5,18 +5,19 @@ import gc
 import inspect
 import os
 import psutil
+import sys
 
-from pikos.abstract_monitors import AbstractFunctionMonitor
-
-
-__all__ = ['MemoryProfiler']
+from pikos.abstract_monitors import AbstractMonitor
 
 
-class AbstractMemoryProfiler(AbstractFunctionMonitor):
+__all__ = ['FunctionMemoryProfiler']
+
+
+class AbstractMemoryProfiler(AbstractMonitor):
 
     _fields = None
 
-    def __init__(self, function, output=None, disable_gc=False):
+    def __init__(self, function, recorder, disable_gc=False):
         ''' Initialize the profiler class
 
         Parameters
@@ -32,47 +33,37 @@ class AbstractMemoryProfiler(AbstractFunctionMonitor):
             collector disabled
         '''
         super(AbstractMemoryProfiler, self).__init__(function)
+        self._recorder = recorder
         self._disable_gc = disable_gc
-        if output is None:
-            date = datetime.datetime.now()
-            self._output = '{0}-{1}.profile'.format(
-                self.__class__.__name__, date.strftime('%Y-%m-%d_%H-%M'))
-        else:
-            self._output = output
-
         self._process = None
-        self._output_fh = None
-        self._writer = None
-
-    def _write_result(self, row):
-        if self._writer is None:
-            raise RuntimeError('The profiler has not been started')
-        self._writer.writerow(row)
 
     def setup(self):
-        self._output_fh = open(self._output, 'wb', buffering=0)
-        self._writer = csv.writer(self._output_fh)
-        self._writer.writerow(self._fields)
         self._process = psutil.Process(os.getpid())
         if self._disable_gc:
             gc.disable()
-        super(AbstractMemoryProfiler, self).setup()
+        self._recorder.prepare(self._fields)
 
     def teardown(self):
-        super(AbstractMemoryProfiler, self).teardown()
         if self._disable_gc:
             gc.enable()
         self._process = None
-        self._writer = None
-        self._output_fh.close()
+        self._recorder.finalize()
 
     def _get_memory_info(self):
         return self._process.get_memory_info()
 
 
-class MemoryProfiler(AbstractMemoryProfiler):
+class FunctionMemoryProfiler(AbstractMemoryProfiler):
 
     _fields = ['Type', 'Filename', 'LineNo', 'Function', 'RSS', 'VMS']
+
+    def setup(self):
+        super(FunctionMemoryProfiler, self).setup()
+        sys.setprofile(self.on_function_event)
+
+    def teardown(self):
+        sys.settrace(None)
+        super(FunctionMemoryProfiler, self).teardown()
 
     def on_function_event(self, frame, event, arg):
         usage = self._get_memory_info()
@@ -80,5 +71,6 @@ class MemoryProfiler(AbstractMemoryProfiler):
             frame, context=0)
         if event.startswith('c_'):
             function = arg.__name__
-        record = (event, filename, lineno, function, usage.rss, usage.vms)
-        self._write_result(record)
+        record = dict(zip(self._fields, (event, filename, lineno, function,
+                                         usage.rss, usage.vms)))
+        self._recorder.record(self._fields, record)

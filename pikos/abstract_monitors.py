@@ -1,6 +1,10 @@
 import abc
 import sys
 
+
+class PikosError(Exception): pass
+
+
 class AbstractMonitor(object):
     """ The base abstract monitor class.
 
@@ -51,40 +55,6 @@ class AbstractMonitor(object):
 
         """
         return self._item()
-
-
-class AbstractFunctionMonitor(AbstractMonitor):
-    """ Abstract monitor on function events using the setprofile interface.
-    """
-
-    def setup(self):
-        sys.setprofile(self.on_function_event)
-
-    def teardown(self):
-        sys.setprofile(None)
-
-    @abc.abstractmethod
-    def on_function_event(self, frame, event, arg):
-        """ Function event dispatcher.
-        """
-        pass
-
-
-class AbstractLineMonitor(AbstractMonitor):
-    """ Abstract monitor using the settrace interface.
-    """
-
-    def setup(self):
-        sys.settrace(self.on_line_event)
-
-    def teardown(self):
-        sys.settrace(None)
-
-    @abc.abstractmethod
-    def on_line_event(self, frame, event, arg):
-        """ Line event despatcher.
-        """
-        pass
 
 
 class AbstractTimeMonitor(AbstractMonitor):
