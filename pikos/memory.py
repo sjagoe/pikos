@@ -5,9 +5,8 @@ import gc
 import inspect
 import os
 import psutil
-import sys
 
-from pikos.abstract_monitors import AbstractFunctionMonitor, AbstractTimeMonitor
+from pikos.abstract_monitors import AbstractFunctionMonitor
 
 
 __all__ = ['MemoryProfiler']
