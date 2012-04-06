@@ -30,8 +30,7 @@ class AbstractMemoryProfiler(AbstractMonitor):
         recorder :
             An instance of pikos.recorders.AbstractRecorder
         '''
-        super(AbstractMemoryProfiler, self).__init__(function)
-        self._recorder = recorder
+        super(AbstractMemoryProfiler, self).__init__(function, recorders)
         self._process = None
 
     def setup(self):
@@ -54,17 +53,15 @@ class FunctionMemoryProfiler(AbstractMemoryProfiler):
 
     _fields = ['Type', 'Filename', 'LineNo', 'Function', 'RSS', 'VMS']
 
-    def setup(self):
+    def enable(self):
         ''' Set up for profiling function calls
         '''
-        super(FunctionMemoryProfiler, self).setup()
         sys.setprofile(self.on_function_event)
 
-    def teardown(self):
+    def disable(self):
         ''' Remove function call profiler
         '''
         sys.settrace(None)
-        super(FunctionMemoryProfiler, self).teardown()
 
     def on_function_event(self, frame, event, arg):
         ''' Collect profiling information and pass it to the recorder
