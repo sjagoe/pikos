@@ -27,18 +27,17 @@ class AbstractMonitor(object):
         """
         self.setup()
         try:
-            result = self.run_item()
+            return self.run_item()
         finally:
             self.teardown()
-        return result
 
-    @abc.abtsractmethod
+    @abc.abstractmethod
     def setup(self):
         """ Setup the monitor.
         """
         pass
 
-    @abc.abtsractmethod
+    @abc.abstractmethod
     def teardown(self):
         """ Tear-down the monitor.
         """
