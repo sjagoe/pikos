@@ -25,8 +25,8 @@ class AbstractMemoryProfiler(AbstractMonitor):
         function : callable
             The callable to profile
 
-        output : str
-            The file in which to store profiling results
+        recorder :
+            An instance of pikos.recorders.AbstractRecorder
 
         disable_gc : bool
             Indicates that the profiling should run with the garbage
