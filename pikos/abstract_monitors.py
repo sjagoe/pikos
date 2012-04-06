@@ -16,7 +16,8 @@ class AbstractMonitor(object):
         Parameters
         ----------
         item : object
-            The item to monitor.
+            The item to monitor. The default implementation expects a
+            callable object without any arguments.
 
         """
         self._item = item
@@ -26,7 +27,7 @@ class AbstractMonitor(object):
         """
         self.setup()
         try:
-            result = self.monitor_item()
+            result = self.run_item()
         finally:
             self.teardown()
         return result
@@ -43,22 +44,21 @@ class AbstractMonitor(object):
         """
         pass
 
-    @abc.abstractmethod
-    def monitor_item(self):
-        """ Method executes the item under examination.
+    def run_item(self):
+        """ Method prepares and executes the item under examination.
 
         Anything that the examined item returns should be forwarded
-        and returned by this function to the caller.
+        and returned by this function to the caller (i.e. the :meth:`run`).
 
         """
-        pass
+        return self._item()
 
 
 class AbstractFunctionMonitor(AbstractMonitor):
     """ Abstract monitor on function events using the setprofile interface.
     """
     def __init__(self, callable):
-        self.process = callable
+        self.item = callable
 
     def setup(self):
         sys.setprofile(self.on_function_event)
@@ -97,10 +97,6 @@ class AbstractLineMonitor(AbstractMonitor):
 class AbstractTimeMonitor(AbstractMonitor):
     """ Abstract monitor to examine an external process over fixed
     time itervals.
-
-    A TimeMonitor should setup a timer in the :meth:`setup` method
-    that will call the :meth:`on_time_event` to record the necessary
-    information.
 
     """
     def __init__(self, interval):
