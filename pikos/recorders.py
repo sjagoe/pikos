@@ -14,6 +14,8 @@ def _make_filename():
 
 
 class AbstractRecorder(object):
+    ''' Abstract Base Class defining the interface for all recorders
+    '''
 
     __metaclass__ = abc.ABCMeta
 
@@ -42,7 +44,9 @@ class AbstractRecorder(object):
         '''
 
 
-class CSVRecorder(object):
+class CSVRecorder(AbstractRecorder):
+    ''' Implements a recorder that records information in a CSV file
+    '''
 
     def __init__(self, filename=None):
         if filename is None:
