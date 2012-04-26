@@ -29,28 +29,28 @@ class AbstractRecorder(object):
         '''
 
     @abc.abstractmethod
-    def record(self, fields, values):
-        ''' Record a measurement.
-
-        Parameters
-        ----------
-        fields : tuple
-            Tuple of field names
-
-        values : dict
-            A dictionary mapping field name to field value
-        '''
+    def record(self, *args, **kwargs):
+        ''' Record a measurement. '''
 
 
-class CSVRecorder(object):
+class CSVRecorder(AbstractRecorder):
 
     def __init__(self, filename=None):
-        if filename is None:
-            self._filename = _make_filename()
-        else:
-            self._filename = filename
-        self._output_fh = None
-        self._writer = None
+        self._filename = _make_filename() if (filename is None) else filename
+        self._csvfile = open(self._filename, 'wb', buffering=0)
+        self._writer = csv.writer(self._csvfile)
+        self._started = False
+
+    def prepare(self, fields):
+        if not self._started:
+            self._writer.writerow(fields)
+            self._started = True
+
+    def finalize(self):
+        pass
+
+    def record(self, values):
+        self._writer.writerow(values)
 
     def prepare(self, fields):
         self._output_fh = open(self._filename, 'wb', buffering=0)
