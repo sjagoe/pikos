@@ -52,21 +52,16 @@ class CSVRecorder(AbstractRecorder):
     def record(self, values):
         self._writer.writerow(values)
 
+class ConsoleRecorder(AbstractRecorder):
+
+    def __init__(self):
+        pass
+
     def prepare(self, fields):
-        self._output_fh = open(self._filename, 'wb', buffering=0)
-        self._writer = csv.writer(self._output_fh)
-        self._writer.writerow(fields)
+        print "RECORDING STARTS"
 
     def finalize(self):
-        self._output_fh.close()
-        self._output_fh = None
-        self._writer = None
+        print "RECORDING FINISHED"
 
-    def record(self, fields, values):
-        try:
-            line = [values[field] for field in fields]
-        except KeyError:
-            raise RecorderError(
-                'Invalid value dictionary. Expected keys {0!r}, got {1!r}'.\
-                    format(fields, values.keys()))
-        self._writer.writerow(line)
+    def record(self, values):
+        print values
