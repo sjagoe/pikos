@@ -26,12 +26,12 @@ class AbstractMonitor(object):
         """
         self._item = item
 
-    def run(self):
+    def run(self, *args, **kwds):
         """ Start the monitoring.
         """
         self.setup()
         try:
-            return self.run_item()
+            return self.run_item(*args, **kwds)
         finally:
             self.teardown()
 
@@ -47,14 +47,14 @@ class AbstractMonitor(object):
         """
         pass
 
-    def run_item(self):
+    def run_item(self, *args, **kwds):
         """ Method prepares and executes the item under examination.
 
         Anything that the examined item returns should be forwarded
         and returned by this function to the caller (i.e. the :meth:`run`).
 
         """
-        return self._item()
+        return self._item(*args, **kwds)
 
 
 class AbstractTimeMonitor(AbstractMonitor):
