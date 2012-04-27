@@ -14,7 +14,7 @@ __all__ = [
 ]
 
 FunctionRecord = namedtuple('FunctionRecord',
-                            ['Type', 'Filename', 'LineNo', 'Function'])
+                            ['type', 'filename', 'lineNo', 'function'])
 
 class FunctionLogger(AbstractMonitor):
 
