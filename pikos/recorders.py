@@ -32,14 +32,16 @@ class AbstractRecorder(object):
     def record(self, *args, **kwargs):
         ''' Record a measurement. '''
 
-
 class CSVRecorder(AbstractRecorder):
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, record_filter=None):
         self._filename = _make_filename() if (filename is None) else filename
         self._csvfile = open(self._filename, 'wb', buffering=0)
         self._writer = csv.writer(self._csvfile)
         self._started = False
+        if record_filter is None:
+            record_filter = lambda x: True
+        self._record_filter = record_filter
 
     def prepare(self, fields):
         if not self._started:
@@ -50,12 +52,15 @@ class CSVRecorder(AbstractRecorder):
         pass
 
     def record(self, values):
-        self._writer.writerow(values)
+        if self._record_filter(values):
+            self._writer.writerow(values)
 
 class ConsoleRecorder(AbstractRecorder):
 
-    def __init__(self):
-        pass
+    def __init__(self, record_filter=None):
+        if record_filter is None:
+            record_filter = lambda x: True
+        self._record_filter = recorde_filter
 
     def prepare(self, fields):
         print "RECORDING STARTS"
@@ -65,3 +70,4 @@ class ConsoleRecorder(AbstractRecorder):
 
     def record(self, values):
         print values
+
