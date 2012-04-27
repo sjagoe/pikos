@@ -4,14 +4,21 @@ import os
 import sys
 import psutil
 
+from collections import namedtuple
 from functools import wraps
 from pikos.abstract_monitors import AbstractMonitor
 
-__all__ = ['FunctionLogger']
+__all__ = [
+    'FunctionLogger',
+    'FunctionRecord',
+]
+
+FunctionRecord = namedtuple('FunctionRecord',
+                            ['Type', 'Filename', 'LineNo', 'Function'])
 
 class FunctionLogger(AbstractMonitor):
 
-    _fields = ['Type', 'Filename', 'LineNo', 'Function']
+    _fields = FunctionRecord._fields
 
     def __init__(self, recorder):
         ''' Initialize the logger class.
@@ -53,7 +60,7 @@ class FunctionLogger(AbstractMonitor):
             inspect.getframeinfo(frame, context=0)
         if event.startswith('c_'):
             function = arg.__name__
-        data = (event, filename, lineno, function)
-        self._recorder.record(data)
+        record = FunctionRecord(event, filename, lineno, function)
+        self._recorder.record(record)
 
 
