@@ -2,7 +2,7 @@ import abc
 import csv
 from datetime import datetime
 
-from pikos.abstract_monitors import PikosError
+from pikos.monitor import PikosError
 
 
 class RecorderError(PikosError): pass
@@ -38,18 +38,22 @@ class CSVRecorder(AbstractRecorder):
         self._filename = _make_filename() if (filename is None) else filename
         self._csvfile = open(self._filename, 'wb', buffering=0)
         self._writer = csv.writer(self._csvfile)
-        self._started = False
+        self._already_started = False
         if record_filter is None:
             record_filter = lambda x: True
         self._record_filter = record_filter
 
     def prepare(self, fields):
-        if not self._started:
+        if not self._already_started:
             self._writer.writerow(fields)
-            self._started = True
+            self._already_started = True
 
     def finalize(self):
         pass
+
+    def __del__(self):
+        if hasattr(self, '_csvfile') and not self._csvfile.closed:
+            self._csvfile.close()
 
     def record(self, values):
         if self._record_filter(values):
@@ -60,7 +64,7 @@ class ConsoleRecorder(AbstractRecorder):
     def __init__(self, record_filter=None):
         if record_filter is None:
             record_filter = lambda x: True
-        self._record_filter = recorde_filter
+        self._record_filter = record_filter
 
     def prepare(self, fields):
         print "RECORDING STARTS"
