@@ -1,12 +1,8 @@
 from __future__ import absolute_import
 import inspect
-import os
-import sys
-import psutil
 
 from collections import namedtuple
-from functools import wraps
-from pikos.abstract_monitors import AbstractMonitor
+from pikos._profile_functions import ProfileFunctions
 
 __all__ = [
     'FunctionLogger',
@@ -16,43 +12,29 @@ __all__ = [
 FunctionRecord = namedtuple('FunctionRecord',
                             ['type', 'filename', 'lineNo', 'function'])
 
-class FunctionLogger(AbstractMonitor):
+
+class FunctionLogger(object):
 
     _fields = FunctionRecord._fields
 
-    def __init__(self, recorder):
+    def __init__(self, recorder, **kwargs):
         """ Initialize the logger class.
 
         Parameters
         ----------
-        function : callable
-            The callable to profile
-
-        output : str
-            The file in which to store profiling results.
-
+        recorder : pikos.recorders.AbstractRecorder
+            An instance of a Pikos recorder to handle the values to be logged
         """
-        super(FunctionLogger, self).__init__(None)
+        super(FunctionLogger, self).__init__(**kwargs)
         self._recorder = recorder
-        self._process = None
-        self._old_profile_function = None
+        self._profiler = ProfileFunctions()
 
-    def __call__(self, function):
-        self._item = function
-        @wraps(function)
-        def wrapper(*args, **kwds):
-             return self.run(*args, **kwds)
-        return wrapper
-
-    def setup(self):
+    def __enter__(self):
         self._recorder.prepare(self._fields)
-        self._process = psutil.Process(os.getpid())
-        self._old_profile_function = sys.getprofile()
-        sys.setprofile(self.on_function_event)
+        self._profiler.set(self.on_function_event)
 
-    def teardown(self):
-        sys.setprofile(self._old_profile_function)
-        self._process = None
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._profiler.unset()
         self._recorder.finalize()
 
     def on_function_event(self, frame, event, arg):

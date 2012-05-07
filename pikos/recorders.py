@@ -55,21 +55,25 @@ class CSVRecorder(AbstractRecorder):
             self._filename = filename
         self._output_fh = open(self._filename, 'wb', buffering=0)
         self._writer = csv.writer(self._output_fh)
-        self._started = False
+        self._already_started = False
         if record_filter is None:
             record_filter = lambda x: True
         self._record_filter = record_filter
 
     def prepare(self, fields):
-        if not self._started:
+        if not self._already_started:
             self._writer.writerow(fields)
-            self._started = True
+            self._already_started = True
 
     def finalize(self):
         pass
         # self._output_fh.close()
         # self._output_fh = None
         # self._writer = None
+
+    # def __del__(self):
+    #     if hasattr(self, '_csvfile') and not self._csvfile.closed:
+    #         self._csvfile.close()
 
     def record(self, values):
         if self._record_filter(values):
