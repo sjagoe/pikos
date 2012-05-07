@@ -14,10 +14,12 @@ __all__ = ['FunctionMemoryProfiler']
 
 
 class AbstractMemoryProfiler(AbstractMonitor):
+    ''' Base class to set up common requirements for all MemoryProfilers
+    '''
 
     _fields = None
 
-    def __init__(self, function, recorder, disable_gc=False):
+    def __init__(self, function, recorder):
         ''' Initialize the profiler class
 
         Parameters
@@ -25,48 +27,46 @@ class AbstractMemoryProfiler(AbstractMonitor):
         function : callable
             The callable to profile
 
-        output : str
-            The file in which to store profiling results
-
-        disable_gc : bool
-            Indicates that the profiling should run with the garbage
-            collector disabled
+        recorder :
+            An instance of pikos.recorders.AbstractRecorder
         '''
-        super(AbstractMemoryProfiler, self).__init__(function)
-        self._recorder = recorder
-        self._disable_gc = disable_gc
+        super(AbstractMemoryProfiler, self).__init__(function, recorder)
         self._process = None
 
     def setup(self):
+        ''' Set up requirements for memory profiling
+        '''
         self._process = psutil.Process(os.getpid())
-        if self._disable_gc:
-            gc.disable()
         self._recorder.prepare(self._fields)
 
     def teardown(self):
-        if self._disable_gc:
-            gc.enable()
+        ''' Clean up after profiling is complete
+        '''
         self._process = None
         self._recorder.finalize()
 
-    def _get_memory_info(self):
-        return self._process.get_memory_info()
-
 
 class FunctionMemoryProfiler(AbstractMemoryProfiler):
+    ''' A concrete class for collecting memory information on function
+    calls and returns
+    '''
 
     _fields = ['Type', 'Filename', 'LineNo', 'Function', 'RSS', 'VMS']
 
-    def setup(self):
-        super(FunctionMemoryProfiler, self).setup()
+    def enable(self):
+        ''' Set up for profiling function calls
+        '''
         sys.setprofile(self.on_function_event)
 
-    def teardown(self):
+    def disable(self):
+        ''' Remove function call profiler
+        '''
         sys.settrace(None)
-        super(FunctionMemoryProfiler, self).teardown()
 
     def on_function_event(self, frame, event, arg):
-        usage = self._get_memory_info()
+        ''' Collect profiling information and pass it to the recorder
+        '''
+        usage = self._process.get_memory_info()
         filename, lineno, function, _, _ = inspect.getframeinfo(
             frame, context=0)
         if event.startswith('c_'):

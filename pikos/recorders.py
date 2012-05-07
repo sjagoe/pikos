@@ -14,11 +14,13 @@ def _make_filename():
 
 
 class AbstractRecorder(object):
+    ''' Abstract Base Class defining the interface for all recorders
+    '''
 
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def prepare(self):
+    def prepare(self, fields):
         ''' Perform any setup required before the recorder is used
         '''
 
@@ -29,15 +31,30 @@ class AbstractRecorder(object):
         '''
 
     @abc.abstractmethod
-    def record(self, *args, **kwargs):
-        ''' Record a measurement. '''
+    def record(self, values):
+        ''' Record a measurement.
+
+        Parameters
+        ----------
+        fields : tuple
+            Tuple of field names
+
+        values : dict
+            A dictionary mapping field name to field value
+        '''
+
 
 class CSVRecorder(AbstractRecorder):
+    ''' Implements a recorder that records information in a CSV file
+    '''
 
     def __init__(self, filename=None, record_filter=None):
-        self._filename = _make_filename() if (filename is None) else filename
-        self._csvfile = open(self._filename, 'wb', buffering=0)
-        self._writer = csv.writer(self._csvfile)
+        if filename is None:
+            self._filename = _make_filename()
+        else:
+            self._filename = filename
+        self._output_fh = open(self._filename, 'wb', buffering=0)
+        self._writer = csv.writer(self._output_fh)
         self._started = False
         if record_filter is None:
             record_filter = lambda x: True
@@ -50,17 +67,21 @@ class CSVRecorder(AbstractRecorder):
 
     def finalize(self):
         pass
+        # self._output_fh.close()
+        # self._output_fh = None
+        # self._writer = None
 
     def record(self, values):
         if self._record_filter(values):
             self._writer.writerow(values)
+
 
 class ConsoleRecorder(AbstractRecorder):
 
     def __init__(self, record_filter=None):
         if record_filter is None:
             record_filter = lambda x: True
-        self._record_filter = recorde_filter
+        self._record_filter = record_filter
 
     def prepare(self, fields):
         print "RECORDING STARTS"
@@ -69,5 +90,6 @@ class ConsoleRecorder(AbstractRecorder):
         print "RECORDING FINISHED"
 
     def record(self, values):
-        print values
+        if self._record_filter(values):
+            print values
 
