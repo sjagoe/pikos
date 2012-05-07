@@ -1,6 +1,5 @@
 import abc
 import functools
-import sys
 
 
 class PikosError(Exception): pass

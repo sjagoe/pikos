@@ -21,7 +21,7 @@ class FunctionLogger(AbstractMonitor):
     _fields = FunctionRecord._fields
 
     def __init__(self, recorder):
-        ''' Initialize the logger class.
+        """ Initialize the logger class.
 
         Parameters
         ----------
@@ -31,7 +31,7 @@ class FunctionLogger(AbstractMonitor):
         output : str
             The file in which to store profiling results.
 
-        '''
+        """
         super(FunctionLogger, self).__init__(None)
         self._recorder = recorder
         self._process = None

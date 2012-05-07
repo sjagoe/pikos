@@ -14,25 +14,25 @@ def _make_filename():
 
 
 class AbstractRecorder(object):
-    ''' Abstract Base Class defining the interface for all recorders
-    '''
+    """ Abstract Base Class defining the interface for all recorders
+    """
 
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def prepare(self, fields):
-        ''' Perform any setup required before the recorder is used
-        '''
+        """ Perform any setup required before the recorder is used
+        """
 
     @abc.abstractmethod
     def finalize(self):
-        ''' Perform any tasks to finalize and clean up when the
+        """ Perform any tasks to finalize and clean up when the
         recording is completed
-        '''
+        """
 
     @abc.abstractmethod
     def record(self, values):
-        ''' Record a measurement.
+        """ Record a measurement.
 
         Parameters
         ----------
@@ -41,12 +41,12 @@ class AbstractRecorder(object):
 
         values : dict
             A dictionary mapping field name to field value
-        '''
+        """
 
 
 class CSVRecorder(AbstractRecorder):
-    ''' Implements a recorder that records information in a CSV file
-    '''
+    """ Implements a recorder that records information in a CSV file
+    """
 
     def __init__(self, filename=None, record_filter=None):
         if filename is None:
