@@ -5,7 +5,7 @@ class AbstractRecorder(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def prepare(self):
+    def prepare(self, fields):
         """ Perform any setup required before the recorder is used. """
 
     @abc.abstractmethod
@@ -16,7 +16,7 @@ class AbstractRecorder(object):
         """
 
     @abc.abstractmethod
-    def record(self, *args, **kwargs):
+    def record(self, values):
         """ Record a measurement. """
 
     @abc.abstractproperty
