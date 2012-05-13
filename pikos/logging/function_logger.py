@@ -17,7 +17,7 @@ class FunctionLogger(object):
 
     _fields = FunctionRecord._fields
 
-    def __init__(self, recorder, **kwargs):
+    def __init__(self, recorder):
         """ Initialize the logger class.
 
         Parameters
@@ -25,7 +25,6 @@ class FunctionLogger(object):
         recorder : pikos.recorders.AbstractRecorder
             An instance of a Pikos recorder to handle the values to be logged
         """
-        super(FunctionLogger, self).__init__(**kwargs)
         self._recorder = recorder
         self._profiler = ProfileFunctions()
 
