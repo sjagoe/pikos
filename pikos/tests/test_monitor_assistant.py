@@ -1,0 +1,97 @@
+import unittest
+
+from pikos.monitor import monitor
+
+# FIXME: might be better to use a mock library
+class MockNativeMonitor():
+
+    def __init__(self):
+        self._enter_called = 0
+        self._exit_called = 0
+
+    def __enter__(self):
+        self._enter_called += 1
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._exit_called += 1
+
+class MockRuncall():
+
+    def __init__(self):
+        self._runcall_called = 0
+        self._functions = []
+        self._args = []
+        self._kwds = []
+
+    def runcall(self, function, *args, **kwds):
+        self._runcall_called += 1
+        self._functions.append(function)
+        self._args.append(args)
+        self._kwds.append(args)
+        return function(*args, **kwds)
+
+class TestMonitorDecorator(unittest.TestCase):
+
+    def test_function_with_context_manager(self):
+
+        mock_logger = MockNativeMonitor()
+
+        @monitor(mock_logger)
+        def my_function(value):
+            return "I was called with {}".format(value)
+
+        result = my_function(5)
+        self.assertEqual(mock_logger._enter_called, 1)
+        self.assertEqual(mock_logger._exit_called, 1)
+        self.assertEqual(result, "I was called with 5")
+
+    def test_generator_with_context_manager(self):
+
+        mock_logger = MockNativeMonitor()
+
+        @monitor(mock_logger)
+        def my_generator(value):
+            for i in range(value):
+                yield i
+
+        results = []
+        for i in my_generator(5):
+            results.append(i)
+
+        self.assertEqual(results,[0,1,2,3,4])
+        self.assertEqual(mock_logger._enter_called, 6)
+        self.assertEqual(mock_logger._exit_called, 6)
+
+    def test_function_with_runcall(self):
+
+        mock_logger = MockRuncall()
+
+        @monitor(mock_logger)
+        def my_function(value):
+            return "I was called with {}".format(value)
+
+        result = my_function(5)
+        self.assertEqual(mock_logger._runcall_called, 1)
+        self.assertEqual(mock_logger._functions, [])
+        self.assertEqual(result, "I was called with 5")
+
+    def test_generator_with_runcall(self):
+
+        mock_logger = MockRuncall()
+
+        @monitor(mock_logger)
+        def my_generator(value):
+            for i in range(value):
+                yield i
+
+        results = []
+        for i in my_generator(5):
+            results.append(i)
+
+        self.assertEqual(results,[0,1,2,3,4])
+        self.assertEqual(mock_logger._runcall_called, 6)
+
+
+
+if __name__ == '__main__':
+    unittest.main()
