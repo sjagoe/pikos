@@ -1,6 +1,6 @@
 import csv
 
-from pikos.recorders.abstract_recorder import AbstractRecorder
+from pikos.recorders.abstract_recorder import AbstractRecorder, RecorderError
 
 class CSVRecorder(AbstractRecorder):
     """ The CSV Recorder is a simple text based recorder that records the
@@ -9,7 +9,7 @@ class CSVRecorder(AbstractRecorder):
     Private
     -------
     _filter : callable
-        Used to check if the set `record` should be `recored`. The function
+        Used to check if the set `record` should be `recorded`. The function
         accepts a tuple of the `record` values and return True is the input
         sould be recored.
 
@@ -18,8 +18,7 @@ class CSVRecorder(AbstractRecorder):
         values according to the configured dialect.
 
     _ready : bool
-        Singify that the Recorder is ready to accept data. Please use the
-        Recorder.ready property
+        Singify that the Recorder is ready to accept data.
 
     """
 
@@ -51,14 +50,15 @@ class CSVRecorder(AbstractRecorder):
 
     def finalize(self):
         """ A do nothing method. """
-        pass
-
-    @property
-    def ready(self):
-        """ Is the recorder ready to accept data? """
-        return self._ready
+        if not self._ready:
+            msg = 'Method called while recorder has not been prepared'
+            raise RecorderError(msg)
 
     def record(self, values):
         """ Rerord entry onlty when the filter function returns True. """
-        if self._ready and self._filter(values):
-            self._writer.writerow(values)
+        if self._ready:
+            if self._filter(values):
+                self._writer.writerow(values)
+        else:
+            msg = 'Method called while recorder is not ready to record'
+            raise RecorderError(msg)

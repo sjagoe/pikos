@@ -1,7 +1,9 @@
+import os
 import StringIO
 import unittest
 
 from pikos.recorders.csv_recorder import CSVRecorder
+from pikos.recorders.abstract_recorder import RecorderError
 
 class TestCSVRecorder(unittest.TestCase):
 
@@ -13,7 +15,7 @@ class TestCSVRecorder(unittest.TestCase):
 
     def test_prepare(self):
         fields = ('one', 'two','three')
-        header = 'one,two,three\r\n'
+        header = 'one,two,three{}'.format(os.linesep)
         recorder = CSVRecorder(self.temp)
         recorder.prepare(fields)
 
@@ -27,7 +29,7 @@ class TestCSVRecorder(unittest.TestCase):
 
     def test_finalize(self):
         fields = ('one', 'two','three')
-        header = 'one,two,three\r\n'
+        header = 'one,two,three{}'.format(os.linesep)
         recorder = CSVRecorder(self.temp)
         # all calls do nothing
         recorder.prepare(fields)
@@ -38,7 +40,8 @@ class TestCSVRecorder(unittest.TestCase):
     def test_record(self):
         fields = ('one', 'two','three')
         values = (5, 'pikos','apikos')
-        output = 'one,two,three\r\n5,pikos,apikos\r\n'
+        output = 'one,two,three{newline}5,pikos,apikos{newline}'.\
+                 format(newline=os.linesep)
         recorder = CSVRecorder(self.temp)
         recorder.prepare(fields)
         recorder.record(values)
@@ -47,7 +50,8 @@ class TestCSVRecorder(unittest.TestCase):
     def test_filter(self):
         fields = ('one', 'two','three')
         values = [(5, 'pikos','apikos'), (12, 'emilios','milo')]
-        output = 'one,two,three\r\n12,emilios,milo\r\n'
+        output = 'one,two,three{newline}12,emilios,milo{newline}'.\
+                 format(newline=os.linesep)
         def not_pikos(values):
             return not 'pikos' in values
         recorder = CSVRecorder(self.temp, filter_=not_pikos)
@@ -65,6 +69,17 @@ class TestCSVRecorder(unittest.TestCase):
         for record in values:
             recorder.record(record)
         self.assertMultiLineEqual(self.temp.getvalue(), output)
+
+    def test_exceptions(self):
+        fields = ('one', 'two','three')
+        values = [(5, 'pikos','apikos')]
+        recorder = CSVRecorder(self.temp)
+
+        with self.assertRaises(RecorderError):
+            recorder.record(values)
+
+        with self.assertRaises(RecorderError):
+            recorder.finalize()
 
 if __name__ == '__main__':
     unittest.main()
