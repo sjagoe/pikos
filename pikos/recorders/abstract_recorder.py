@@ -1,6 +1,10 @@
 import abc
 
+class RecorderError(Exception):
+        pass
+
 class AbstractRecorder(object):
+    """ Abstract recorder class. """
 
     __metaclass__ = abc.ABCMeta
 
@@ -18,7 +22,3 @@ class AbstractRecorder(object):
     @abc.abstractmethod
     def record(self, values):
         """ Record a measurement. """
-
-    @abc.abstractproperty
-    def ready(self):
-        """ Indicate that the recorder is ready to receive data. """
