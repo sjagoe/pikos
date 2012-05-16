@@ -6,6 +6,8 @@ class TextStreamRecorder(AbstractRecorder):
     """ The TextStreamRecorder is simple recorder that formats and writes the
     records directly to a stream.
 
+    The output of the Recorder is controled by the formating
+
     Private
     -------
 
@@ -26,10 +28,9 @@ class TextStreamRecorder(AbstractRecorder):
     _ready : bool
         Singify that the Recorder is ready to accept data.
 
-
     """
 
-    def __init__(self, text_stream, filter_=None):
+    def __init__(self, text_stream, filter_=None, formater=None):
         """ Class initialization.
 
         Parameters
@@ -41,17 +42,20 @@ class TextStreamRecorder(AbstractRecorder):
             A callable function that accepts a data tuple and returns True
             if the input sould be recorded.
 
+        formater : class
+            A concrit class that implements the the RecordFormater interface.
+            Default is no formating.
+
         """
         self._filter = (lambda x: True) if filter_ is None else filter_
         self._stream = text_stream
-        self._template = None
+        self._formater = formater
         self._ready = False
 
-    def prepare(self, fields):
+    def prepare(self, record):
         """ Setup the format template. """
         if not self._ready:
-            self._setup_template(fields)
-            self._writeheader(fields)
+            self._writeheader(record)
             self._ready = True
 
     def finalize(self):
@@ -60,32 +64,30 @@ class TextStreamRecorder(AbstractRecorder):
             msg = 'Method called while recorder has not been prepared yet'
             raise RecorderError(msg)
 
-    def record(self, values):
+    def record(self, record):
         """ Record entry only when the filter function returns True. """
         if self._ready:
-            if self._filter(values):
-                line = self._format(values)
+            if self._filter(record):
+                line = self._format(record)
                 self._stream.write(line)
         else:
             msg = 'Method called while recorder is not ready to record'
             raise RecorderError(msg)
 
-    def _format(self, values, max_length=30):
-        """ Format the record """
-        str_values = [str(value)[-max_length:len(str(value))]
-                     for value in values]
-        return self._template.format(*str_values)
-
-    def _writeheader(self, fields):
+    def _writeheader(self, record):
         """ Write the header to the stream. """
-        header = self._format(fields)
-        separator = '{:-<{length}}{}'.format('', os.linesep,
-                                            length=len(header)-len(os.linesep))
+        if self._formater is None:
+            header = self._format(record._fields)
+        else:
+            header = self._formater.header(record)
+        separator = '-' * (len(header) - len(os.linesep)) + os.linesep
         self._stream.write(header)
         self._stream.write(separator)
 
-    def _setup_template(self, fields):
-        """ Setup the template to write the fields. """
-        template = '{:<30} ' * len(fields)
-        template = template.strip() + os.linesep
-        self._template = template
+    def _format(self, record):
+        """ Format the record values"""
+        if self._formater is None:
+            line = ' '.join(str(value) for value in record) + os.linesep
+        else:
+            line = self._formater.line(record)
+        return line

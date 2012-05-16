@@ -1,16 +1,29 @@
 import abc
 
+
 class RecorderError(Exception):
-        pass
+    pass
 
 class AbstractRecorder(object):
-    """ Abstract recorder class. """
+    """ Abstract recorder class.
+
+    A recorder is reposnible for storing the record data that are provided by
+    the logger or profiler. The records are expected to be nametuple-like
+    classes.
+
+    """
 
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def prepare(self, fields):
-        """ Perform any setup required before the recorder is used. """
+    def prepare(self, record):
+        """ Perform any setup required before the recorder is used.
+
+        Parameters:
+        record : NamedTuple
+            An instance of the record class that is going to be used.
+
+        """
 
     @abc.abstractmethod
     def finalize(self):
@@ -20,5 +33,11 @@ class AbstractRecorder(object):
         """
 
     @abc.abstractmethod
-    def record(self, values):
-        """ Record a measurement. """
+    def record(self, data):
+        """ Record a measurement.
+
+        Parameters:
+        data : NamedTuple
+            An instance of the record class that is going to be used.
+
+        """
