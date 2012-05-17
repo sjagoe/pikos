@@ -45,6 +45,19 @@ class TestMonitorDecorator(unittest.TestCase):
         self.assertEqual(mock_logger._exit_called, 1)
         self.assertEqual(result, "I was called with 5")
 
+    def test_recursive_with_context_manager(self):
+        mock_logger = MockNativeMonitor()
+
+        @monitor(mock_logger)
+        def gcd(x,y):
+            return x if y == 0 else gcd(y, (x % y))
+
+        result = gcd(21, 28)
+        self.assertEqual(mock_logger._enter_called, 4)
+        self.assertEqual(mock_logger._exit_called, 4)
+        self.assertEqual(result, 7)
+
+
     def test_generator_with_context_manager(self):
 
         mock_logger = MockNativeMonitor()
@@ -72,7 +85,7 @@ class TestMonitorDecorator(unittest.TestCase):
 
         result = my_function(5)
         self.assertEqual(mock_logger._runcall_called, 1)
-        self.assertEqual(mock_logger._functions, [])
+        self.assertEqual(len(mock_logger._functions), 1)
         self.assertEqual(result, "I was called with 5")
 
     def test_generator_with_runcall(self):
