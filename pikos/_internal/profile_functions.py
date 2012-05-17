@@ -7,14 +7,21 @@ except ImportError:
 
 
 class ProfileFunctions(object):
+    """ A Class to handle setting and unseting the setprofile function.
+
+    """
 
     def set(self, function):
-        self._old_function = sys.getprofile()
+        """ Set a new function in sys.setprofile.
+
+        """
         if has_threading:
             threading.setprofile(function)
         sys.setprofile(function)
 
     def unset(self):
-        sys.setprofile(self._old_function)
+        """ Unset the current function in the sys.setprofile.
+        """
+        sys.setprofile(None)
         if has_threading:
-            threading.setprofile(self._old_function)
+            threading.setprofile(None)
