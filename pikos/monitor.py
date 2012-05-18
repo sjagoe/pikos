@@ -3,7 +3,7 @@ import functools
 
 from pikos._internal.util import is_context_manager
 
-class _MonitorAssistant(object):
+class Monitor(object):
     """ The monitor class decorator.
 
     This is the main entry point for all the monitors, inspectors, loggers and
@@ -73,11 +73,9 @@ class _MonitorAssistant(object):
         """ Wrap a generator to profile it.
         """
         def wrapper(*args, **kwds):
-            g = self._function(*args, **kwds)
             monitor = self._monitor_object
-            # The first iterate will not be a .send()
+            g = self._function(*args, **kwds)
             value = (yield monitor.runcall(g.next))
-            # But any following one might be.
             while True:
                 item = monitor.runcall(g.send, (value,))
                 value = (yield item)
@@ -94,17 +92,14 @@ class _MonitorAssistant(object):
         """ Wrap a generator to profile it.
         """
         def wrapper(*args, **kwds):
-            g = self._function(*args, **kwds)
-            # The first iterate will not be a .send()
             with self._monitor_object:
+                g = self._function(*args, **kwds)
                 value = g.next()
             yield value
-            # But any following one might be.
             while True:
                 with self._monitor_object:
                     item = g.send(value)
                 value = (yield item)
         return wrapper
 
-Monitor = _MonitorAssistant
-monitor = _MonitorAssistant
+monitor = Monitor
