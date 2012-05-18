@@ -18,6 +18,8 @@ develop-eggs
 .installed.cfg
 lib
 lib64
+
+# directories
 docs/_build/
 
 # Installer logs
