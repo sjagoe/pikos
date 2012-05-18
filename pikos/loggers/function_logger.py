@@ -27,6 +27,7 @@ class FunctionRecordFormater(AbstractRecordFormater):
 
 
 class FunctionLogger(object):
+    """ Log python function events """
 
     def __init__(self, recorder):
         """ Initialize the logger class.
@@ -50,8 +51,8 @@ class FunctionLogger(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._run_counts -= 1
         if self._run_counts == 0:
-            self._recorder.prepare(FunctionRecord)
             self._profiler.unset()
+            self._recorder.finalize()
 
     def on_function_event(self, frame, event, arg):
         filename, lineno, function, _, _ = \
