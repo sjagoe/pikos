@@ -1,4 +1,3 @@
-import StringIO
 import unittest
 
 from pikos.recorders.list_recorder import ListRecorder
@@ -10,8 +9,6 @@ class TestListRecorder(unittest.TestCase):
         output = []
         recorder = ListRecorder()
         recorder.prepare(fields)
-
-        # the first call does nothing
         self.assertSequenceEqual(recorder.records, output)
         recorder.prepare(fields)
 
@@ -19,7 +16,6 @@ class TestListRecorder(unittest.TestCase):
         fields = ('one', 'two','three')
         output = []
         recorder = ListRecorder()
-        # all calls do nothing
         recorder.prepare(fields)
         for x in range(10):
             recorder.finalize()
