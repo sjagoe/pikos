@@ -101,5 +101,3 @@ class Monitor(object):
                     item = g.send(value)
                 value = (yield item)
         return wrapper
-
-monitor = Monitor

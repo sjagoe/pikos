@@ -1,6 +1,6 @@
 import unittest
 
-from pikos.monitor import monitor
+from pikos.monitor import Monitor as monitor
 
 # FIXME: might be better to use a mock library
 class MockNativeMonitor():
