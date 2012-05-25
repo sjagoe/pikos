@@ -20,17 +20,22 @@ class TextStreamRecorder(AbstractRecorder):
         accepts a tuple of the `record` values and return True is the input
         sould be recored.
 
-    _tamplate : str
+    _template : str
         A string (using the `Format Specification Mini-Language`) to format the
         set of values in a line. It is constructed when the `prepare` method is
         called.
+
+    _auto_flush : bool
+        A bool to enable/disable automatic flushing of the string after each
+        record process.
 
     _ready : bool
         Singify that the Recorder is ready to accept data.
 
     """
 
-    def __init__(self, text_stream, filter_=None, formater=None):
+    def __init__(self, text_stream, filter_=None, formater=None,
+                 auto_flush=False):
         """ Class initialization.
 
         Parameters
@@ -46,10 +51,15 @@ class TextStreamRecorder(AbstractRecorder):
             A concrit class that implements the the RecordFormater interface.
             Default is no formating.
 
+        auto_flush : Bool
+            When set the stream buffer is always flushed after each record
+            process.
+
         """
         self._filter = (lambda x: True) if filter_ is None else filter_
         self._stream = text_stream
         self._formater = formater
+        self._auto_flush = auto_flush
         self._ready = False
 
     def prepare(self, record):
@@ -70,6 +80,8 @@ class TextStreamRecorder(AbstractRecorder):
             if self._filter(record):
                 line = self._format(record)
                 self._stream.write(line)
+                if self._auto_flush:
+                    self._stream.flush()
         else:
             msg = 'Method called while recorder is not ready to record'
             raise RecorderError(msg)
@@ -83,6 +95,8 @@ class TextStreamRecorder(AbstractRecorder):
         separator = '-' * (len(header) - len(os.linesep)) + os.linesep
         self._stream.write(header)
         self._stream.write(separator)
+        if self._auto_flush:
+            self._stream.flush()
 
     def _format(self, record):
         """ Format the record values"""
