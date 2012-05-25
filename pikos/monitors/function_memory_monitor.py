@@ -7,7 +7,7 @@ from pikos._internal.profile_functions import ProfileFunctions
 from pikos.recorders.abstract_record_formater import AbstractRecordFormater
 
 __all__ = [
-    'FunctionMemoryLogger',
+    'FunctionMemoryMonitor',
     'FunctionMemoryRecord',
     'FunctionMemoryRecordFormater'
 ]
@@ -31,13 +31,13 @@ class FunctionMemoryRecordFormater(AbstractRecordFormater):
         return FUNCTION_MEMORY_RECORD_TEMPLATE.format(*record,
                                                       newline=os.linesep)
 
-class FunctionMemoryLogger(object):
-    """ Log process memory on python function events. """
+class FunctionMemoryMonitor(object):
+    """ Record process memory on python function events. """
 
     _fields = FunctionMemoryRecord._fields
 
     def __init__(self, recorder):
-        """ Initialize the function memory profiler class.
+        """ Initialize the function memory monitor class.
 
         Parameters
         ----------

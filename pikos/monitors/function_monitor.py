@@ -26,11 +26,11 @@ class FunctionRecordFormater(AbstractRecordFormater):
         return FUNCTION_RECORD_TEMPLATE.format(*record, newline=os.linesep)
 
 
-class FunctionLogger(object):
+class FunctionMonitor(object):
     """ Log python function events """
 
     def __init__(self, recorder):
-        """ Initialize the logger class.
+        """ Initialize the monitoring class.
 
         Parameters
         ----------

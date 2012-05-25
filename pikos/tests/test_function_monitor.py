@@ -1,8 +1,8 @@
 import StringIO
 import unittest
 
-from pikos.monitor import monitor
-from pikos.loggers.function_logger import FunctionLogger
+from pikos.monitor import Monitor as monitor
+from pikos.monitors.function_monitor import FunctionMonitor
 from pikos.recorders.list_recorder import ListRecorder
 from pikos.recorders.text_stream_recorder import TextStreamRecorder
 from pikos.tests.test_assistant import TestAssistant
@@ -11,7 +11,7 @@ class TestFunctionLogger(unittest.TestCase, TestAssistant):
 
     def test_function(self):
         recorder = ListRecorder()
-        logger = FunctionLogger(recorder)
+        logger = FunctionMonitor(recorder)
 
         @monitor(logger)
         def gcd(x,y):
@@ -38,7 +38,7 @@ class TestFunctionLogger(unittest.TestCase, TestAssistant):
 
     def test_recursive(self):
         recorder = ListRecorder()
-        logger = FunctionLogger(recorder)
+        logger = FunctionMonitor(recorder)
 
         @monitor(logger)
         def gcd(x,y):
@@ -62,7 +62,7 @@ class TestFunctionLogger(unittest.TestCase, TestAssistant):
 
     def test_generator(self):
         recorder = ListRecorder()
-        logger = FunctionLogger(recorder)
+        logger = FunctionMonitor(recorder)
         output = (0, 1, 1, 2, 3, 5, 8, 13, 21, 34)
 
         @monitor(logger)

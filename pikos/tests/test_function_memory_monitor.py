@@ -1,16 +1,16 @@
 import StringIO
 import unittest
 
-from pikos.monitor import monitor
-from pikos.loggers.function_memory_logger import FunctionMemoryLogger
+from pikos.monitor import Monitor as monitor
+from pikos.monitors.function_memory_monitor import FunctionMemoryMonitor
 from pikos.recorders.list_recorder import ListRecorder
 from pikos.tests.test_assistant import TestAssistant
 
-class TestFunctionMemoryLogger(unittest.TestCase, TestAssistant):
+class TestFunctionMemoryMonitor(unittest.TestCase, TestAssistant):
 
     def test_function(self):
         recorder = ListRecorder()
-        logger = FunctionMemoryLogger(recorder)
+        logger = FunctionMemoryMonitor(recorder)
 
         @monitor(logger)
         def gcd(x,y):
@@ -37,7 +37,7 @@ class TestFunctionMemoryLogger(unittest.TestCase, TestAssistant):
 
     def test_recursive(self):
         recorder = ListRecorder()
-        logger = FunctionMemoryLogger(recorder)
+        logger = FunctionMemoryMonitor(recorder)
 
         @monitor(logger)
         def gcd(x,y):
@@ -61,7 +61,7 @@ class TestFunctionMemoryLogger(unittest.TestCase, TestAssistant):
 
     def test_generator(self):
         recorder = ListRecorder()
-        logger = FunctionMemoryLogger(recorder)
+        logger = FunctionMemoryMonitor(recorder)
         output = (0, 1, 1, 2, 3, 5, 8, 13, 21, 34)
 
         @monitor(logger)
