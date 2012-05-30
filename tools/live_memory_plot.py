@@ -9,7 +9,7 @@ import zmq
 import numpy as np
 
 from traits.api import HasTraits, Str, Any, Int, Instance, Bool, Button, Enum, \
-    Tuple
+    Tuple, Either
 from traitsui.api import View, Item, UItem
 from pyface.gui import GUI
 from chaco.api import Plot, ArrayPlotData
@@ -38,9 +38,13 @@ class LivePlot(HasTraits):
     memory_plot = Instance(Plot)
 
     fields = Tuple
+    plottable_fields = Tuple
+    plottable_item_indices = Either(None, Tuple)
 
-    index_item = Enum(values='fields')
-    value_item = Enum(values='fields')
+    index_item = Enum(values='plottable_fields')
+    value_item = Enum(values='plottable_fields')
+
+    last_n_points = Int(100000)
 
     def _prepare_socket_default(self):
         return self.context.socket(zmq.REP)
@@ -65,22 +69,30 @@ class LivePlot(HasTraits):
         plot.plot(('x', 'y'), type='line')
         return plot
 
-    def _fields_changed(self, new):
+    def _plottable_item_indices_changed(self, new):
+        self.plottable_fields = [self.fields[i] for i in new]
+
+    def _plottable_fields_changed(self, new):
         if len(new) >= 2:
             self.index_item = new[0]
             self.value_item = new[1]
             self._update_index()
             self._update_value()
 
-    def _update_index(self):
-        if self.index_item in self.plot_data.list_data():
+    def _truncate(self, data):
+        return data[-self.last_n_points:]
+
+    def __update_plot_values(self, axis, value_name):
+        if value_name in self.plot_data.list_data():
+            new_points = self.plot_data.get_data(value_name)
             self.plot_data.set_data(
-                'x', self.plot_data.get_data(self.index_item))
+                axis, self._truncate(new_points))
+
+    def _update_index(self):
+        self.__update_plot_values('x', self.index_item)
 
     def _update_value(self):
-        if self.value_item in self.plot_data.list_data():
-            self.plot_data.set_data(
-                'y', self.plot_data.get_data(self.value_item))
+        self.__update_plot_values('y', self.value_item)
 
     def _index_item_changed(self):
         self._update_index()
@@ -108,7 +120,7 @@ class LivePlot(HasTraits):
         fields = pickle.loads(self.prepare_socket.recv())
         self.prepare_socket.send(pickle.dumps(True))
         # FIXME
-        self.fields = fields[0], fields[3], fields[4], fields[5]
+        self.fields = fields
         self.ready = True
 
     def _del_data_item(self, name):
@@ -124,17 +136,23 @@ class LivePlot(HasTraits):
             new = np.hstack([exitsing, values])
         self.plot_data.set_data(name, new)
 
+    def _calculate_plottable_item_indices(self, data):
+        item = data[0]
+        self.plottable_item_indices = tuple(
+            [i for i in xrange(len(item))
+             if isinstance(item[i], int) or isinstance(item[i], float)])
+
     def _add_data(self, data):
         if len(data) == 0:
             return
 
-        indexes, types, functions, rss, vms, lineNos, filenames = \
-            zip(*data)
+        if self.plottable_item_indices is None:
+            self._calculate_plottable_item_indices(data)
 
-        self._add_data_item('index', indexes)
-        self._add_data_item('RSS', rss)
-        self._add_data_item('VMS', vms)
-        self._add_data_item('lineNo', lineNos)
+        data = zip(*data)
+
+        for index in self.plottable_item_indices:
+            self._add_data_item(self.fields[index], data[index])
 
         self._update_index()
         self._update_value()
@@ -162,8 +180,11 @@ class LivePlot(HasTraits):
     traits_view = View(
         Item('index_item'),
         Item('value_item'),
+        Item('last_n_points', label='Display the last N point'),
         UItem('memory_plot', editor=ComponentEditor()),
-        Item('start', enabled_when='not ready'),
+        UItem('start', enabled_when='not ready'),
+        resizable=True,
+        title='Live Recording Plot'
         )
 
 
