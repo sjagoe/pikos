@@ -54,7 +54,7 @@ class ZeroMQRecorder(AbstractRecorder):
             ready = False
             while not ready:
                 ready = pickle.loads(self._prepare_socket.recv()) is True
-                self._prepare_socket.send(pickle.dumps(ready))
+                self._prepare_socket.send(pickle.dumps(record._fields))
             self._ready = True
             self._prepare_socket.close()
             self._prepare_socket = None
