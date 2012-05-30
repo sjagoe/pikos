@@ -19,10 +19,16 @@ class Leaker(object):
         return np.empty(self.shape)
 
     def _leak(self):
-        self.leaks.append(self._make_array())
+        foo = self._make_array()
+        foo = self._add_to_array(foo, 200.)
+        self.leaks.append(foo)
+
+    def _add_to_array(self, array, value):
+        return array + value
 
     def _dont_leak(self):
-        self._make_array()
+        foo = self._make_array()
+        foo = self._add_to_array(foo, 1.)
 
     @monitor(FunctionMemoryMonitor(ZeroMQRecorder()))
     # @monitor(log_functions())
@@ -36,5 +42,9 @@ if __name__ == '__main__':
     proc = psutil.Process(os.getpid())
     print proc.get_memory_info()
     leaker = Leaker(1000, (100, 100))
+    leaker.run_leaky()
+    print proc.get_memory_info()
+    leaker.leaks = []
+    print proc.get_memory_info()
     leaker.run_leaky()
     print proc.get_memory_info()
