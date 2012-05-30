@@ -45,7 +45,8 @@ class Monitor(object):
         if is_context_manager(self._monitor_object):
             return self._use_context_manager()
         else:
-            return self._use_runcall()
+            msg = "provided monitor object '{}' is not a context manager"
+            ValueError(msg.format(self._monitor_object))
 
     def _use_context_manager(self):
         if inspect.isgeneratorfunction(self._function):
@@ -54,32 +55,6 @@ class Monitor(object):
         else:
             fn = self.wrap_function_with_context_manager()
         return fn
-
-    def _use_runcall(self):
-        if inspect.isgeneratorfunction(self._function):
-            fn = self.wrap_generator_with_runcall()
-        else:
-            fn = self.wrap_function_with_runcall()
-        return fn
-
-    def wrap_function_with_runcall(self):
-        @functools.wraps(self._function)
-        def wrapper(*args, **kwds):
-             monitor = self._monitor_object
-             return monitor.runcall(self._function, *args, **kwds)
-        return wrapper
-
-    def wrap_generator_with_runcall(self):
-        """ Wrap a generator to profile it.
-        """
-        def wrapper(*args, **kwds):
-            monitor = self._monitor_object
-            g = self._function(*args, **kwds)
-            value = (yield monitor.runcall(g.next))
-            while True:
-                item = monitor.runcall(g.send, (value,))
-                value = (yield item)
-        return wrapper
 
     def wrap_function_with_context_manager(self):
         @functools.wraps(self._function)
