@@ -40,7 +40,7 @@ class ZeroMQRecorder(AbstractRecorder):
         self._socket = self._context.socket(zmq.PUB)
         self._socket.bind('tcp://{0}:{1}'.format(zmq_host, zmq_port))
         if wait_for_ready:
-            self._prepare_socket = self._context.socket(zmq.REP)
+            self._prepare_socket = self._context.socket(zmq.REQ)
             self._prepare_socket.bind('tcp://{0}:{1}'.format(
                     zmq_host, zmq_port+1))
         else:
@@ -53,8 +53,8 @@ class ZeroMQRecorder(AbstractRecorder):
         if not self._ready:
             ready = False
             while not ready:
-                ready = pickle.loads(self._prepare_socket.recv()) is True
                 self._prepare_socket.send(pickle.dumps(record._fields))
+                ready = pickle.loads(self._prepare_socket.recv()) is True
             self._ready = True
             self._prepare_socket.close()
             self._prepare_socket = None

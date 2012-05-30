@@ -43,7 +43,7 @@ class LivePlot(HasTraits):
     value_item = Enum(values='fields')
 
     def _prepare_socket_default(self):
-        return self.context.socket(zmq.REQ)
+        return self.context.socket(zmq.REP)
 
     def _data_socket_default(self):
         return self.context.socket(zmq.SUB)
@@ -100,12 +100,13 @@ class LivePlot(HasTraits):
         GUI.invoke_later(self._receive_batch)
 
     def _wait_for_ready(self, timeout=5000):
-        self.prepare_socket.send(pickle.dumps(True))
         socks = dict(self.poller.poll(timeout=timeout))
         if self.prepare_socket not in socks or \
                 socks[self.prepare_socket] != zmq.POLLIN:
-            raise Exception()
+            GUI.invoke_after(500, self._wait_for_ready)
+            return
         fields = pickle.loads(self.prepare_socket.recv())
+        self.prepare_socket.send(pickle.dumps(True))
         # FIXME
         self.fields = fields[0], fields[3], fields[4], fields[5]
         self.ready = True
