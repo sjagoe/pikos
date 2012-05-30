@@ -54,7 +54,7 @@ class FunctionMemoryMonitor(object):
         self._run_counts += 1
         if self._run_counts == 1:
             self._process = psutil.Process(os.getpid())
-            self._recorder.prepare(self._fields)
+            self._recorder.prepare(FunctionMemoryRecord)
             self._profiler.set(self.on_function_event)
 
     def __exit__(self, exc_type, exc_val, exc_tb):

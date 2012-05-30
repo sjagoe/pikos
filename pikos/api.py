@@ -2,7 +2,7 @@ import sys
 
 from pikos.monitor import Monitor
 from pikos.recorders.text_stream_recorder import TextStreamRecorder
-from pikos.loggers.function_logger import FunctionLogger
+from pikos.monitors.function_monitor import FunctionMonitor
 
 def baserecorder():
     """ Factory function that returns a default recorder.
@@ -12,7 +12,7 @@ def baserecorder():
 def log_functions():
     """ Factory function that returns a default function logger.
     """
-    return FunctionLogger(baserecorder())
+    return FunctionMonitor(baserecorder())
 
 #: Easy to find placeholder for the Monitor decorator class.
 monitor = Monitor
