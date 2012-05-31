@@ -44,12 +44,12 @@ class FunctionMonitor(object):
         self._call_tracker = KeepTrack()
 
     def __enter__(self):
-        if self._call_tracker():
+        if self._call_tracker('ping'):
             self._recorder.prepare(FunctionRecord)
             self._profiler.set(self.on_function_event)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self._call_tracker('teardown'):
+        if self._call_tracker('pong'):
             self._profiler.unset()
             self._recorder.finalize()
 

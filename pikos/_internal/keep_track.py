@@ -1,16 +1,17 @@
-_MODES = {'setup': 1, 'teardown': -1}
-_CHECKS = {'setup': 1, 'teardown': 0}
+# utility dictionaries for the KeepTrack class
+_MODES = {'ping': 1, 'pong': -1}
+_CHECKS = {'ping': 1, 'pong': 0}
 
 class KeepTrack(object):
-    """ A simple object to keep track of setup and teardown calls\
+    """ A simple object to keep track of start and stop calls
 
     The object is used to decide if a initialization or destroy operation needs
     to be performed when a context manager is called recursivly.
 
     usage:
-        - Calling the instance with ``mode='setup'`` will increase the
+        - Calling the instance with ``ping`` will increase the
           internal counter and return true only the first time it is called.
-        - Calling the instance with ``mode='teardown'`` will decrease the
+        - Calling the instance with ``pong`` will decrease the
           internal counter and return False until the counter is zero which
           will pair with the first time the instance was called.
 
@@ -18,19 +19,23 @@ class KeepTrack(object):
     def __init__(self):
         self._counter = 0
 
-    def __call__(self, mode='setup'):
+    def __call__(self, mode='ping'):
         """
 
         Parameters
         ----------
         mode : string
-            mode is a String with value 'setup' or 'teardown' to indicate the
+            mode is a String with value 'ping' or 'pong' to indicate the
             operation that is perfomed in the internal counter.
 
         Returns
         -------
-        A boolean value inidicating that an actual *setup* or *teardown* needs
+        A boolean value inidicating that an actual *ping* or *pong* needs
         to be perfomed.
+
+        Note
+        ----
+        Perfoming a 'pong' without a coresponding 'ping' will return false.
 
         """
         self._counter += _MODES[mode]
