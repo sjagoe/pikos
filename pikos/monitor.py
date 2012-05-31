@@ -18,7 +18,7 @@ class Monitor(object):
     -----
 
     # as a decorator
-    @monitor(FunctionLogger())
+    @monitor(FunctionMonitor())
     def my_function():
         ...
         return
@@ -28,7 +28,7 @@ class Monitor(object):
         ...
         return
 
-    logfunctions = MonitorAssistant(FunctionLogger(), )
+    logfunctions = MonitorAssistant(FunctionMonitor(), )
     logfunctions(my_function, *args, **kwrgs)
     ...
 
