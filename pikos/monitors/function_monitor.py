@@ -7,7 +7,7 @@ from pikos._internal.keep_track import KeepTrack
 from pikos.recorders.abstract_record_formater import AbstractRecordFormater
 
 __all__ = [
-    'FunctionLogger',
+    'FunctionMonitor',
     'FunctionRecord',
     'FunctionRecordFormater'
 ]
@@ -35,7 +35,7 @@ class FunctionMonitor(object):
 
         Parameters
         ----------
-        recorder : pikos.recorders.AbstractRecorder
+        recorder : ~pikos.recorders.AbstractRecorder
             An instance of a Pikos recorder to handle the values to be logged
         """
         self._recorder = recorder
