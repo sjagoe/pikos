@@ -3,6 +3,7 @@ import inspect
 
 from collections import namedtuple
 from pikos._internal.profile_functions import ProfileFunctions
+from pikos._internal.keep_track import KeepTrack
 from pikos.recorders.abstract_record_formater import AbstractRecordFormater
 
 __all__ = [
@@ -40,17 +41,15 @@ class FunctionMonitor(object):
         self._recorder = recorder
         self._profiler = ProfileFunctions()
         self._index = 0
-        self._run_counts = 0
+        self._call_tracker = KeepTrack()
 
     def __enter__(self):
-        self._run_counts += 1
-        if self._run_counts == 1:
+        if self._call_tracker():
             self._recorder.prepare(FunctionRecord)
             self._profiler.set(self.on_function_event)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self._run_counts -= 1
-        if self._run_counts == 0:
+        if self._call_tracker('teardown'):
             self._profiler.unset()
             self._recorder.finalize()
 
