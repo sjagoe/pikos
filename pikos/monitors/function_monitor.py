@@ -28,7 +28,7 @@ class FunctionRecordFormater(AbstractRecordFormater):
 
 
 class FunctionMonitor(object):
-    """ Log python function events """
+    """ Record python function events. """
 
     def __init__(self, recorder):
         """ Initialize the monitoring class.
