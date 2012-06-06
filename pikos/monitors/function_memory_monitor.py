@@ -14,7 +14,7 @@ __all__ = [
 
 FUNCTION_MEMORY_RECORD = ('index', 'type', 'function', 'RSS', 'VMS', 'lineNo',
                           'filename')
-FUNCTION_MEMORY_RECORD_TEMPLATE = ('{:<8} {:<11} {:<8} {:<8} {:<30} {:<5} {}'
+FUNCTION_MEMORY_RECORD_TEMPLATE = ('{:>8} {:<11} {:<12} {:>15} {:>15} {:>5} {}'
                                    '{newline}')
 
 FunctionMemoryRecord = namedtuple('FunctionMemoryRecord',
