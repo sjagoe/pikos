@@ -9,8 +9,8 @@ import zmq
 import numpy as np
 
 from traits.api import HasTraits, Str, Any, Int, Instance, Bool, Button, Enum, \
-    Tuple, Either, DelegatesTo, on_trait_change
-from traitsui.api import View, Item, UItem, VGroup, HGroup
+    Tuple, Either, DelegatesTo, on_trait_change, WeakRef
+from traitsui.api import View, Item, UItem, VGroup, HGroup, Spring
 from pyface.gui import GUI
 from chaco.api import Plot, ArrayPlotData
 from chaco.tools.api import ZoomTool, PanTool
@@ -20,17 +20,14 @@ from enable.component_editor import ComponentEditor
 from pikos.recorders.zeromq_recorder import RecordingStopped
 
 
-class FollowPanel(HasTraits):
+class DisableTrackingPlot(Plot):
 
-    follow_plot = Bool(False)
-    last_n_points = Int(100000)
+    live_plot = WeakRef('LivePlot')
 
-    traits_view = View(
-        HGroup(
-            UItem('follow_plot'),
-            UItem('last_n_points'),
-            ),
-        )
+    def dispatch(self, event, suffix):
+        if 'mouse' not in suffix:
+            self.live_plot.follow_plot = False
+        super(DisableTrackingPlot, self).dispatch(event, suffix)
 
 
 class LivePlot(HasTraits):
@@ -46,11 +43,12 @@ class LivePlot(HasTraits):
 
     ready = Bool(False)
 
-    start = Button('Start')
+    start_button = Button('Start')
+    reset_view_button = Button('Reset View')
 
     plot_data = Instance(ArrayPlotData)
 
-    plot = Instance(Plot)
+    plot = Instance(DisableTrackingPlot)
 
     zoom_tool = Instance(ZoomTool)
     pan_tool = Instance(PanTool)
@@ -62,9 +60,8 @@ class LivePlot(HasTraits):
     index_item = Enum(values='plottable_fields')
     value_item = Enum(values='plottable_fields')
 
-    follow_panel = Instance(FollowPanel, args=())
-    last_n_points = DelegatesTo('follow_panel')
-    follow_plot = DelegatesTo('follow_panel')
+    follow_plot = Bool(True)
+    last_n_points = Int(100000)
 
     TRANSFORMS = {
         'RSS': 1./(1024**2),
@@ -95,7 +92,10 @@ class LivePlot(HasTraits):
             )
 
     def _plot_default(self):
-        plot = Plot(self.plot_data)
+        plot = DisableTrackingPlot(
+            self.plot_data,
+            live_plot=self,
+            )
         plot.padding_left = 100
         plot.plot(('x', 'y'), type='line')
 
@@ -106,8 +106,17 @@ class LivePlot(HasTraits):
             )
         plot.overlays.append(self.zoom_tool)
         plot.tools.append(self.zoom_tool)
-        self.pan_tool = PanTool(plot)
+        self.pan_tool = PanTool(
+            plot,
+            constrain_direction='x',
+            constrain=True,
+            )
         plot.tools.append(self.pan_tool)
+
+        if self.follow_plot:
+            plot.x_mapper.range.low_setting = 'track'
+            plot.x_mapper.range.high_setting = 'auto'
+            plot.x_mapper.range.tracking_amount = self.last_n_points
 
         return plot
 
@@ -135,8 +144,13 @@ class LivePlot(HasTraits):
             self.plot.x_mapper.range.high_setting = 'auto'
             self.plot.x_mapper.range.tracking_amount = self.last_n_points
         else:
-            self.plot.x_mapper.range.low_setting = 'auto'
-            self.plot.x_mapper.range.high_setting = 'auto'
+            self.plot.x_mapper.range.low_setting = self.plot.x_mapper.range.low
+            self.plot.x_mapper.range.high_setting = self.plot.x_mapper.range.high
+
+    def _reset_view_button_fired(self):
+        self.follow_plot = False
+        self.plot.x_mapper.range.low_setting = 'auto'
+        self.plot.x_mapper.range.high_setting = 'auto'
 
     def _update_index(self):
         self.__update_plot_values('x', self.index_item)
@@ -162,7 +176,7 @@ class LivePlot(HasTraits):
     def _value_item_changed(self):
         self._update_value()
 
-    def _start_fired(self):
+    def _start_button_fired(self):
         self.data_socket.connect(
             'tcp://{0}:{1}'.format(self.host, self.port))
         self.data_socket.setsockopt(zmq.SUBSCRIBE, '')
@@ -243,14 +257,31 @@ class LivePlot(HasTraits):
 
     traits_view = View(
         VGroup(
-            Item('index_item'),
-            Item('value_item'),
-            Item('follow_panel',
-                 label='Follow plot (display only last N points)',
-                 style='custom'),
+            HGroup(
+                Item('index_item'),
+                Item('value_item'),
+                ),
+            HGroup(
+                Item(
+                    'follow_plot',
+                    label='Follow plot',
+                    ),
+                Item(
+                    'last_n_points',
+                    label='Number of points to show',
+                    enabled_when='follow_plot',
+                    ),
+                ),
+            HGroup(
+                Spring(),
+                UItem('reset_view_button'),
+                UItem(
+                    'start_button',
+                    enabled_when='not ready',
+                    ),
+                ),
             ),
         UItem('plot', editor=ComponentEditor()),
-        UItem('start', enabled_when='not ready'),
         height=600,
         width=800,
         resizable=True,
