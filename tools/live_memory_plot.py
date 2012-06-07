@@ -9,13 +9,28 @@ import zmq
 import numpy as np
 
 from traits.api import HasTraits, Str, Any, Int, Instance, Bool, Button, Enum, \
-    Tuple, Either
-from traitsui.api import View, Item, UItem, VGroup
+    Tuple, Either, DelegatesTo, on_trait_change
+from traitsui.api import View, Item, UItem, VGroup, HGroup
 from pyface.gui import GUI
 from chaco.api import Plot, ArrayPlotData
+from chaco.tools.api import ZoomTool, PanTool
+from chaco.tools.tool_states import SelectedZoomState
 from enable.component_editor import ComponentEditor
 
 from pikos.recorders.zeromq_recorder import RecordingStopped
+
+
+class FollowPanel(HasTraits):
+
+    follow_plot = Bool(False)
+    last_n_points = Int(100000)
+
+    traits_view = View(
+        HGroup(
+            UItem('follow_plot'),
+            UItem('last_n_points'),
+            ),
+        )
 
 
 class LivePlot(HasTraits):
@@ -37,6 +52,9 @@ class LivePlot(HasTraits):
 
     plot = Instance(Plot)
 
+    zoom_tool = Instance(ZoomTool)
+    pan_tool = Instance(PanTool)
+
     fields = Tuple
     plottable_fields = Tuple
     plottable_item_indices = Either(None, Tuple)
@@ -44,7 +62,9 @@ class LivePlot(HasTraits):
     index_item = Enum(values='plottable_fields')
     value_item = Enum(values='plottable_fields')
 
-    last_n_points = Int(100000)
+    follow_panel = Instance(FollowPanel, args=())
+    last_n_points = DelegatesTo('follow_panel')
+    follow_plot = DelegatesTo('follow_panel')
 
     TRANSFORMS = {
         'RSS': 1./(1024**2),
@@ -78,6 +98,17 @@ class LivePlot(HasTraits):
         plot = Plot(self.plot_data)
         plot.padding_left = 100
         plot.plot(('x', 'y'), type='line')
+
+        self.zoom_tool = ZoomTool(
+            plot,
+            tool_mode='range',
+            axis='index',
+            )
+        plot.overlays.append(self.zoom_tool)
+        plot.tools.append(self.zoom_tool)
+        self.pan_tool = PanTool(plot)
+        plot.tools.append(self.pan_tool)
+
         return plot
 
     def _plottable_item_indices_changed(self, new):
@@ -90,14 +121,21 @@ class LivePlot(HasTraits):
             self._update_index()
             self._update_value()
 
-    def _truncate(self, data):
-        return data[-self.last_n_points:]
-
     def __update_plot_values(self, axis, value_name):
         if value_name in self.plot_data.list_data():
             new_points = self.plot_data.get_data(value_name)
-            self.plot_data.set_data(
-                axis, self._truncate(new_points))
+            self.plot_data.set_data(axis, new_points)
+
+    def _last_n_points_changed(self)
+    self.plot.x_mapper.range.tracking_amount = self.last_n_points
+
+    def _follow_plot_changed(self):
+        if self.follow_plot:
+            self.plot.x_mapper.range.low_setting = 'track'
+            self.plot.x_mapper.range.high_setting = 'auto'
+        else:
+            self.plot.x_mapper.range.low_setting = 'auto'
+            self.plot.x_mapper.range.high_setting = 'auto'
 
     def _update_index(self):
         self.__update_plot_values('x', self.index_item)
@@ -134,7 +172,7 @@ class LivePlot(HasTraits):
     def _ready_changed(self):
         GUI.invoke_later(self._receive_batch)
 
-    def _wait_for_ready(self, timeout=5000):
+    def _wait_for_ready(self, timeout=250):
         socks = dict(self.poller.poll(timeout=timeout))
         if self.prepare_socket not in socks or \
                 socks[self.prepare_socket] != zmq.POLLIN:
@@ -206,7 +244,9 @@ class LivePlot(HasTraits):
         VGroup(
             Item('index_item'),
             Item('value_item'),
-            Item('last_n_points', label='Display the last N point'),
+            Item('follow_panel',
+                 label='Follow plot (display only last N points)',
+                 style='custom'),
             ),
         UItem('plot', editor=ComponentEditor()),
         UItem('start', enabled_when='not ready'),
