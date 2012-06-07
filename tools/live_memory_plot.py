@@ -60,7 +60,7 @@ class LivePlot(HasTraits):
     index_item = Enum(values='plottable_fields')
     value_item = Enum(values='plottable_fields')
 
-    follow_plot = Bool(True)
+    follow_plot = Bool(False)
     last_n_points = Int(100000)
 
     TRANSFORMS = {
@@ -92,33 +92,28 @@ class LivePlot(HasTraits):
             )
 
     def _plot_default(self):
-        plot = DisableTrackingPlot(
+        container = DisableTrackingPlot(
             self.plot_data,
             live_plot=self,
             )
-        plot.padding_left = 100
-        plot.plot(('x', 'y'), type='line')
+        container.padding_left = 100
+        container.plot(('x', 'y'), type='line')
 
         self.zoom_tool = ZoomTool(
-            plot,
+            container,
             tool_mode='range',
             axis='index',
             )
-        plot.overlays.append(self.zoom_tool)
-        plot.tools.append(self.zoom_tool)
+        container.overlays.append(self.zoom_tool)
+        container.tools.append(self.zoom_tool)
         self.pan_tool = PanTool(
-            plot,
+            container,
             constrain_direction='x',
             constrain=True,
             )
-        plot.tools.append(self.pan_tool)
+        container.tools.append(self.pan_tool)
 
-        if self.follow_plot:
-            plot.x_mapper.range.low_setting = 'track'
-            plot.x_mapper.range.high_setting = 'auto'
-            plot.x_mapper.range.tracking_amount = self.last_n_points
-
-        return plot
+        return container
 
     def _plottable_item_indices_changed(self, new):
         self.plottable_fields = [self.fields[i] for i in new]
