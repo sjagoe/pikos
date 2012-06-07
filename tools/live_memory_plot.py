@@ -12,8 +12,8 @@ from traits.api import HasTraits, Str, Any, Int, Instance, Bool, Button, Enum, \
     Tuple, Either, DelegatesTo, on_trait_change, WeakRef
 from traitsui.api import View, Item, UItem, VGroup, HGroup, Spring
 from pyface.gui import GUI
-from chaco.api import Plot, ArrayPlotData
-from chaco.tools.api import ZoomTool, PanTool
+from chaco.api import Plot, ArrayPlotData, ScatterInspectorOverlay
+from chaco.tools.api import ZoomTool, PanTool, ScatterInspector
 from chaco.tools.tool_states import SelectedZoomState
 from enable.component_editor import ComponentEditor
 
@@ -97,14 +97,35 @@ class LivePlot(HasTraits):
             live_plot=self,
             )
         container.padding_left = 100
-        container.plot(('x', 'y'), type='line')
+        plot = container.plot(('x', 'y'), type='line')[0]
+
+        scatter = container.plot(
+            ('x', 'y'),
+            type='scatter',
+            marker_size=0,
+            show_selection=False,
+            )
+        scatter = scatter[0]
+        inspector = ScatterInspector(
+            scatter,
+            selection_mode='single',
+            )
+        scatter.tools.append(inspector)
+        overlay = ScatterInspectorOverlay(scatter,
+                                          hover_color="gray",
+                                          hover_marker_size=2,
+                                          selection_marker_size=3,
+                                          selection_color="darkgrey",
+                                          selection_outline_color="black",
+                                          selection_line_width=1)
+        scatter.overlays.append(overlay)
 
         self.zoom_tool = ZoomTool(
             container,
             tool_mode='range',
             axis='index',
             )
-        container.overlays.append(self.zoom_tool)
+        container.underlays.append(self.zoom_tool)
         container.tools.append(self.zoom_tool)
         self.pan_tool = PanTool(
             container,
