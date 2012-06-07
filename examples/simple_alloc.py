@@ -1,8 +1,12 @@
 import sys
 import numpy as np
-from pikos.api import monitor, baserecorder
+from pikos.api import monitor
 from pikos.recorders.text_stream_recorder import TextStreamRecorder
-from pikos.monitors.function_memory_monitor import FunctionMemoryMonitor, FunctionMemoryRecordFormater
+from pikos.monitors.function_memory_monitor import FunctionMemoryMonitor, \
+    FunctionMemoryRecordFormater
+
+recorder = TextStreamRecorder(sys.stdout, auto_flush=True,
+                              formater=FunctionMemoryRecordFormater())
 
 class Leaky(object):
 
@@ -19,10 +23,7 @@ class Leaky(object):
         return np.where(a<=0.25, a, b)
         return a[np.where(a<=0.25, a, b)]
 
-    @monitor(FunctionMemoryMonitor(
-            TextStreamRecorder(
-                sys.stdout, auto_flush=True,
-                formater=FunctionMemoryRecordFormater())))
+    @monitor(FunctionMemoryMonitor(recorder))
     def run(self):
         for i in xrange(self.number):
             self.allocate()
