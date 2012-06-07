@@ -30,7 +30,7 @@ class MockRuncall():
         self._kwds.append(args)
         return function(*args, **kwds)
 
-class TestMonitorDecorator(unittest.TestCase):
+class TestMonitor(unittest.TestCase):
 
     def test_function_with_context_manager(self):
 
@@ -74,36 +74,6 @@ class TestMonitorDecorator(unittest.TestCase):
         self.assertEqual(results,[0,1,2,3,4])
         self.assertEqual(mock_logger._enter_called, 6)
         self.assertEqual(mock_logger._exit_called, 6)
-
-    def test_function_with_runcall(self):
-
-        mock_logger = MockRuncall()
-
-        @monitor(mock_logger)
-        def my_function(value):
-            return "I was called with {}".format(value)
-
-        result = my_function(5)
-        self.assertEqual(mock_logger._runcall_called, 1)
-        self.assertEqual(len(mock_logger._functions), 1)
-        self.assertEqual(result, "I was called with 5")
-
-    def test_generator_with_runcall(self):
-
-        mock_logger = MockRuncall()
-
-        @monitor(mock_logger)
-        def my_generator(value):
-            for i in range(value):
-                yield i
-
-        results = []
-        for i in my_generator(5):
-            results.append(i)
-
-        self.assertEqual(results,[0,1,2,3,4])
-        self.assertEqual(mock_logger._runcall_called, 6)
-
 
 
 if __name__ == '__main__':

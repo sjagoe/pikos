@@ -7,14 +7,22 @@ except ImportError:
 
 
 class TraceFunctions(object):
+    """ A Class to handle setting and unseting the settrace function.
+
+    """
 
     def set(self, function):
-        self._old_function = sys.gettrace()
+        """ Set a new function in sys.setprofile.
+
+        """
         if has_threading:
             threading.settrace(function)
         sys.settrace(function)
 
     def unset(self):
-        sys.settrace(self._old_function)
+        """ Unset the current function in the sys.setprofile.
+        """
+        sys.settrace(None)
         if has_threading:
-            threading.settrace(self._old_function)
+            threading.settrace(None)
+

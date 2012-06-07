@@ -7,7 +7,7 @@ from pikos.recorders.list_recorder import ListRecorder
 from pikos.recorders.text_stream_recorder import TextStreamRecorder
 from pikos.tests.test_assistant import TestAssistant
 
-class TestFunctionLogger(unittest.TestCase, TestAssistant):
+class TestFunctionMonitor(unittest.TestCase, TestAssistant):
 
     def test_function(self):
         recorder = ListRecorder()

@@ -5,6 +5,7 @@ import psutil
 from collections import namedtuple
 from pikos._internal.profile_functions import ProfileFunctions
 from pikos.recorders.abstract_record_formater import AbstractRecordFormater
+from pikos._internal.keep_track import KeepTrack
 
 __all__ = [
     'FunctionMemoryMonitor',
@@ -47,19 +48,17 @@ class FunctionMemoryMonitor(object):
         self._recorder = recorder
         self._profiler = ProfileFunctions()
         self._index = 0
-        self._run_counts = 0
+        self._call_tracker = KeepTrack()
         self._process = None
 
     def __enter__(self):
-        self._run_counts += 1
-        if self._run_counts == 1:
+        if self._call_tracker('ping'):
             self._process = psutil.Process(os.getpid())
             self._recorder.prepare(FunctionMemoryRecord)
             self._profiler.set(self.on_function_event)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self._run_counts -= 1
-        if self._run_counts == 0:
+        if self._call_tracker('pong'):
             self._profiler.unset()
             self._recorder.finalize()
 

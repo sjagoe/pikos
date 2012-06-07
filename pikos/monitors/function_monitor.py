@@ -3,10 +3,11 @@ import inspect
 
 from collections import namedtuple
 from pikos._internal.profile_functions import ProfileFunctions
+from pikos._internal.keep_track import KeepTrack
 from pikos.recorders.abstract_record_formater import AbstractRecordFormater
 
 __all__ = [
-    'FunctionLogger',
+    'FunctionMonitor',
     'FunctionRecord',
     'FunctionRecordFormater'
 ]
@@ -27,30 +28,28 @@ class FunctionRecordFormater(AbstractRecordFormater):
 
 
 class FunctionMonitor(object):
-    """ Log python function events """
+    """ Record python function events. """
 
     def __init__(self, recorder):
         """ Initialize the monitoring class.
 
         Parameters
         ----------
-        recorder : pikos.recorders.AbstractRecorder
+        recorder : ~pikos.recorders.AbstractRecorder
             An instance of a Pikos recorder to handle the values to be logged
         """
         self._recorder = recorder
         self._profiler = ProfileFunctions()
         self._index = 0
-        self._run_counts = 0
+        self._call_tracker = KeepTrack()
 
     def __enter__(self):
-        self._run_counts += 1
-        if self._run_counts == 1:
+        if self._call_tracker('ping'):
             self._recorder.prepare(FunctionRecord)
             self._profiler.set(self.on_function_event)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self._run_counts -= 1
-        if self._run_counts == 0:
+        if self._call_tracker('pong'):
             self._profiler.unset()
             self._recorder.finalize()
 
