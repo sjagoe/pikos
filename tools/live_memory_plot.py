@@ -126,13 +126,14 @@ class LivePlot(HasTraits):
             new_points = self.plot_data.get_data(value_name)
             self.plot_data.set_data(axis, new_points)
 
-    def _last_n_points_changed(self)
-    self.plot.x_mapper.range.tracking_amount = self.last_n_points
+    def _last_n_points_changed(self):
+        self.plot.x_mapper.range.tracking_amount = self.last_n_points
 
     def _follow_plot_changed(self):
         if self.follow_plot:
             self.plot.x_mapper.range.low_setting = 'track'
             self.plot.x_mapper.range.high_setting = 'auto'
+            self.plot.x_mapper.range.tracking_amount = self.last_n_points
         else:
             self.plot.x_mapper.range.low_setting = 'auto'
             self.plot.x_mapper.range.high_setting = 'auto'
