@@ -60,8 +60,6 @@ if __name__ == '__main__':
     else:
         size = (1000, 20000)
 
-    print "The zeromq server should start within the next 5 seconds."
-    time.sleep(5)
     if '--fixed' in sys.argv[1:]:
         fixed(size)
     else:

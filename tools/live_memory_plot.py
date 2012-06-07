@@ -9,8 +9,10 @@ import zmq
 import numpy as np
 
 from traits.api import HasTraits, Str, Any, Int, Instance, Bool, Button, Enum, \
-    Tuple, Either, DelegatesTo, on_trait_change, WeakRef
-from traitsui.api import View, Item, UItem, VGroup, HGroup, Spring
+    Tuple, Either, DelegatesTo, on_trait_change, WeakRef, List, Either, Property
+from traitsui.api import View, Item, UItem, VGroup, HGroup, Spring, \
+    TabularEditor
+from traitsui.tabular_adapter import TabularAdapter
 from pyface.gui import GUI
 from chaco.api import Plot, ArrayPlotData, ScatterInspectorOverlay
 from chaco.tools.api import ZoomTool, PanTool, ScatterInspector
@@ -18,6 +20,14 @@ from chaco.tools.tool_states import SelectedZoomState
 from enable.component_editor import ComponentEditor
 
 from pikos.recorders.zeromq_recorder import RecordingStopped
+
+
+class DetailsAdapter(TabularAdapter):
+
+    columns = (
+        ('Field', 0),
+        ('Value', 1),
+        )
 
 
 class DisableTrackingPlot(Plot):
@@ -49,6 +59,7 @@ class LivePlot(HasTraits):
     plot_data = Instance(ArrayPlotData)
 
     plot = Instance(DisableTrackingPlot)
+    scatter = Any
 
     zoom_tool = Instance(ZoomTool)
     pan_tool = Instance(PanTool)
@@ -59,6 +70,10 @@ class LivePlot(HasTraits):
 
     index_item = Enum(values='plottable_fields')
     value_item = Enum(values='plottable_fields')
+
+    data_items = List
+    selected_index = Either(None, Int)
+    selected_item = Property(depends_on='selected_index')
 
     follow_plot = Bool(False)
     last_n_points = Int(100000)
@@ -102,39 +117,52 @@ class LivePlot(HasTraits):
         scatter = container.plot(
             ('x', 'y'),
             type='scatter',
-            marker_size=0,
+            marker_size=1,
             show_selection=False,
+            color='lightskyblue',
             )
-        scatter = scatter[0]
+        self.scatter = scatter[0]
         inspector = ScatterInspector(
-            scatter,
+            self.scatter,
             selection_mode='single',
             )
-        scatter.tools.append(inspector)
-        overlay = ScatterInspectorOverlay(scatter,
-                                          hover_color="gray",
+        self.scatter.tools.append(inspector)
+        overlay = ScatterInspectorOverlay(self.scatter,
+                                          hover_color="lightskyblue",
                                           hover_marker_size=2,
                                           selection_marker_size=3,
-                                          selection_color="darkgrey",
+                                          selection_color="lightskyblue",
                                           selection_outline_color="black",
                                           selection_line_width=1)
-        scatter.overlays.append(overlay)
+        self.scatter.overlays.append(overlay)
+
+        self.scatter.index.on_trait_change(
+            self._metadata_changed, "metadata_changed")
 
         self.zoom_tool = ZoomTool(
             container,
-            tool_mode='range',
-            axis='index',
             )
         container.underlays.append(self.zoom_tool)
         container.tools.append(self.zoom_tool)
         self.pan_tool = PanTool(
             container,
-            constrain_direction='x',
-            constrain=True,
             )
         container.tools.append(self.pan_tool)
 
         return container
+
+    def _metadata_changed(self, new):
+        data_indices = self.scatter.index.metadata.get('selections', [])
+        if len(data_indices) == 0:
+            self.selected_index = None
+            return
+        self.selected_index = data_indices[0]
+
+    def _get_selected_item(self):
+        if self.selected_index is not None:
+            values = self.data_items[self.selected_index]
+            return zip(self.fields, values)
+        return ()
 
     def _plottable_item_indices_changed(self, new):
         self.plottable_fields = [self.fields[i] for i in new]
@@ -240,6 +268,8 @@ class LivePlot(HasTraits):
         if len(data) == 0:
             return
 
+        self.data_items = self.data_items + data
+
         if self.plottable_item_indices is None:
             self._calculate_plottable_item_indices(data)
 
@@ -298,6 +328,7 @@ class LivePlot(HasTraits):
                 ),
             ),
         UItem('plot', editor=ComponentEditor()),
+        UItem('selected_item', editor=TabularEditor(adapter=DetailsAdapter())),
         height=600,
         width=800,
         resizable=True,
