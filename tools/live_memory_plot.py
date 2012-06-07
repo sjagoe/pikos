@@ -10,7 +10,7 @@ import numpy as np
 
 from traits.api import HasTraits, Str, Any, Int, Instance, Bool, Button, Enum, \
     Tuple, Either
-from traitsui.api import View, Item, UItem
+from traitsui.api import View, Item, UItem, VGroup
 from pyface.gui import GUI
 from chaco.api import Plot, ArrayPlotData
 from enable.component_editor import ComponentEditor
@@ -35,7 +35,7 @@ class LivePlot(HasTraits):
 
     plot_data = Instance(ArrayPlotData)
 
-    memory_plot = Instance(Plot)
+    plot = Instance(Plot)
 
     fields = Tuple
     plottable_fields = Tuple
@@ -45,6 +45,16 @@ class LivePlot(HasTraits):
     value_item = Enum(values='plottable_fields')
 
     last_n_points = Int(100000)
+
+    TRANSFORMS = {
+        'RSS': 1./(1024**2),
+        'VMS': 1./(1024**2),
+        }
+
+    UNITS = {
+        'RSS': 'MB',
+        'VMS': 'MB',
+        }
 
     def _prepare_socket_default(self):
         return self.context.socket(zmq.REP)
@@ -64,8 +74,9 @@ class LivePlot(HasTraits):
             y=[],
             )
 
-    def _memory_plot_default(self):
+    def _plot_default(self):
         plot = Plot(self.plot_data)
+        plot.padding_left = 100
         plot.plot(('x', 'y'), type='line')
         return plot
 
@@ -90,9 +101,21 @@ class LivePlot(HasTraits):
 
     def _update_index(self):
         self.__update_plot_values('x', self.index_item)
+        if self.index_item in self.UNITS:
+            title = '{0} ({1})'.format(
+                self.index_item, self.UNITS[self.index_item])
+        else:
+            title = self.index_item
+        self.plot.x_axis.title = title
 
     def _update_value(self):
         self.__update_plot_values('y', self.value_item)
+        if self.value_item in self.UNITS:
+            title = '{0} ({1})'.format(
+                self.value_item, self.UNITS[self.value_item])
+        else:
+            title = self.value_item
+        self.plot.y_axis.title = title
 
     def _index_item_changed(self):
         self._update_index()
@@ -130,6 +153,8 @@ class LivePlot(HasTraits):
 
     def _add_data_item(self, name, values):
         exitsing = self.plot_data.get_data(name)
+        if name in self.TRANSFORMS:
+            values = np.array(values) * self.TRANSFORMS[name]
         if exitsing is None:
             new = values
         else:
@@ -157,7 +182,7 @@ class LivePlot(HasTraits):
         self._update_index()
         self._update_value()
 
-        self.memory_plot.invalidate_and_redraw()
+        self.plot.invalidate_and_redraw()
 
     def _receive_batch(self):
         data = []
@@ -178,11 +203,15 @@ class LivePlot(HasTraits):
         GUI.invoke_after(500, self._receive_batch)
 
     traits_view = View(
-        Item('index_item'),
-        Item('value_item'),
-        Item('last_n_points', label='Display the last N point'),
-        UItem('memory_plot', editor=ComponentEditor()),
+        VGroup(
+            Item('index_item'),
+            Item('value_item'),
+            Item('last_n_points', label='Display the last N point'),
+            ),
+        UItem('plot', editor=ComponentEditor()),
         UItem('start', enabled_when='not ready'),
+        height=600,
+        width=800,
         resizable=True,
         title='Live Recording Plot'
         )
