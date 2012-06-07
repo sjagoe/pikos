@@ -1,6 +1,7 @@
 from traits.etsconfig.api import ETSConfig
 ETSConfig.toolkit = 'qt4'
 
+from collections import namedtuple
 import time
 import cPickle as pickle
 
@@ -11,7 +12,7 @@ import numpy as np
 from traits.api import HasTraits, Str, Any, Int, Instance, Bool, Button, Enum, \
     Tuple, Either, DelegatesTo, on_trait_change, WeakRef, List, Either, Property
 from traitsui.api import View, Item, UItem, VGroup, HGroup, Spring, \
-    TabularEditor
+    TabularEditor, HSplit, Group
 from traitsui.tabular_adapter import TabularAdapter
 from pyface.gui import GUI
 from chaco.api import Plot, ArrayPlotData, ScatterInspectorOverlay
@@ -22,12 +23,18 @@ from enable.component_editor import ComponentEditor
 from pikos.recorders.zeromq_recorder import RecordingStopped
 
 
+Details = namedtuple('Details', ['field', 'value'])
+
+
 class DetailsAdapter(TabularAdapter):
 
     columns = (
-        ('Field', 0),
-        ('Value', 1),
+        ('Field', 'field'),
+        ('Value', 'value'),
         )
+
+    field_width = 5
+    value_width = 5
 
 
 class DisableTrackingPlot(Plot):
@@ -161,8 +168,8 @@ class LivePlot(HasTraits):
     def _get_selected_item(self):
         if self.selected_index is not None:
             values = self.data_items[self.selected_index]
-            return zip(self.fields, values)
-        return ()
+            return [Details(f, v) for f, v in zip(self.fields, values)]
+        return []
 
     def _plottable_item_indices_changed(self, new):
         self.plottable_fields = [self.fields[i] for i in new]
@@ -302,35 +309,42 @@ class LivePlot(HasTraits):
         GUI.invoke_after(500, self._receive_batch)
 
     traits_view = View(
-        VGroup(
-            HGroup(
-                Item('index_item'),
-                Item('value_item'),
-                ),
-            HGroup(
-                Item(
-                    'follow_plot',
-                    label='Follow plot',
+        Group(
+            VGroup(
+                HGroup(
+                    Item('index_item'),
+                    Item('value_item'),
                     ),
-                Item(
-                    'last_n_points',
-                    label='Number of points to show',
-                    enabled_when='follow_plot',
+                HGroup(
+                    Item(
+                        'follow_plot',
+                        label='Follow plot',
+                        ),
+                    Item(
+                        'last_n_points',
+                        label='Number of points to show',
+                        enabled_when='follow_plot',
+                        ),
+                    ),
+                HGroup(
+                    Spring(),
+                    UItem('reset_view_button'),
+                    UItem(
+                        'start_button',
+                        enabled_when='not ready',
+                        ),
                     ),
                 ),
-            HGroup(
-                Spring(),
-                UItem('reset_view_button'),
+            HSplit(
+                UItem('plot', editor=ComponentEditor()),
                 UItem(
-                    'start_button',
-                    enabled_when='not ready',
-                    ),
+                    'selected_item',
+                    editor=TabularEditor(adapter=DetailsAdapter()),
+                    width=300),
                 ),
             ),
-        UItem('plot', editor=ComponentEditor()),
-        UItem('selected_item', editor=TabularEditor(adapter=DetailsAdapter())),
-        height=600,
-        width=800,
+        height=768,
+        width=1024,
         resizable=True,
         title='Live Recording Plot'
         )
