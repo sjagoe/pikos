@@ -1,12 +1,14 @@
 .. pikos documentation master file
 
-.. include: ../../README.txt
+.. include:: ../README.txt
 
-Contents:
+Contents
+--------
 
 .. toctree::
    :maxdepth: 4
 
+   architecture
    pikos
 
 Indices and tables

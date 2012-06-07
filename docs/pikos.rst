@@ -1,59 +1,21 @@
-pikos Package
-=============
+Library Reference
+=================
 
-:mod:`abstract_monitors` Module
--------------------------------
 
-.. automodule:: pikos.abstract_monitors
+:mod:`monitor` Module
+---------------------
+
+.. automodule:: pikos.monitor
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`function_logger` Module
------------------------------
+Subpackages
+-----------
 
-.. automodule:: pikos.function_logger
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. toctree::
 
-:mod:`memory` Module
---------------------
-
-.. automodule:: pikos.memory
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`memory_profile` Module
-----------------------------
-
-.. automodule:: pikos.memory_profile
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`monitor_profile` Module
------------------------------
-
-.. automodule:: pikos.monitor_profile
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`process_monitor` Module
------------------------------
-
-.. automodule:: pikos.process_monitor
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`speed_profile` Module
----------------------------
-
-.. automodule:: pikos.speed_profile
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    pikos.external
+    pikos.monitors
+    pikos.recorders
 
