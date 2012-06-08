@@ -5,9 +5,10 @@ import numpy as np
 import psutil
 
 from pikos.api import monitor, baserecorder
-from pikos.monitors.function_memory_monitor import FunctionMemoryMonitor
-from pikos.recorders.zeromq_recorder import ZeroMQRecorder
+from pikos.external.api import PythonCProfiler
 
+
+cprofiler = PythonCProfiler()
 
 class Leaker(object):
 
@@ -38,7 +39,7 @@ class Leaker(object):
     def _dont_leak(self):
         self._make_array()
 
-    @monitor(FunctionMemoryMonitor(ZeroMQRecorder()))
+    @monitor(cprofiler)
     # @monitor(log_functions())
     def run_leaky(self):
         for i in xrange(self.number):
@@ -53,6 +54,7 @@ class Leaker(object):
 
 if __name__ == '__main__':
     proc = psutil.Process(os.getpid())
-    print proc.get_memory_info()
-    leaker = Leaker(1000, (5000, 1000))
+    leaker = Leaker(100, (5000, 1000))
     leaker.run_leaky()
+
+    cprofiler.print_stats()
