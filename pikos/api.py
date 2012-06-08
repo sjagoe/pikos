@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+#------------------------------------------------------------------------------
+#  Package: Pikos toolkit
+#  File: api.py
+#  License: LICENSE.TXT
+#
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 
 from pikos.monitor import Monitor
 

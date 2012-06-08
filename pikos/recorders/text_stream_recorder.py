@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+#------------------------------------------------------------------------------
+#  Package: Pikos toolkit
+#  File: recorders/text_stream_recorder.py
+#  License: LICENSE.TXT
+#
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 import os
 
 from pikos.recorders.abstract_recorder import AbstractRecorder, RecorderError

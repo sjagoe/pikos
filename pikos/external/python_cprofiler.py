@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+#------------------------------------------------------------------------------
+#  Package: Pikos toolkit
+#  file: external/python_cprofiler.py
+#  License: LICENSE.TXT
+#
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 from __future__ import absolute_import
 import cProfile
 

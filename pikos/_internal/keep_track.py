@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+#------------------------------------------------------------------------------
+#  Package: Pikos toolkit
+#  File: _internal/keep_track.py
+#  License: LICENSE.TXT
+#
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 # utility dictionaries for the KeepTrack class
 _MODES = {'ping': 1, 'pong': -1}
 _CHECKS = {'ping': 1, 'pong': 0}
