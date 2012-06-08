@@ -118,7 +118,7 @@ class LineMemoryMonitor(object):
             filename, lineno, function, line, _ = \
                 inspect.getframeinfo(frame, context=0)
             record = LineMemoryRecord(self._index, function, lineno, usage.rss,
-                                      usage.vms, filename)
+                                      usage.vms, line, filename)
             self._recorder.record(record)
             self._index += 1
         return self.on_line_event
