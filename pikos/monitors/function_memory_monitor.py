@@ -2,21 +2,16 @@ from __future__ import absolute_import
 import inspect
 import os
 import psutil
+
 from collections import namedtuple
 from pikos._internal.profile_functions import ProfileFunctions
-from pikos.recorders.abstract_record_formater import AbstractRecordFormater
 from pikos._internal.keep_track import KeepTrack
-
-__all__ = [
-    'FunctionMemoryMonitor',
-    'FunctionMemoryRecord',
-    'FunctionMemoryRecordFormater'
-]
 
 FUNCTION_MEMORY_RECORD = ('index', 'type', 'function', 'RSS', 'VMS', 'lineNo',
                           'filename')
-FUNCTION_MEMORY_RECORD_TEMPLATE = ('{:<8} {:<11} {:<8} {:<8} {:<30} {:<5} {}'
-                                   '{newline}')
+FUNCTION_MEMORY_RECORD_TEMPLATE = ('{:<8} {:<11} {:<40} {:<8} {:<8} {:<30} '
+                                   '{:<5} {}{newline}')
+
 
 FunctionMemoryRecord = namedtuple('FunctionMemoryRecord',
                                   FUNCTION_MEMORY_RECORD)
@@ -33,17 +28,48 @@ class FunctionMemoryRecordFormater(AbstractRecordFormater):
                                                       newline=os.linesep)
 
 class FunctionMemoryMonitor(object):
-    """ Record process memory on python function events. """
+    """ Record process memory on python function events.
 
-    _fields = FunctionMemoryRecord._fields
+    The class hooks on the setprofile function to receive function events and
+    record the current process memory when they happen.
+
+    Private
+    -------
+    _recorder : object
+        A recorder object that implementes the
+        :class:`~pikos.recorder.AbstractRecorder` interface.
+
+    _profiler : object
+        An instance of the
+        :class:`~pikos._internal.profiler_functions.ProfilerFunctions` utility
+        class that is used to set and unset the setprofile function as required
+        by the monitor.
+
+    _index : int
+        The current zero based record index. Each function event will increase
+        the index by one.
+
+    _call_tracker : object
+        An instance of the :class:`~pikos._internal.keep_track` utility class
+        to keep track of recursive calls to the monitor's :meth:`__enter__` and
+        :meth:`__exit__` methods.
+
+    _process : object
+       An instanse of :class:`psutil.Process` for the current process, used to
+       get memory information in a platform independent way.
+
+    """
 
     def __init__(self, recorder):
-        """ Initialize the function memory monitor class.
+        """ Initialize the monitoring class.
 
         Parameters
         ----------
-        recorder : pikos.recorders.AbstractRecorder
-            An instance of a Pikos recorder to handle the values to be logged
+        recorder : object
+            A subclass of :class:`~pikos.recorders.AbstractRecorder` or a class
+            that implements the same interface to handle the values to be
+            logged.
+
         """
         self._recorder = recorder
         self._profiler = ProfileFunctions()
@@ -52,17 +78,39 @@ class FunctionMemoryMonitor(object):
         self._process = None
 
     def __enter__(self):
+        """ Enter the monitor context.
+
+        The first time the method is called (the context is entered) it will
+        initialize the Process class, set the setprofile hooks and initialize
+        the recorder.
+
+        """
         if self._call_tracker('ping'):
             self._process = psutil.Process(os.getpid())
             self._recorder.prepare(FunctionMemoryRecord)
             self._profiler.set(self.on_function_event)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """ Exit the monitor context.
+
+        The last time the method is called (the context is exited) it will
+        unset the setprofile hooks and finalize the recorder and set
+        :attr:`_process` to None.
+
+        """
         if self._call_tracker('pong'):
             self._profiler.unset()
             self._recorder.finalize()
+            self._process = None
 
     def on_function_event(self, frame, event, arg):
+        """ Record the process memory usage during the current function event.
+
+        Called on function events, it will retrieve the necessary information
+        from the `frame` and :attr:`_process`, create a :class:`FunctionRecord`
+        and send it to the recorder.
+
+        """
         usage = self._process.get_memory_info()
         filename, lineno, function, _, _ = \
             inspect.getframeinfo(frame, context=0)
