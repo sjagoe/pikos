@@ -6,10 +6,9 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
-   architecture
-   pikos
+   reference
 
 Indices and tables
 ==================

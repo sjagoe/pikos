@@ -1,5 +1,5 @@
-Architecture
-============
+Library Reference
+=================
 
 Pikos is designed in layers.  At the top layer we find the
 :class:`~pikos.monitor.Monitor` a decorator that acts as an the entry
@@ -8,6 +8,16 @@ be monitored. The next layer is the various monitors that are
 responsible to collect information (e.g. memory) during the execution
 of the decorated function. The retrieved information is recorded
 through the :ref:`recorders` and controlled with the :ref:`filters`.
+
+Monitor Decorator
+-----------------
+
+.. autoclass:: pikos.monitor.Monitor
+
+    .. automethod:: pikos.monitor.Monitor.__init__
+
+    .. automethod:: pikos.monitor.Monitor.__call__
+
 
 Monitors
 --------
