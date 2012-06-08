@@ -32,3 +32,8 @@ Optional packages are:
 
 - yappi (>=0.62),  `<http://code.google.com/p/yappi/>`_
 - line_profiler (>=1.0b3),  `<http://pypi.python.org/pypi/line_profiler>`_
+- pyzmq (>= 2.1.11) `<http://www.zeromq.org/bindings:python>`_
+- traits (>= 4.1.0) `<https://github.com/enthought/traits>`_
+- traitsui (>= 4.1.0) `<https://github.com/enthought/traitsui>`_
+- chaco (>= 4.1.0) `<https://github.com/enthought/chaco>`_
+- numpy (>= 1.6.1) `<http://numpy.scipy.org>`_
