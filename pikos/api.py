@@ -21,16 +21,23 @@ def monitor_lines(filter_=None):
     return Monitor(LineMonitor(baserecorder(filter_=filter_)))
 
 def memory_on_functions(filter_=None):
-    """ Factory function that returns a basic line monitor.
+    """ Factory function that returns a basic function memory monitor.
     """
     from pikos.monitors.function_memory_monitor import FunctionMemoryMonitor
     return Monitor(FunctionMemoryMonitor(baserecorder(filter_=filter_)))
 
 def memory_on_lines(filter_=None):
-    """ Factory function that returns a basic line monitor.
+    """ Factory function that returns a basic line memory monitor.
     """
     from pikos.monitors.line_memory_monitor import LineMemoryMonitor
     return Monitor(LineMemoryMonitor(baserecorder(filter_=filter_)))
+
+def yappi_monitor(buildins=None):
+    """ Factory function that returns a yappi monitor.
+    """
+    from pikos.external.yappi_profiler import YappiProfiler
+    return Monitor(YappiProfiler(buildins))
+
 
 #: Easy to find placeholder for the Monitor decorator class.
 monitor = Monitor
