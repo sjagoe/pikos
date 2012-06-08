@@ -32,7 +32,7 @@ def memory_on_lines(filter_=None):
     from pikos.monitors.line_memory_monitor import LineMemoryMonitor
     return Monitor(LineMemoryMonitor(baserecorder(filter_=filter_)))
 
-def yappi_monitor(buildins=None):
+def yappi_profile(buildins=None):
     """ Factory function that returns a yappi monitor.
     """
     from pikos.external.yappi_profiler import YappiProfiler
