@@ -35,7 +35,7 @@ class CSVRecorder(AbstractRecorder):
             if the input sould be recorded.
 
         **csv_kwargs :
-            Key word arguments
+            Key word arguments to be passed to the *cvs.writer*.
 
         """
         self._filter = (lambda x: True) if filter_ is None else filter_
@@ -49,16 +49,39 @@ class CSVRecorder(AbstractRecorder):
             self._ready = True
 
     def finalize(self):
-        """ A do nothing method. """
+        """ Finalize the recorder.
+
+        A do nothing method.
+
+        Raises
+        ------
+        RecorderError :
+            Raised if the method is called without the recorder been ready to
+            accept data.
+
+        """
         if not self._ready:
             msg = 'Method called while recorder has not been prepared'
             raise RecorderError(msg)
 
-    def record(self, values):
-        """ Rerord entry onlty when the filter function returns True. """
+    def record(self, data):
+        """ Rerord the data entry when the filter function returns True.
+
+        Parameters
+        ----------
+        values : NamedTuple
+            The record entry.
+
+        Raises
+        ------
+        RecorderError :
+            Raised if the method is called without the recorder been ready to
+            accept data.
+
+        """
         if self._ready:
-            if self._filter(values):
-                self._writer.writerow(values)
+            if self._filter(data):
+                self._writer.writerow(data)
         else:
             msg = 'Method called while recorder is not ready to record'
             raise RecorderError(msg)

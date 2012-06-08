@@ -15,9 +15,9 @@ class ListRecorder(AbstractRecorder):
     Private
     -------
     _filter : callable
-        Used to check if the set `record` should be `recored`. The function
-        accepts a tuple of the `record` values and return True is the input
-        sould be recored.
+        Used to check if the data entry should be recorded. The function
+        accepts a namedtuple record and return True is the input sould be
+        recored.
 
     """
 
@@ -28,19 +28,27 @@ class ListRecorder(AbstractRecorder):
         ----------
 
         filter_ : callable
-            A callable function that accepts a data tuple and returns True
-            if the input sould be recorded.
+            A callable function to filter out the data entries that are going
+            to be recorded.
 
         """
         self._filter = (lambda x: True) if filter_ is None else filter_
         self.records = []
 
-    def prepare(self, fields):
-        """ A do nothing method. """
+    def prepare(self, data):
+        """ Prepare the recorder to accept data.
+
+        .. note:: nothing to do for the ListRecorder.
+
+        """
         pass
 
     def finalize(self):
-        """ A do nothing method. """
+        """ Finalize the recorder.
+
+        .. note:: nothing to do for the ListRecorder.
+
+        """
         pass
 
     @property
@@ -48,7 +56,14 @@ class ListRecorder(AbstractRecorder):
         """ Is the recorder ready to accept data? """
         return True
 
-    def record(self, values):
-        """ Rerord entry onlty when the filter function returns True. """
-        if self.ready and self._filter(values):
-            self.records.append(values)
+    def record(self, data):
+        """ Rerord the data entry when the filter function returns True.
+
+        Parameters
+        ----------
+        data : NamedTuple
+            The record entry.
+
+        """
+        if self.ready and self._filter(data):
+            self.records.append(data)
