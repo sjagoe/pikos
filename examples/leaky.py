@@ -42,9 +42,8 @@ if __name__ == '__main__':
     proc = psutil.Process(os.getpid())
     print proc.get_memory_info()
     leaker = Leaker(1000, (100, 100))
-    leaker.run_leaky()
-    print proc.get_memory_info()
-    leaker.leaks = []
-    print proc.get_memory_info()
-    leaker.run_leaky()
-    print proc.get_memory_info()
+    for i in xrange(200):
+        leaker.run_leaky()
+        print proc.get_memory_info()
+        leaker.leaks = []
+        print proc.get_memory_info()
