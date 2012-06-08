@@ -48,7 +48,6 @@ Pikos can act as entry point for external libraries and profilers.
 
    pikos.external.python_cprofiler.PythonCProfiler
    pikos.external.line_profiler.LineProfiler
-   pikos.external.memory_line_profiler.MemoryProfiler
    pikos.external.yappi_profiler.YappiProfiler
 
 .. note:: These profilers are experimental and not yet integrate fully
