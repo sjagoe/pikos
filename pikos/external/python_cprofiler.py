@@ -1,26 +1,30 @@
 from __future__ import absolute_import
-import sys
 import cProfile
 
 from pikos._internal.keep_track import KeepTrack
-
-__all__ = [
-    'PythonCProfiler',
-]
 
 class PythonCProfiler(cProfile.Profile):
     """ The normal python :class:`~cProfiler.Profile` subclassed and adapted to
     work with the pikos Monitor decorator.
 
-    Note
-    ----
+    The class fully supports the ``Monitor`` decorator for functions and
+    generators but does not support recorders.
+
+    Notes
+    -----
     Due to the function wrapping a small overhead is expected especially if the
     decorated function is recursive calls.  The ``wrapper`` function and the
     ``__enter__`` and ``__exit__`` methods of the context manager might also
     appear in the list of functions that have been called.
 
+
     """
     def __init__(self, *args, **kwrds):
+        """ Initialize the cProfiler wrapper class.
+
+        Please refer to the pyhton documentation for initialization options.
+
+        """
         super(PythonCProfiler, self).__init__(*args, **kwrds)
         self._call_tracker = KeepTrack()
 
