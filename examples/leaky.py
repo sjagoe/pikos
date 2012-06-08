@@ -1,4 +1,5 @@
 import os
+from random import random
 
 import numpy as np
 import psutil
@@ -15,35 +16,43 @@ class Leaker(object):
         self.shape = shape
         self.leaks = []
 
-    def _make_array(self):
-        return np.empty(self.shape)
+    def _make_array(self, big=False):
+        if big:
+            shape = (self.shape[0]*5, self.shape[1]*2)
+        else:
+            shape = self.shape
+        return np.empty(shape)
 
     def _leak(self):
-        foo = self._make_array()
-        foo = self._add_to_array(foo, 200.)
+        foo = self._make_array(big=True)
+        foo = self._bad_add_to_array(foo, 1.)
         self.leaks.append(foo)
 
-    def _add_to_array(self, array, value):
-        return array + value
+    def _bad_add_to_array(self, array, value):
+        return np.array(array) + value
+
+    def _spike(self):
+        foo = self._make_array(big=True)
+        foo = self._bad_add_to_array(foo, 1.)
 
     def _dont_leak(self):
-        foo = self._make_array()
-        foo = self._add_to_array(foo, 1.)
+        self._make_array()
 
     @monitor(FunctionMemoryMonitor(ZeroMQRecorder()))
     # @monitor(log_functions())
     def run_leaky(self):
         for i in xrange(self.number):
-            self._leak()
-            self._dont_leak()
+            num = random()
+            if num < 0.025:
+                self._leak()
+            elif num < 0.1:
+                self._spike()
+            else:
+                self._dont_leak()
 
 
 if __name__ == '__main__':
     proc = psutil.Process(os.getpid())
     print proc.get_memory_info()
-    leaker = Leaker(1000, (100, 100))
-    for i in xrange(200):
-        leaker.run_leaky()
-        print proc.get_memory_info()
-        leaker.leaks = []
-        print proc.get_memory_info()
+    leaker = Leaker(1000, (5000, 1000))
+    leaker.run_leaky()
