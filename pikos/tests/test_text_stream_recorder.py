@@ -6,18 +6,16 @@ from collections import namedtuple
 
 from pikos.recorders.text_stream_recorder import TextStreamRecorder
 from pikos.recorders.abstract_recorder import RecorderError
-from pikos.recorders.abstract_record_formater import AbstractRecordFormater
 
-MockRecord = namedtuple('MockRecord', ('one', 'two', 'three'))
+class MockRecord(namedtuple('MockRecord', ('one', 'two', 'three'))):
 
-class MockFormater(AbstractRecordFormater):
-
-    def header(self, record):
-        return '{:<5} {:<5} {:<5}{newline}'.format(*record._fields,
+    @classmethod
+    def header(cls):
+        return '{:<5} {:<5} {:<5}{newline}'.format(*cls._fields,
                                                    newline=os.linesep)
 
-    def line(self, record):
-        return '{:<5} {:<5} {:<5}{newline}'.format(*record, newline=os.linesep)
+    def line(self):
+        return '{:<5} {:<5} {:<5}{newline}'.format(*self, newline=os.linesep)
 
 
 class TestTextStreamRecorder(unittest.TestCase):
@@ -89,7 +87,7 @@ class TestTextStreamRecorder(unittest.TestCase):
         record = MockRecord(5, 'pikos','apikos')
         output = ('one   two   three{newline}-----------------{newline}'
                   '5     pikos apikos{newline}'.format(newline=os.linesep))
-        recorder = TextStreamRecorder(self.temp, formater=MockFormater())
+        recorder = TextStreamRecorder(self.temp, formated=True)
         recorder.prepare(MockRecord)
         recorder.record(record)
         self.assertMultiLineEqual(self.temp.getvalue(), output)

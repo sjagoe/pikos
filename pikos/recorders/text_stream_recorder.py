@@ -129,14 +129,14 @@ class TextStreamRecorder(AbstractRecorder):
 
         Parameters
         ----------
-        data : NamedTuple
-            A sample of a record entry.
+        data : class
+            The class of the data entry record.
 
         """
-        if self._formated is None:
-            header = ' '.join(str(value) for value in data) + os.linesep
-        else:
+        if self._formated:
             header = data.header()
+        else:
+            header = ' '.join(str(value) for value in data._fields) + os.linesep
 
         separator = '-' * (len(header) - len(os.linesep)) + os.linesep
         self._stream.write(header)
@@ -158,8 +158,8 @@ class TextStreamRecorder(AbstractRecorder):
             The string representation of the data entry.
 
         """
-        if self._formated is None:
-            line = ' '.join(str(value) for value in data) + os.linesep
-        else:
+        if self._formated:
             line = data.line()
+        else:
+            line = ' '.join(str(value) for value in data) + os.linesep
         return line
