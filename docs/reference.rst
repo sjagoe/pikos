@@ -50,8 +50,8 @@ Pikos can act as entry point for external libraries and profilers.
    pikos.external.line_profiler.LineProfiler
    pikos.external.yappi_profiler.YappiProfiler
 
-.. note:: These profilers are experimental and not yet integrate fully
-  with the pikos framework. Please check individual documentation for
+.. note:: These profilers are experimental and not yet integrated fully
+  in the pikos framework. Please check individual documentation for
   more information.
 
 Recorders
