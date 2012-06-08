@@ -1,1 +1,1 @@
-from pikos.external.python_profiler import PythonCProfiler
+from pikos.external.python_cprofiler import PythonCProfiler
