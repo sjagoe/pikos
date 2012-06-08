@@ -6,3 +6,8 @@ External monitors
 ----------------------------------------
 
 .. autoclass:: pikos.external.yappi_profiler.YappiProfiler
+
+----------------------------------------
+
+.. autoclass:: pikos.external.line_profiler.LineProfiler
+
