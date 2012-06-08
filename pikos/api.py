@@ -38,6 +38,16 @@ def yappi_monitor(buildins=None):
     from pikos.external.yappi_profiler import YappiProfiler
     return Monitor(YappiProfiler(buildins))
 
+def line_profile(*args, **kwrds):
+    """ Factory function that returns a line profiler.
+
+    Please refer to
+    `<http://packages.python.org/line_profiler/ for more information>_`
+    for initialization options.
+    """
+    from pikos.external.line_profiler import LineProfiler
+    return Monitor(LineProfiler(*args, **kwrds))
+
 
 #: Easy to find placeholder for the Monitor decorator class.
 monitor = Monitor
