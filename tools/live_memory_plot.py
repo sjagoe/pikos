@@ -33,8 +33,9 @@ class DetailsAdapter(TabularAdapter):
         ('Value', 'value'),
         )
 
-    field_width = 5
-    value_width = 5
+    def get_width(self, *args):
+        return 150
+
 
 
 class DisableTrackingPlot(Plot):
@@ -340,11 +341,11 @@ class LivePlot(HasTraits):
                 UItem(
                     'selected_item',
                     editor=TabularEditor(adapter=DetailsAdapter()),
-                    width=300),
+                    width=350),
                 ),
             ),
-        height=768,
-        width=1024,
+        height=800,
+        width=1100,
         resizable=True,
         title='Live Recording Plot'
         )
