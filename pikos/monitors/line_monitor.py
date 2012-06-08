@@ -10,15 +10,19 @@ from pikos._internal.keep_track import KeepTrack
 LINE_RECORD = ('index', 'function', 'lineNo', 'line', 'filename')
 LINE_RECORD_TEMPLATE = '{:<12} {:<50} {:<7} {} {}{newline}'
 
-LineRecord = namedtuple('LineRecord', LINE_RECORD)
+class LineRecord(namedtuple('LineRecord', LINE_RECORD)):
 
-class LineRecordFormater(AbstractRecordFormater):
+    __slots__ = ()
 
-    def header(self, record):
-        return LINE_RECORD_TEMPLATE.format(*record._fields, newline=os.linesep)
+    @classmethod
+    def header(cls):
+        """ Return a formated header line """
+        return LINE_RECORD_TEMPLATE.format(*cls._fields,
+                                               newline=os.linesep)
 
-    def line(self, record):
-        return LINE_RECORD_TEMPLATE.format(*record, newline=os.linesep)
+    def line(self):
+        """ Return a formated header line """
+        return LINE_RECORD_TEMPLATE.format(*self, newline=os.linesep)
 
 
 class LineMonitor(object):

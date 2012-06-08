@@ -12,15 +12,20 @@ LINE_MEMORY_RECORD = ('index', 'function', 'lineNo', 'RSS', 'VMS', 'line',
                       'filename')
 LINE_MEMORY_RECORD_TEMPLATE = '{:<12} {:<50} {:<7} {:<8} {:<8} {} {}{newline}'
 
-LineMemoryRecord = namedtuple('LineMemoryRecord', LINE_RECORD)
 
-class LineMemoryRecordFormater(AbstractRecordFormater):
+class LineMemoryRecord(namedtuple('LineMemoryRecord', LINE_MEMORY_RECORD)):
 
-    def header(self, record):
-        return LINE_RECORD_TEMPLATE.format(*record._fields, newline=os.linesep)
+    __slots__ = ()
 
-    def line(self, record):
-        return LINE_RECORD_TEMPLATE.format(*record, newline=os.linesep)
+    @classmethod
+    def header(cls):
+        """ Return a formated header line """
+        return LINE_MEMORY_RECORD_TEMPLATE.format(*cls._fields,
+                                               newline=os.linesep)
+
+    def line(self):
+        """ Return a formated header line """
+        return LINE_MEMORY_RECORD_TEMPLATE.format(*self, newline=os.linesep)
 
 
 class LineMemoryMonitor(object):

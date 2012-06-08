@@ -13,19 +13,21 @@ FUNCTION_MEMORY_RECORD_TEMPLATE = ('{:<8} {:<11} {:<40} {:<8} {:<8} {:<30} '
                                    '{:<5} {}{newline}')
 
 
-FunctionMemoryRecord = namedtuple('FunctionMemoryRecord',
-                                  FUNCTION_MEMORY_RECORD)
+class FunctionMemoryRecord(namedtuple('FunctionMemoryRecord',
+                                      FUNCTION_MEMORY_RECORD)):
 
-# we might need a factory function for this
-class FunctionMemoryRecordFormater(AbstractRecordFormater):
+    __slots__ = ()
 
-    def header(self, record):
-        return FUNCTION_MEMORY_RECORD_TEMPLATE.format(*record._fields,
-                                                      newline=os.linesep)
+    @classmethod
+    def header(cls):
+        """ Return a formated header line. """
+        return FUNCTION_MEMORY_RECORD_TEMPLATE.format(*cls._fields,
+                                               newline=os.linesep)
 
-    def line(self, record):
-        return FUNCTION_MEMORY_RECORD_TEMPLATE.format(*record,
-                                                      newline=os.linesep)
+    def line(self):
+        """ Return a formated header line """
+        return FUNCTION_MEMORY_RECORD_TEMPLATE.format(*self, newline=os.linesep)
+
 
 class FunctionMemoryMonitor(object):
     """ Record process memory on python function events.
