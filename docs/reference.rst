@@ -51,9 +51,9 @@ Pikos can act as entry point for external libraries and profilers.
    pikos.external.memory_line_profiler.MemoryProfiler
    pikos.external.yappi_profiler.YappiProfiler
 
-.. note:: These profilers integrate with the native profilers to a
-  certain degree. Please check individual documentation for more
-  information.
+.. note:: These profilers are experimental and not yet integrate fully
+  with the pikos framework. Please check individual documentation for
+  more information.
 
 Recorders
 ---------
