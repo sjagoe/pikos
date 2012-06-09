@@ -4,6 +4,67 @@
 #include "structseq.h"
 #include "rotatingtree.h"
 
+#include "zmq.h"
+/* #include "nanopb/pb_encode.h" */
+
+/*** cPickle functions ***/
+
+PyObject *cPickle_loads, *cPickle_dumps;
+
+
+//  Receive 0MQ string from socket and convert into C string
+//  Caller must free returned string. Returns NULL if the context
+//  is being terminated.
+static char *
+s_recv (void *socket) {
+    zmq_msg_t message;
+    zmq_msg_init (&message);
+    if (zmq_recv (socket, &message, 0))
+        return (NULL);
+    int size = zmq_msg_size (&message);
+    char *string = malloc (size + 1);
+    memcpy (string, zmq_msg_data (&message), size);
+    zmq_msg_close (&message);
+    string [size] = 0;
+    return (string);
+}
+
+
+//  Convert C string to 0MQ string and send to socket
+static int
+s_send (void *socket, PyObject *pyobj) {
+    int rc = 0;
+    Py_ssize_t len;
+    char *string = NULL;
+    PyObject *pickled;
+
+    PyObject *protocol;
+    protocol = PyInt_FromString("0", NULL, 10);
+
+    pickled = PyObject_CallFunctionObjArgs(cPickle_dumps, pyobj, protocol, NULL);
+    Py_XDECREF(protocol);
+    /* PyObject_Print(pickled, stdout, 0); */
+
+    if (!PyString_CheckExact(pickled)) {
+        return EFAULT;
+    };
+
+    len = PyString_Size(pickled);
+    string = PyString_AsString(pickled);
+
+    zmq_msg_t message;
+    zmq_msg_init_size (&message, len);
+    memcpy (zmq_msg_data (&message), string, len);
+    rc = zmq_send (socket, &message, 0);
+    zmq_msg_close (&message);
+
+    Py_XDECREF(pickled);
+    if (string)
+        string = NULL;
+    return (rc);
+}
+
+
 #if !defined(HAVE_LONG_LONG)
 #error "This module requires long longs!"
 #endif
@@ -110,6 +171,9 @@ typedef struct {
     int flags;
     PyObject *externalTimer;
     double externalTimerUnit;
+    void *context;
+    void *data_socket;
+    void *prepare_socket;
 } ProfilerObject;
 
 #define POF_ENABLED     0x001
@@ -431,7 +495,19 @@ ptrace_leave_call(PyObject *self, void *key)
     pContext->previous = pObj->freelistProfilerContext;
     pObj->freelistProfilerContext = pContext;
 
-    /* SJAGOE: Place zmq here */
+    char *string = malloc(sizeof(char)*6);
+    memcpy(string, "World", 6);
+    PyObject *obj;
+    obj = PyString_FromString(string);
+
+    PyObject *record;
+    record = PyTuple_New(1);
+    PyTuple_SetItem(record, 0, obj);
+    s_send(pObj->data_socket, record);
+    Py_XDECREF(record);
+
+    Py_XDECREF(obj);
+    free(string);
 }
 
 static int
@@ -793,6 +869,36 @@ profiler_init(ProfilerObject *pObj, PyObject *args, PyObject *kw)
     Py_XINCREF(timer);
     Py_XDECREF(o);
     pObj->externalTimerUnit = timeunit;
+
+    pObj->context = zmq_init(1);
+    if (!pObj->context)
+        return;
+    pObj->data_socket = zmq_socket(pObj->context, ZMQ_PUB);
+    if (!pObj->data_socket)
+        return;
+    zmq_bind(pObj->data_socket, "tcp://127.0.0.1:9001");
+    pObj->prepare_socket = zmq_socket(pObj->context, ZMQ_REQ);
+    if (!pObj->prepare_socket)
+        return;
+    zmq_bind(pObj->prepare_socket, "tcp://127.0.0.1:9002");
+
+
+    char *string = malloc(sizeof(char)*6);
+    memcpy(string, "World", 6);
+    PyObject *obj;
+    obj = PyString_FromString(string);
+
+    PyObject *record;
+    record = PyTuple_New(1);
+    PyTuple_SetItem(record, 0, obj);
+    s_send(pObj->prepare_socket, record);
+    Py_XDECREF(record);
+
+    Py_XDECREF(obj);
+    free(string);
+
+    s_recv(pObj->prepare_socket);
+
     return 0;
 }
 
@@ -872,6 +978,15 @@ init_lsprof_rt(void)
     module = Py_InitModule3("_lsprof_rt", moduleMethods, "Fast RT profiler");
     if (module == NULL)
         return;
+
+    PyObject *cPickle;
+    cPickle = PyImport_ImportModuleLevel("cPickle", NULL, NULL, NULL, 0);
+    if (!cPickle)
+        return;
+    cPickle_loads = PyObject_GetAttrString(cPickle, "loads");
+    cPickle_dumps = PyObject_GetAttrString(cPickle, "dumps");
+    Py_XDECREF(cPickle);
+
     d = PyModule_GetDict(module);
     if (PyType_Ready(&PyProfiler_Type) < 0)
         return;
