@@ -840,6 +840,10 @@ profiler_dealloc(ProfilerObject *op)
     clearEntries(op);
     Py_XDECREF(op->externalTimer);
     Py_TYPE(op)->tp_free(op);
+
+    zmq_close(op->prepare_socket);
+    zmq_close(op->data_socket);
+    zmq_term(op->context);
 }
 
 static int
