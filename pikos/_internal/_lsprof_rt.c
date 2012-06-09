@@ -7,8 +7,8 @@
 #include "zmq.h"
 /* #include "nanopb/pb_encode.h" */
 
-static const int num_fields = 2;
-static const char *field_names[] = {"index", "call_count"};
+static const int profiler_rt_num_fields = 2;
+static const char *profiler_rt_field_names[] = {"index", "call_count"};
 
 /*** cPickle functions ***/
 
@@ -502,15 +502,16 @@ ptrace_leave_call(PyObject *self, void *key)
     memcpy(string, "World", 6);
     PyObject *obj;
     obj = PyString_FromString(string);
+    free(string);
+    PyObject *obj1;
+    obj1 = PyInt_FromString("10", NULL, 10);
 
     PyObject *record;
-    record = PyTuple_New(1);
+    record = PyTuple_New(profiler_rt_num_fields);
     PyTuple_SetItem(record, 0, obj);
+    PyTuple_SetItem(record, 1, obj1);
     s_send(pObj->data_socket, record);
     Py_XDECREF(record);
-
-    Py_XDECREF(obj);
-    free(string);
 }
 
 static int
@@ -890,14 +891,14 @@ profiler_init(ProfilerObject *pObj, PyObject *args, PyObject *kw)
     zmq_bind(pObj->prepare_socket, "tcp://127.0.0.1:9002");
 
     PyObject *fields;
-    fields = PyTuple_New(num_fields);
+    fields = PyTuple_New(profiler_rt_num_fields);
     char *string;
     int ix;
     int string_len;
-    for (ix = 0; ix < num_fields; ix++) {
-        string_len = strlen(field_names[ix]);
+    for (ix = 0; ix < profiler_rt_num_fields; ix++) {
+        string_len = strlen(profiler_rt_field_names[ix]);
         string = malloc(sizeof(char) * (string_len + 1));
-        memcpy(string, field_names[ix], string_len);
+        memcpy(string, profiler_rt_field_names[ix], string_len);
         string[string_len] = 0;
         PyTuple_SetItem(fields, ix, PyString_FromString(string));
         free(string);
