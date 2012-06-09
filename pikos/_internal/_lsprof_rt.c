@@ -7,6 +7,9 @@
 #include "zmq.h"
 /* #include "nanopb/pb_encode.h" */
 
+static const int num_fields = 2;
+static const char *field_names[] = {"index", "call_count"};
+
 /*** cPickle functions ***/
 
 PyObject *cPickle_loads, *cPickle_dumps;
@@ -886,20 +889,26 @@ profiler_init(ProfilerObject *pObj, PyObject *args, PyObject *kw)
         return;
     zmq_bind(pObj->prepare_socket, "tcp://127.0.0.1:9002");
 
+    PyObject *fields;
+    fields = PyTuple_New(num_fields);
+    char *string;
+    int ix;
+    int string_len;
+    for (ix = 0; ix < num_fields; ix++) {
+        string_len = strlen(field_names[ix]);
+        string = malloc(sizeof(char) * (string_len + 1));
+        memcpy(string, field_names[ix], string_len);
+        string[string_len] = 0;
+        PyTuple_SetItem(fields, ix, PyString_FromString(string));
+        free(string);
+    };
 
-    char *string = malloc(sizeof(char)*6);
-    memcpy(string, "World", 6);
-    PyObject *obj;
-    obj = PyString_FromString(string);
+    /* PyObject_Print(fields, stdout, 0); */
 
-    PyObject *record;
-    record = PyTuple_New(1);
-    PyTuple_SetItem(record, 0, obj);
-    s_send(pObj->prepare_socket, record);
-    Py_XDECREF(record);
+    s_send(pObj->prepare_socket, fields);
 
-    Py_XDECREF(obj);
-    free(string);
+    /* FIXME: Does this decref the internal elements of the tuple? */
+    Py_XDECREF(fields);
 
     s_recv(pObj->prepare_socket);
 
