@@ -84,21 +84,9 @@ class BaseModel(HasTraits):
 
     def _update_index(self):
         self.__update_plot_values('x', self.index_item)
-        if self.index_item in self.UNITS:
-            title = '{0} ({1})'.format(
-                self.index_item, self.UNITS[self.index_item])
-        else:
-            title = self.index_item
-        # self.plot.x_axis.title = title
 
     def _update_value(self):
         self.__update_plot_values('y', self.value_item)
-        if self.value_item in self.UNITS:
-            title = '{0} ({1})'.format(
-                self.value_item, self.UNITS[self.value_item])
-        else:
-            title = self.value_item
-        # self.plot.y_axis.title = title
 
     def _index_item_changed(self):
         self._update_index()
@@ -131,22 +119,3 @@ class BaseModel(HasTraits):
         self._update_index()
         self._update_value()
         self.updated = True
-
-    # def _receive_batch(self):
-    #     data = []
-    #     while True:
-    #         socks = dict(self.poller.poll(timeout=0))
-    #         if self.data_socket not in socks or \
-    #                 socks[self.data_socket] != zmq.POLLIN:
-    #             break
-    #         item = pickle.loads(self.data_socket.recv())
-    #         print item
-    #         if isinstance(item, RecordingStopped):
-    #             break
-    #         data.append(item)
-    #     else:
-    #         self._add_data(data)
-    #         GUI.invoke_later(self._receive_batch)
-    #         return
-    #     self._add_data(data)
-    #     GUI.invoke_after(500, self._receive_batch)

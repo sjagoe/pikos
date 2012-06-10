@@ -121,6 +121,28 @@ class MemoryView(ModelView):
     def _model_updated(self):
         self.plot.invalidate_and_redraw()
 
+    @on_trait_change('model.index_item')
+    def _on_model_index_item_change(self, index_item):
+        if index_item is None:
+            return
+        if index_item in self.model.UNITS:
+            index_title = '{0} ({1})'.format(
+                index_item, self.model.UNITS[index_item])
+        else:
+            index_title = index_item
+        self.plot.x_axis.title = index_title
+
+    @on_trait_change('model.value_item')
+    def _on_model_value_item_change(self, value_item):
+        if value_item is None:
+            return
+        if value_item in self.model.UNITS:
+            value_title = '{0} ({1})'.format(
+                value_item, self.model.UNITS[value_item])
+        else:
+            value_title = value_item
+        self.plot.y_axis.title = value_title
+
     traits_view = View(
         Group(
             VGroup(
