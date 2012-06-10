@@ -62,10 +62,8 @@ class ZmqProvider(HasTraits):
 
     def _add_view(self, pid, profile, fields):
         # make new model
-        class Model(HasTraits):
-            pid = Int(462347863)
-            wibble = Str('bar')
-        model = Model(pid=pid)
+        from pikos.live.models.base_model import BaseModel
+        model = BaseModel.create_model(pid, profile, fields)
         # FIXME?
         self.application.active_window.central_pane.add_tab(model)
         self._pid_mapping[pid] = model

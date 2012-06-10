@@ -8,6 +8,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import cPickle as pickle
+import os
 
 import zmq
 
@@ -61,8 +62,10 @@ class ZeroMQRecorder(AbstractRecorder):
         """ Write the header in the csv file the first time it is called. """
         if not self._ready:
             ready = False
+            handshake_message = pickle.dumps(
+                (os.getpid(), "Memory", record._fields))
             while not ready:
-                self._prepare_socket.send(pickle.dumps(record._fields))
+                self._prepare_socket.send(handshake_message)
                 ready = pickle.loads(self._prepare_socket.recv()) is True
             self._ready = True
             self._prepare_socket.close()
