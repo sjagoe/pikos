@@ -89,7 +89,7 @@ class BaseModel(HasTraits):
                 self.index_item, self.UNITS[self.index_item])
         else:
             title = self.index_item
-        self.plot.x_axis.title = title
+        # self.plot.x_axis.title = title
 
     def _update_value(self):
         self.__update_plot_values('y', self.value_item)
@@ -98,7 +98,7 @@ class BaseModel(HasTraits):
                 self.value_item, self.UNITS[self.value_item])
         else:
             title = self.value_item
-        self.plot.y_axis.title = title
+        # self.plot.y_axis.title = title
 
     def _index_item_changed(self):
         self._update_index()
@@ -106,23 +106,23 @@ class BaseModel(HasTraits):
     def _value_item_changed(self):
         self._update_value()
 
-    def _add_data_item(self, name, values):
+    def _add_data_item(self, name, value):
         exitsing = self.plot_data.get_data(name)
         if name in self.TRANSFORMS:
-            values = np.array(values) * self.TRANSFORMS[name]
+            value = value * self.TRANSFORMS[name]
         if exitsing is None:
-            new = values
+            new = [value]
         else:
-            new = np.hstack([exitsing, values])
+            new = np.hstack([exitsing, [value]])
         self.plot_data.set_data(name, new)
 
-    def _calculate_plottable_item_indices(self, data):
-        item = data[0]
+    def _calculate_plottable_item_indices(self, item):
         self.plottable_item_indices = tuple(
             [i for i in xrange(len(item))
              if isinstance(item[i], int) or isinstance(item[i], float)])
 
     def add_data(self, data):
+        pid, profile, data = data
         self.data_items.append(data)
         if self.plottable_item_indices is None:
             self._calculate_plottable_item_indices(data)

@@ -64,13 +64,19 @@ class ZmqProvider(HasTraits):
         # make new model
         from pikos.live.models.base_model import BaseModel
         model = BaseModel.create_model(pid, profile, fields)
+        self._pid_mapping[pid] = model
         # FIXME?
         self.application.active_window.central_pane.add_tab(model)
-        self._pid_mapping[pid] = model
 
     def _handle_data(self):
         data = pickle.loads(self._data_socket.recv())
-        # handle data
+        if not isinstance(data, tuple) or len(data) != 3:
+            return 0
+        pid = data[0]
+        if pid not in self._pid_mapping:
+            return 0
+        model = self._pid_mapping[pid]
+        model.add_data(data)
         return 0
 
     def _handle_connection(self):
