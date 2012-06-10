@@ -1,4 +1,5 @@
 import cPickle as pickle
+import time
 
 from traits.api import HasTraits, Instance, Dict, Str, Int, Property, WeakRef
 from pyface.gui import GUI
@@ -68,14 +69,23 @@ class ZmqProvider(HasTraits):
         self.application.active_window.central_pane.add_tab(model)
 
     def _handle_data(self):
-        data = pickle.loads(self._data_socket.recv())
-        if not isinstance(data, tuple) or len(data) != 2:
-            return 0
-        pid, data = data
-        if pid not in self._pid_mapping:
-            return 0
-        model = self._pid_mapping[pid]
-        model.add_data(data)
+        records = {}
+        start = time.time()
+        while (time.time() - start) <= 0.1:
+            socks = dict(self._poller.poll(timeout=self.poll_timeout))
+            if self._data_socket not in socks or \
+                    socks[self._data_socket] != zmq.POLLIN:
+                break
+            record = pickle.loads(self._data_socket.recv())
+            if not isinstance(record, tuple) or len(record) != 2:
+                continue
+            pid, record_data = record
+            if pid not in self._pid_mapping:
+                continue
+            records.setdefault(pid, []).append(record_data)
+        for pid, record_data in records.iteritems():
+            model = self._pid_mapping[pid]
+            model.add_data(record_data)
         return 0
 
     def _handle_connection(self):
@@ -85,11 +95,8 @@ class ZmqProvider(HasTraits):
         self._add_view(pid, profile, fields)
 
     def _wait_for_data(self):
-        next_poll = self.poll_period
+        next_poll = self._handle_data()
         socks = dict(self._poller.poll(timeout=self.poll_timeout))
-        if self._data_socket in socks and \
-                socks[self._data_socket] == zmq.POLLIN:
-            next_poll = self._handle_data()
         if self._handshake_socket in socks and \
                 socks[self._handshake_socket] == zmq.POLLIN:
             self._handle_connection()

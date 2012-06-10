@@ -72,5 +72,5 @@ class BaseModel(HasTraits):
             [i for i in xrange(len(item))
              if isinstance(item[i], int) or isinstance(item[i], float)])
 
-    def add_data(self, data):
+    def add_data(self, records):
         raise NotImplementedError()

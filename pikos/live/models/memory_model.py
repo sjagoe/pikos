@@ -29,20 +29,21 @@ class MemoryModel(BaseModel):
             return [Details(f, v) for f, v in zip(self.fields, values)]
         return []
 
-    def _add_data_item(self, name, value):
+    def _add_data_item(self, name, values):
         exitsing = self.plot_data.get_data(name)
         if name in self.TRANSFORMS:
-            value = value * self.TRANSFORMS[name]
+            values = np.array(values) * self.TRANSFORMS[name]
         if exitsing is None:
-            new = [value]
+            new = values
         else:
-            new = np.hstack([exitsing, [value]])
+            new = np.hstack([exitsing, values])
         self.plot_data.set_data(name, new)
 
-    def add_data(self, data):
-        self.data_items.append(data)
+    def add_data(self, records):
+        self.data_items.extend(records)
         if self.plottable_item_indices is None:
-            self._calculate_plottable_item_indices(data)
+            self._calculate_plottable_item_indices(records[0])
+        data = zip(*records)
         for index in self.plottable_item_indices:
             self._add_data_item(self.fields[index], data[index])
         self._update_index()
