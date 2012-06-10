@@ -7,8 +7,11 @@
 #include "zmq.h"
 /* #include "nanopb/pb_encode.h" */
 
-static const int profiler_rt_num_fields = 2;
-static const char *profiler_rt_field_names[] = {"index", "call_count"};
+static const int profiler_rt_num_fields = 10;
+static const char *profiler_rt_field_names[] = {
+    "id", "filename", "line_number", "function_name",
+    "callcount", "cc1?", "total_time", "cumulative_time",
+    "inlinetime", "totaltime"};
 
 /*** cPickle functions ***/
 
@@ -477,6 +480,10 @@ restorePyerr:
 }
 
 static void
+rt_profile_send_record(ProfilerObject *pObj, ProfilerContext *pContext,
+                       ProfilerEntry *profEntry);
+
+static void
 ptrace_leave_call(PyObject *self, void *key)
 {
     /* leaving a call to the function identified by 'key' */
@@ -498,20 +505,7 @@ ptrace_leave_call(PyObject *self, void *key)
     pContext->previous = pObj->freelistProfilerContext;
     pObj->freelistProfilerContext = pContext;
 
-    char *string = malloc(sizeof(char)*6);
-    memcpy(string, "World", 6);
-    PyObject *obj;
-    obj = PyString_FromString(string);
-    free(string);
-    PyObject *obj1;
-    obj1 = PyInt_FromString("10", NULL, 10);
-
-    PyObject *record;
-    record = PyTuple_New(profiler_rt_num_fields);
-    PyTuple_SetItem(record, 0, obj);
-    PyTuple_SetItem(record, 1, obj1);
-    s_send(pObj->data_socket, record);
-    Py_XDECREF(record);
+    rt_profile_send_record(pObj, pContext, profEntry);
 }
 
 static int
@@ -686,6 +680,49 @@ static int statsForEntry(rotating_node_t *node, void *arg)
     return err;
 }
 
+inline double
+profiler_get_factor(ProfilerObject *pObj)
+{
+    if (!pObj->externalTimer)
+        return hpTimerUnit();
+    else if (pObj->externalTimerUnit > 0.0)
+        return pObj->externalTimerUnit;
+    else
+        return 1.0 / DOUBLE_TIMER_PRECISION;
+}
+
+static void
+rt_profile_send_record(ProfilerObject *pObj, ProfilerContext *pContext,
+                       ProfilerEntry *profEntry)
+{
+    if (pending_exception(pObj))
+        return;
+    if (profEntry->callcount == 0)
+        return;
+    double factor = profiler_get_factor(pObj);
+
+    PyObject *record;
+    Py_INCREF(Py_None);
+    Py_INCREF(Py_None);
+    Py_INCREF(Py_None);
+    Py_INCREF(Py_None);
+    Py_INCREF(Py_None);
+    record = PyTuple_New(profiler_rt_num_fields);
+    PyTuple_SetItem(record, 0, PyInt_FromSsize_t((Py_ssize_t)profEntry->userObj)); /* id */
+    PyTuple_SetItem(record, 1, Py_None); /* filename */
+    PyTuple_SetItem(record, 2, Py_None); /* line_number */
+    PyTuple_SetItem(record, 3, Py_None); /* function_name */
+    PyTuple_SetItem(record, 4, PyInt_FromLong(profEntry->callcount)); /* callcount */
+    PyTuple_SetItem(record, 5, PyInt_FromLong(profEntry->callcount - profEntry->recursivecallcount)); /* cc1? */
+    PyTuple_SetItem(record, 6, PyFloat_FromDouble(factor * profEntry->tt)); /* totaltime */
+    PyTuple_SetItem(record, 7, Py_None); /* cumulative_time */
+    PyTuple_SetItem(record, 8, PyFloat_FromDouble(factor * profEntry->it)); /* inlinetime */
+    PyTuple_SetItem(record, 9, Py_None); /* totaltime */
+    s_send(pObj->data_socket, record);
+    Py_XDECREF(record);
+}
+
+
 PyDoc_STRVAR(getstats_doc, "\
 getstats() -> list of profiler_entry objects\n\
 \n\
@@ -716,12 +753,7 @@ profiler_getstats(ProfilerObject *pObj, PyObject* noarg)
     statscollector_t collect;
     if (pending_exception(pObj))
         return NULL;
-    if (!pObj->externalTimer)
-        collect.factor = hpTimerUnit();
-    else if (pObj->externalTimerUnit > 0.0)
-        collect.factor = pObj->externalTimerUnit;
-    else
-        collect.factor = 1.0 / DOUBLE_TIMER_PRECISION;
+    collect.factor = profiler_get_factor(pObj);
     collect.list = PyList_New(0);
     if (collect.list == NULL)
         return NULL;
