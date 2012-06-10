@@ -69,9 +69,9 @@ class ZmqProvider(HasTraits):
 
     def _handle_data(self):
         data = pickle.loads(self._data_socket.recv())
-        if not isinstance(data, tuple) or len(data) != 3:
+        if not isinstance(data, tuple) or len(data) != 2:
             return 0
-        pid = data[0]
+        pid, data = data
         if pid not in self._pid_mapping:
             return 0
         model = self._pid_mapping[pid]

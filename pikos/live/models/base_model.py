@@ -92,7 +92,6 @@ class BaseModel(HasTraits):
              if isinstance(item[i], int) or isinstance(item[i], float)])
 
     def add_data(self, data):
-        pid, profile, data = data
         self.data_items.append(data)
         if self.plottable_item_indices is None:
             self._calculate_plottable_item_indices(data)

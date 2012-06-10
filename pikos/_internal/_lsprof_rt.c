@@ -183,6 +183,7 @@ typedef struct {
     void *context;
     void *data_socket;
     void *prepare_socket;
+    PyObject *pid;
 } ProfilerObject;
 
 #define POF_ENABLED     0x001
@@ -739,7 +740,19 @@ rt_profile_send_record(ProfilerObject *pObj, ProfilerContext *pContext,
     PyTuple_SetItem(record, 5, PyInt_FromLong(profEntry->callcount - profEntry->recursivecallcount)); /* cc1? */
     PyTuple_SetItem(record, 6, PyFloat_FromDouble(factor * profEntry->tt)); /* total_time */
     PyTuple_SetItem(record, 7, PyFloat_FromDouble(factor * profEntry->it)); /* cumulative_time */
-    s_send(pObj->data_socket, record);
+
+    PyObject *message;
+    message = PyTuple_New(2);
+    if (!message) {
+        goto rt_profile_send_record_error;
+    }
+
+    Py_INCREF(pObj->pid);
+    PyTuple_SetItem(message, 0, pObj->pid);
+    PyTuple_SetItem(message, 1, record);
+    s_send(pObj->data_socket, message);
+    Py_XDECREF(message);
+    return;
  rt_profile_send_record_error:
     Py_XDECREF(record);
 }
@@ -968,8 +981,11 @@ profiler_init(ProfilerObject *pObj, PyObject *args, PyObject *kw)
 
     PyObject *my_pid;
     my_pid = PyObject_CallFunctionObjArgs(os_getpid, NULL);
+    pObj->pid = my_pid;
 
-    PyTuple_SetItem(handshake, 0, my_pid);
+    Py_INCREF(my_pid);
+
+    PyTuple_SetItem(handshake, 0, pObj->pid);
     PyTuple_SetItem(handshake, 1, PyString_FromString("cProfile"));
     PyTuple_SetItem(handshake, 2, fields);
 

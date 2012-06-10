@@ -85,5 +85,5 @@ class ZeroMQRecorder(AbstractRecorder):
     def record(self, record):
         """ Rerord entry onlty when the filter function returns True. """
         if self._ready and self._filter(record):
-            message = (os.getpid(), "Message", record)
+            message = (os.getpid(), record)
             self._socket.send(pickle.dumps(message))
