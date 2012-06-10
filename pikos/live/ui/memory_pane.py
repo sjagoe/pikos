@@ -3,16 +3,18 @@ from chaco.chaco_plot_editor import ChacoPlotItem
 from pyface.tasks.api import TraitsTaskPane
 from traits.api import Dict, Enum, Instance, List, Property, \
      Unicode, on_trait_change
-from traitsui.api import EnumEditor, HGroup, Item, Label, View
+from traitsui.api import EnumEditor, HGroup, Item, Label, View, Instance
 
 
-class DefaultPane(TraitsTaskPane):
+class MemoryPane(TraitsTaskPane):
 
     #### 'ITaskPane' interface ################################################
 
-    id = 'pikos.live.default_pane'
-    name = 'Default Pane'
+    id = 'pikos.live.memory_pane'
+    name = 'Memory Plot Pane'
 
-    #### 'Plot2dPane' interface ###############################################
+    #### 'MemoryPane' interface ###############################################
 
     view = View(Label('Model'), resizable = True)
+
+    model = Instance('pikos.live.models.memory_model.MemoryModel')
