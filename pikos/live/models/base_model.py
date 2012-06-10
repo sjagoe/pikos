@@ -3,7 +3,7 @@ from collections import namedtuple
 import numpy as np
 
 from traits.api import HasTraits, Int, Instance, Enum, \
-    Tuple, Either, List, Property, Event, Str
+    Tuple, Either, List, Property, Event, Str, Dict
 from chaco.api import ArrayPlotData
 
 # from pikos.recorders.zeromq_recorder import RecordingStopped
@@ -20,7 +20,8 @@ class BaseModel(HasTraits):
     @classmethod
     def _get_model_class(cls, profile):
         if profile.lower() == 'memory':
-            return cls
+            from pikos.live.models.memory_model import MemoryModel
+            return MemoryModel
         raise ModelRegistrationError()
 
     @classmethod
@@ -45,15 +46,8 @@ class BaseModel(HasTraits):
 
     updated = Event
 
-    TRANSFORMS = {
-        'RSS': 1./(1024**2),
-        'VMS': 1./(1024**2),
-        }
-
-    UNITS = {
-        'RSS': 'MB',
-        'VMS': 'MB',
-        }
+    TRANSFORMS = Dict
+    UNITS = Dict
 
     def _plot_data_default(self):
         return ArrayPlotData(
