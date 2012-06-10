@@ -7,15 +7,18 @@
 #include "zmq.h"
 /* #include "nanopb/pb_encode.h" */
 
-static const int profiler_rt_num_fields = 10;
+static const int profiler_rt_num_fields = 8;
 static const char *profiler_rt_field_names[] = {
     "id", "filename", "line_number", "function_name",
-    "callcount", "cc1?", "total_time", "cumulative_time",
-    "inlinetime", "totaltime"};
+    "callcount", "non-recursive callcount", "total_time", "cumulative_time"};
 
 /*** cPickle functions ***/
 
 PyObject *cPickle_loads, *cPickle_dumps;
+
+/*** os functions ***/
+
+PyObject *os_getpid;
 
 
 //  Receive 0MQ string from socket and convert into C string
@@ -699,26 +702,45 @@ rt_profile_send_record(ProfilerObject *pObj, ProfilerContext *pContext,
         return;
     if (profEntry->callcount == 0)
         return;
+
     double factor = profiler_get_factor(pObj);
 
     PyObject *record;
-    Py_INCREF(Py_None);
-    Py_INCREF(Py_None);
-    Py_INCREF(Py_None);
-    Py_INCREF(Py_None);
-    Py_INCREF(Py_None);
     record = PyTuple_New(profiler_rt_num_fields);
+    if (record == NULL)
+        return;
+
+    PyObject *filename;
+    PyObject *line_number;
+    PyObject *function_name;
+
+    PyObject *code = profEntry->userObj;
+
+    if (PyCode_Check(code)) {
+        filename = PyObject_GetAttrString(code, "co_filename");
+        line_number = PyObject_GetAttrString(code, "co_firstlineno");
+        function_name = PyObject_GetAttrString(code, "co_name");
+    }
+    else if (PyString_CheckExact(code)) {
+        filename = PyString_FromString("~");
+        line_number = PyLong_FromLong(0);
+        Py_INCREF(code);
+        function_name = code;
+    }
+    else {
+        goto rt_profile_send_record_error;
+    }
+
     PyTuple_SetItem(record, 0, PyInt_FromSsize_t((Py_ssize_t)profEntry->userObj)); /* id */
-    PyTuple_SetItem(record, 1, Py_None); /* filename */
-    PyTuple_SetItem(record, 2, Py_None); /* line_number */
-    PyTuple_SetItem(record, 3, Py_None); /* function_name */
+    PyTuple_SetItem(record, 1, filename); /* filename or ~ */
+    PyTuple_SetItem(record, 2, line_number); /* line_number or 0 */
+    PyTuple_SetItem(record, 3, function_name); /* function_name */
     PyTuple_SetItem(record, 4, PyInt_FromLong(profEntry->callcount)); /* callcount */
     PyTuple_SetItem(record, 5, PyInt_FromLong(profEntry->callcount - profEntry->recursivecallcount)); /* cc1? */
-    PyTuple_SetItem(record, 6, PyFloat_FromDouble(factor * profEntry->tt)); /* totaltime */
-    PyTuple_SetItem(record, 7, Py_None); /* cumulative_time */
-    PyTuple_SetItem(record, 8, PyFloat_FromDouble(factor * profEntry->it)); /* inlinetime */
-    PyTuple_SetItem(record, 9, Py_None); /* totaltime */
+    PyTuple_SetItem(record, 6, PyFloat_FromDouble(factor * profEntry->tt)); /* total_time */
+    PyTuple_SetItem(record, 7, PyFloat_FromDouble(factor * profEntry->it)); /* cumulative_time */
     s_send(pObj->data_socket, record);
+ rt_profile_send_record_error:
     Py_XDECREF(record);
 }
 
@@ -912,18 +934,20 @@ profiler_init(ProfilerObject *pObj, PyObject *args, PyObject *kw)
 
     pObj->context = zmq_init(1);
     if (!pObj->context)
-        return;
+        return -1;
     pObj->data_socket = zmq_socket(pObj->context, ZMQ_PUB);
     if (!pObj->data_socket)
-        return;
+        return -1;
     zmq_bind(pObj->data_socket, "tcp://127.0.0.1:9001");
     pObj->prepare_socket = zmq_socket(pObj->context, ZMQ_REQ);
     if (!pObj->prepare_socket)
-        return;
+        return -1;
     zmq_bind(pObj->prepare_socket, "tcp://127.0.0.1:9002");
 
     PyObject *fields;
     fields = PyTuple_New(profiler_rt_num_fields);
+    if (fields == NULL)
+        return -1;
     char *string;
     int ix;
     int string_len;
@@ -935,16 +959,23 @@ profiler_init(ProfilerObject *pObj, PyObject *args, PyObject *kw)
         PyTuple_SetItem(fields, ix, PyString_FromString(string));
         free(string);
     };
+    PyObject *handshake;
+    handshake = PyTuple_New(3);
+    if (handshake == NULL) {
+        Py_XDECREF(fields);
+        return -1;
+    }
 
-    /* PyObject_Print(fields, stdout, 0); */
+    PyObject *my_pid;
+    my_pid = PyObject_CallFunctionObjArgs(os_getpid, NULL);
 
-    s_send(pObj->prepare_socket, fields);
+    PyTuple_SetItem(handshake, 0, my_pid);
+    PyTuple_SetItem(handshake, 1, PyString_FromString("cProfile"));
+    PyTuple_SetItem(handshake, 2, fields);
 
-    /* FIXME: Does this decref the internal elements of the tuple? */
-    Py_XDECREF(fields);
-
+    s_send(pObj->prepare_socket, handshake);
+    Py_XDECREF(handshake);
     s_recv(pObj->prepare_socket);
-
     return 0;
 }
 
@@ -1032,6 +1063,13 @@ init_lsprof_rt(void)
     cPickle_loads = PyObject_GetAttrString(cPickle, "loads");
     cPickle_dumps = PyObject_GetAttrString(cPickle, "dumps");
     Py_XDECREF(cPickle);
+
+    PyObject *os;
+    os = PyImport_ImportModuleLevel("os", NULL, NULL, NULL, 0);
+    if (!os)
+        return;
+    os_getpid = PyObject_GetAttrString(os, "getpid");
+    Py_XDECREF(os);
 
     d = PyModule_GetDict(module);
     if (PyType_Ready(&PyProfiler_Type) < 0)
