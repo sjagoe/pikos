@@ -17,18 +17,6 @@ class ModelRegistrationError(Exception): pass
 
 class BaseModel(HasTraits):
 
-    @classmethod
-    def _get_model_class(cls, profile):
-        if profile.lower() == 'memory':
-            from pikos.live.models.memory_model import MemoryModel
-            return MemoryModel
-        raise ModelRegistrationError()
-
-    @classmethod
-    def create_model(cls, pid, profile, fields):
-        klass = cls._get_model_class(profile)
-        return klass(pid=pid, profile=profile, fields=fields)
-
     pid = Int
     profile = Str
     fields = Tuple

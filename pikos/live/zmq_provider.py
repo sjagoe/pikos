@@ -48,7 +48,6 @@ class ZmqProvider(HasTraits):
         self._poller.register(self._handshake_socket, zmq.POLLIN)
         self._poller.register(self._data_socket, zmq.POLLIN)
 
-        # GUI.invoke_after(self.poll_period, self._wait_for_connections)
         GUI.invoke_after(self.poll_period, self._wait_for_data)
 
     def stop(self):
@@ -61,9 +60,9 @@ class ZmqProvider(HasTraits):
             self._zmq_context.term()
 
     def _add_view(self, pid, profile, fields):
-        # make new model
-        from pikos.live.models.base_model import BaseModel
-        model = BaseModel.create_model(pid, profile, fields)
+        from pikos.live.utils import get_model_for_profile
+        model_class = get_model_for_profile(profile)
+        model = model_class(pid=pid, profile=profile, fields=fields)
         self._pid_mapping[pid] = model
         # FIXME?
         self.application.active_window.central_pane.add_tab(model)

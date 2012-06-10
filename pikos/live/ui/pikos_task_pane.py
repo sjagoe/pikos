@@ -5,6 +5,8 @@ from traits.api import HasTraits, Dict, Enum, Instance, List, Property, \
      Unicode, on_trait_change, Int, Str
 from traitsui.api import EnumEditor, HGroup, UItem, Label, View, ListEditor
 
+from pikos.live.utils import get_view_for_profile
+
 
 class IntroTab(HasTraits):
     pid = Int
@@ -32,9 +34,9 @@ class PikosTaskPane(TraitsTaskPane):
         return str(model.pid)
 
     def add_tab(self, model):
-        from pikos.live.ui.memory_view import MemoryView
         title = self._make_new_tab_title(model)
-        tab = MemoryView(title=str(model.pid), model=model)
+        view_class = get_view_for_profile(model.profile)
+        tab = view_class(title=str(model.pid), model=model)
         self.tabs.append(tab)
 
     traits_view = View(
