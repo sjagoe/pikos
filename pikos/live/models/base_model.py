@@ -1,9 +1,7 @@
 from collections import namedtuple
 
-import numpy as np
-
 from traits.api import HasTraits, Int, Instance, Enum, \
-    Tuple, Either, List, Property, Event, Str, Dict
+    Tuple, Either, Event, Str, Dict
 from chaco.api import ArrayPlotData
 
 # from pikos.recorders.zeromq_recorder import RecordingStopped
@@ -28,10 +26,6 @@ class BaseModel(HasTraits):
     index_item = Enum(values='plottable_fields')
     value_item = Enum(values='plottable_fields')
 
-    data_items = List
-    selected_index = Either(None, Int)
-    selected_item = Property(depends_on='selected_index')
-
     updated = Event
 
     TRANSFORMS = Dict
@@ -42,12 +36,6 @@ class BaseModel(HasTraits):
             x=[],
             y=[],
             )
-
-    def _get_selected_item(self):
-        if self.selected_index is not None:
-            values = self.data_items[self.selected_index]
-            return [Details(f, v) for f, v in zip(self.fields, values)]
-        return []
 
     def _plottable_item_indices_changed(self, new):
         self.plottable_fields = [self.fields[i] for i in new]
@@ -77,14 +65,7 @@ class BaseModel(HasTraits):
         self._update_value()
 
     def _add_data_item(self, name, value):
-        exitsing = self.plot_data.get_data(name)
-        if name in self.TRANSFORMS:
-            value = value * self.TRANSFORMS[name]
-        if exitsing is None:
-            new = [value]
-        else:
-            new = np.hstack([exitsing, [value]])
-        self.plot_data.set_data(name, new)
+        raise NotImplementedError()
 
     def _calculate_plottable_item_indices(self, item):
         self.plottable_item_indices = tuple(
@@ -92,11 +73,4 @@ class BaseModel(HasTraits):
              if isinstance(item[i], int) or isinstance(item[i], float)])
 
     def add_data(self, data):
-        self.data_items.append(data)
-        if self.plottable_item_indices is None:
-            self._calculate_plottable_item_indices(data)
-        for index in self.plottable_item_indices:
-            self._add_data_item(self.fields[index], data[index])
-        self._update_index()
-        self._update_value()
-        self.updated = True
+        raise NotImplementedError()
