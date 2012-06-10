@@ -4,7 +4,7 @@ from pyface.tasks.action.api import SGroup, SMenu, SMenuBar, \
 from pyface.tasks.api import Task, TaskLayout, Tabbed, PaneItem
 from traits.api import Any, List
 
-from pikos.live.ui.memory_pane import MemoryPane
+from pikos.live.ui.pikos_task_pane import PikosTaskPane
 
 
 class PikosTask(Task):
@@ -29,7 +29,7 @@ class PikosTask(Task):
         """ Create a plot pane with a list of models. Keep track of which model
             is active so that dock panes can introspect it.
         """
-        pane = MemoryPane()
+        pane = PikosTaskPane()
         return pane
 
     # def create_dock_panes(self):

@@ -8,6 +8,8 @@ import zmq
 
 class ZmqProvider(HasTraits):
 
+    application = WeakRef
+
     host = Str('127.0.0.1')
     data_port = Int(9001)
     handshake_port = Int(9002)
@@ -50,7 +52,6 @@ class ZmqProvider(HasTraits):
         GUI.invoke_after(self.poll_period, self._wait_for_data)
 
     def stop(self):
-        print self.count
         self._pid_mapping = {}
         if self._data_socket is not None:
             self._data_socket.close()
@@ -60,9 +61,14 @@ class ZmqProvider(HasTraits):
             self._zmq_context.term()
 
     def _add_view(self, pid, profile, fields):
-        # make new view
-        view = HasTraits()
-        self._pid_mapping[pid] = view
+        # make new model
+        class Model(HasTraits):
+            pid = Int(462347863)
+            wibble = Str('bar')
+        model = Model(pid=pid)
+        # FIXME?
+        self.application.active_window.central_pane.add_tab(model)
+        self._pid_mapping[pid] = model
 
     def _handle_data(self):
         data = pickle.loads(self._data_socket.recv())

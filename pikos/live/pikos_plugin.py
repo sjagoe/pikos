@@ -53,6 +53,8 @@ class PikosPlugin(Plugin):
             ]
 
     def start(self):
+        from pikos.live.zmq_provider import ZmqProvider
+        self._zmq_provider = ZmqProvider(application=self.application)
         self._zmq_provider.start()
 
     def stop(self):
@@ -62,4 +64,4 @@ class PikosPlugin(Plugin):
     # Private interface.
     ###########################################################################
 
-    _zmq_provider = Instance('pikos.live.zmq_provider.ZmqProvider', args=())
+    _zmq_provider = Instance('pikos.live.zmq_provider.ZmqProvider')
