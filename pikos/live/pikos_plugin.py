@@ -4,7 +4,7 @@ import os.path
 # Enthought library imports.
 from envisage.api import Plugin
 from envisage.ui.tasks.api import TaskFactory
-from traits.api import List
+from traits.api import List, Instance
 
 
 class PikosPlugin(Plugin):
@@ -51,3 +51,15 @@ class PikosPlugin(Plugin):
                 factory=PikosTask,
                 ),
             ]
+
+    def start(self):
+        self._zmq_provider.start()
+
+    def stop(self):
+        self._zmq_provider.stop()
+
+    ###########################################################################
+    # Private interface.
+    ###########################################################################
+
+    _zmq_provider = Instance('pikos.live.zmq_provider.ZmqProvider', args=())

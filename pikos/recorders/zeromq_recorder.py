@@ -50,7 +50,7 @@ class ZeroMQRecorder(AbstractRecorder):
         self._socket.bind('tcp://{0}:{1}'.format(zmq_host, zmq_port))
         if wait_for_ready:
             self._prepare_socket = self._context.socket(zmq.REQ)
-            self._prepare_socket.bind('tcp://{0}:{1}'.format(
+            self._prepare_socket.connect('tcp://{0}:{1}'.format(
                     zmq_host, zmq_port+1))
         else:
             self._prepare_socket = None

@@ -942,7 +942,7 @@ profiler_init(ProfilerObject *pObj, PyObject *args, PyObject *kw)
     pObj->prepare_socket = zmq_socket(pObj->context, ZMQ_REQ);
     if (!pObj->prepare_socket)
         return -1;
-    zmq_bind(pObj->prepare_socket, "tcp://127.0.0.1:9002");
+    zmq_connect(pObj->prepare_socket, "tcp://127.0.0.1:9002");
 
     PyObject *fields;
     fields = PyTuple_New(profiler_rt_num_fields);
