@@ -86,7 +86,9 @@ class ZmqProvider(HasTraits):
         for pid, record_data in records.iteritems():
             model = self._pid_mapping[pid]
             model.add_data(record_data)
-        return 0
+        if len(records) > 0:
+            return 0
+        return self.poll_period
 
     def _handle_connection(self):
         handshake = pickle.loads(self._handshake_socket.recv())
