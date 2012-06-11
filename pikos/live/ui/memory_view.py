@@ -24,7 +24,7 @@ class MemoryView(BaseView):
             live_plot=self,
             )
         container.padding_left = 100
-        container.plot(('x', 'y'), type='line')[0]
+        container.plot(('x', 'y'), type='line')
 
         scatter = container.plot(
             ('x', 'y'),

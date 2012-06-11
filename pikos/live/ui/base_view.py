@@ -33,7 +33,7 @@ class BaseView(ModelView):
 
     reset_view_button = Button('Reset View')
 
-    plot = Instance(DisableTrackingPlot)
+    plot = Instance(Plot)
 
     zoom_tool = Instance(ZoomTool)
     pan_tool = Instance(PanTool)
