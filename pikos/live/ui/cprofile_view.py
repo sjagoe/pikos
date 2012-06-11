@@ -1,7 +1,7 @@
 from traits.api import Any, Int, Bool, on_trait_change
 from traitsui.api import View, Item, UItem, VGroup, HGroup, Spring, \
     TabularEditor, HSplit, Group
-from chaco.api import Plot, ScatterInspectorOverlay
+from chaco.api import Plot, ScatterInspectorOverlay, LabelAxis
 from chaco.tools.api import ZoomTool, PanTool, ScatterInspector
 from chaco.ticks import ShowAllTickGenerator
 from enable.component_editor import ComponentEditor
@@ -20,6 +20,7 @@ class CProfileView(BaseView):
             self.model.plot_data,
             )
         container.padding_left = 100
+        container.padding_bottom = 150
         # container.plot(('x', 'y'), type='bar')
 
         self.zoom_tool = ZoomTool(
@@ -45,6 +46,30 @@ class CProfileView(BaseView):
             self.plotted = True
         self.plot.y_mapper.range.low_setting = 'auto'
         self.plot.y_mapper.range.high_setting = 'auto'
+
+    def _format_key(self, key):
+        return '0x{0:x}'.format(key)
+
+    @on_trait_change('model.plot_keys')
+    def _on_model_plot_keys_changed(self):
+        positions = self.model.plot_data.get_data('x')
+        label_axis = LabelAxis(
+            self.plot, orientation='bottom',
+            title='Keys',
+            title_spacing=100,
+            positions=positions,
+            labels=[self._format_key(i)
+                    for i in self.model.plot_keys],
+            small_haxis_style=True,
+            label_rotation=90,
+            tick_generator=ShowAllTickGenerator(
+                positions=positions,
+                ),
+            )
+
+        self.plot.underlays.remove(self.plot.index_axis)
+        self.plot.index_axis = label_axis
+        self.plot.underlays.append(label_axis)
 
     # @on_trait_change('model.index_item')
     # def _on_model_index_item_change(self, index_item):
@@ -88,10 +113,10 @@ class CProfileView(BaseView):
         Group(
             VGroup(
                 HGroup(
-                    Item('model.index_item'),
+                    # Item('model.index_item'),
                     Item('model.value_item'),
-                    ),
-                HGroup(
+                #     ),
+                # HGroup(
                     Spring(),
                     UItem('reset_view_button'),
                     ),

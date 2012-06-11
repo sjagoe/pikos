@@ -1,5 +1,5 @@
 from operator import itemgetter
-from traits.api import Any, Dict, Property
+from traits.api import Any, Dict, Property, List
 
 from pikos.live.models.base_model import BaseModel
 
@@ -9,6 +9,7 @@ import numpy as np
 class CProfileModel(BaseModel):
 
     data_items = Dict
+    plot_keys = List
     selected_index = Any
     selected_item = Property(depends_on='selected_index')
 
@@ -39,21 +40,12 @@ class CProfileModel(BaseModel):
         data_len = len(self.plot_data.get_data('y'))
         self.plot_data.set_data('x', range(data_len))
 
-    # def _add_data_item(self, name, value):
-    #     exitsing = self.plot_data.get_data(name)
-    #     if name in self.TRANSFORMS:
-    #         value = value * self.TRANSFORMS[name]
-    #     if exitsing is None:
-    #         new = [value]
-    #     else:
-    #         new = np.hstack([exitsing, [value]])
-    #     self.plot_data.set_data(name, new)
-
     def _rebuild_data(self):
-        data = zip(*sorted(self.data_items.values(), key=itemgetter(6), reverse=True))
+        data = zip(*sorted(self.data_items.values(), key=itemgetter(6),
+                           reverse=True))
+        self.plot_keys = list(data[0])
         for index in self.plottable_item_indices:
             self.plot_data.set_data(self.fields[index], np.array(data[index]))
-            # self._add_data_item(self.fields[index], data[index])
 
     def add_data(self, records):
         data = {}
