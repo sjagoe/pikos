@@ -1,4 +1,4 @@
-from traits.api import Any, Int, Bool, on_trait_change
+from traits.api import Any, Int, Bool, on_trait_change, Dict, Button
 from traitsui.api import View, Item, UItem, VGroup, HGroup, Spring, \
     TabularEditor, HSplit, Group
 from chaco.api import Plot, ScatterInspectorOverlay, LabelAxis
@@ -14,6 +14,12 @@ class CProfileView(BaseView):
     # Initialization
 
     plotted = Bool(False)
+
+    sort_values_button = Button('Sort')
+
+    FORMATS = Dict({
+            'id': '0x{0:x}',
+            })
 
     def _plot_default(self):
         container = Plot(
@@ -48,7 +54,13 @@ class CProfileView(BaseView):
         self.plot.y_mapper.range.high_setting = 'auto'
 
     def _format_key(self, key):
-        return '0x{0:x}'.format(key)
+        format_ = self.FORMATS.get(self.model.index_item)
+        if format_ is None:
+            return str(key)
+        try:
+            return format_.format(key)
+        except ValueError:
+            return str(key)
 
     @on_trait_change('model.plot_keys')
     def _on_model_plot_keys_changed(self):
@@ -89,6 +101,10 @@ class CProfileView(BaseView):
         self.plot.y_mapper.range.low_setting = 'auto'
         self.plot.y_mapper.range.high_setting = 'auto'
 
+    def _sort_values_button_fired(self):
+        self.model.sort_by_current_value()
+        self.plot.invalidate_and_redraw()
+
     # def _metadata_changed(self, new):
     #     data_indices = self.scatter.index.metadata.get('selections', [])
     #     if len(data_indices) == 0:
@@ -113,11 +129,12 @@ class CProfileView(BaseView):
         Group(
             VGroup(
                 HGroup(
-                    # Item('model.index_item'),
+                    Item('model.index_item'),
                     Item('model.value_item'),
                 #     ),
                 # HGroup(
                     Spring(),
+                    UItem('sort_values_button'),
                     UItem('reset_view_button'),
                     ),
                 ),
