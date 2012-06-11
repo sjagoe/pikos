@@ -14,6 +14,8 @@ Key aims of Pikos are:
       cProfile and line_profiler
     - Provide effective memory monitoring throughout python.
     - Be multi-platform.
+    - Provide real-time access to profile data and allow live analysis
+      of this while the application is running.
 
 Repository
 ----------
@@ -24,9 +26,19 @@ Repository
 Installation
 ------------
 
-The package requires a recent version of psutil (>=0.4.1).
+The package requires a recent version of psutil (>=0.4.1)::
 
     python setup.py install
+
+To build with the real-time fork of cProfile, you will need a build of
+libzmq to compile and link against. Specify the path to the include
+directory (containing ``zmq.h``) and the path to the library file with
+which to link::
+
+    python setup.py install --include /path/to/include --zmq-path=/path/to/libzmq.so
+
+The installation assumes that the libzqm library will be accessible
+from within Python (i.e. you already have pyzmq installed).
 
 Optional packages are:
 
@@ -35,5 +47,7 @@ Optional packages are:
 - pyzmq (>= 2.1.11) `<http://www.zeromq.org/bindings:python>`_
 - traits (>= 4.1.0) `<https://github.com/enthought/traits>`_
 - traitsui (>= 4.1.0) `<https://github.com/enthought/traitsui>`_
+- pyface (>= 4.1.0 `<https://github.com/enthought/pyface>`_
+- envisage (>= 4.1.0 `<https://github.com/enthought/envisage>`_
 - chaco (>= 4.1.0) `<https://github.com/enthought/chaco>`_
 - numpy (>= 1.6.1) `<http://numpy.scipy.org>`_
