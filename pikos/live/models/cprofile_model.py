@@ -36,6 +36,8 @@ class CProfileModel(BaseModel):
         # return []
 
     def _update_index(self):
+        if len(self.data_items) == 0:
+            return
         index = self.fields.index(self.index_item)
         self.plot_keys = list(zip(*self.data_items)[index])
 
