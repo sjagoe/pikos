@@ -95,12 +95,6 @@ class CProfileView(BaseView):
 
     # Handlers
 
-    def _reset_view_button_fired(self):
-        self.plot.x_mapper.range.low_setting = 'auto'
-        self.plot.x_mapper.range.high_setting = 'auto'
-        self.plot.y_mapper.range.low_setting = 'auto'
-        self.plot.y_mapper.range.high_setting = 'auto'
-
     def _sort_values_button_fired(self):
         self.model.sort_by_current_value()
         self.plot.invalidate_and_redraw()

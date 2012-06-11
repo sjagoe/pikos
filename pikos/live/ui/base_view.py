@@ -40,6 +40,12 @@ class BaseView(ModelView):
 
     # Handlers
 
+    def _reset_view_button_fired(self):
+        self.plot.x_mapper.range.low_setting = 'auto'
+        self.plot.x_mapper.range.high_setting = 'auto'
+        self.plot.y_mapper.range.low_setting = 'auto'
+        self.plot.y_mapper.range.high_setting = 'auto'
+
     @on_trait_change('model.updated')
     def _model_updated(self):
         self.plot.invalidate_and_redraw()

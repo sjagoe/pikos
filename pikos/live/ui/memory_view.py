@@ -67,8 +67,7 @@ class MemoryView(BaseView):
 
     def _reset_view_button_fired(self):
         self.follow_plot = False
-        self.plot.x_mapper.range.low_setting = 'auto'
-        self.plot.x_mapper.range.high_setting = 'auto'
+        super(MemoryView, self)._reset_view_button_fired()
 
     def _metadata_changed(self, new):
         data_indices = self.scatter.index.metadata.get('selections', [])
