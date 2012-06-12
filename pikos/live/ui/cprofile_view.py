@@ -45,6 +45,18 @@ class CProfileView(BaseView):
 
         return container
 
+    # @on_trait_change('model.index_item')
+    # def _on_model_index_item_change(self, index_item):
+    #     super(CProfileView, self)._on_model_index_item_change(index_item)
+    #     # self.plot.x_axis.tick_generator = ShowAllTickGenerator(
+    #     #     positions=self.model.plot_data.get_data('x'))
+
+    # @on_trait_change('model.value_item')
+    # def _on_model_value_item_change(self, value_item):
+    #     super(CProfileView, self)._on_model_value_item_change(value_item)
+
+    # Handlers
+
     @on_trait_change('model.updated')
     def _on_model_update_fired(self):
         if not self.plotted:
@@ -96,24 +108,12 @@ class CProfileView(BaseView):
         self.plot.index_axis = label_axis
         self.plot.underlays.append(label_axis)
 
-    # @on_trait_change('model.index_item')
-    # def _on_model_index_item_change(self, index_item):
-    #     super(CProfileView, self)._on_model_index_item_change(index_item)
-    #     # self.plot.x_axis.tick_generator = ShowAllTickGenerator(
-    #     #     positions=self.model.plot_data.get_data('x'))
-
-    # @on_trait_change('model.value_item')
-    # def _on_model_value_item_change(self, value_item):
-    #     super(CProfileView, self)._on_model_value_item_change(value_item)
-
-    # Handlers
-
     def _sort_values_button_fired(self):
         self.model.sort_by_current_value()
         self.plot.invalidate_and_redraw()
 
     def _metadata_changed(self, new):
-        print new
+        self.plot.invalidate_and_redraw()
         # data_indices = self.scatter.index.metadata.get('selections', [])
         # if len(data_indices) == 0:
         #     self.model.selected_index = None
