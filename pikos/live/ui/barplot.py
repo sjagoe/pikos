@@ -48,7 +48,6 @@ class SelectableBarPlot(BarPlot):
                 ):
                 if data is None or len(data) == 0:
                     continue
-                print data
                 gc.set_fill_color(fill_color_)
 
                 if self.bar_width_type == "data":
