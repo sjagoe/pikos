@@ -3,9 +3,10 @@ Pikos
 
 Pikos is a profiling and investigation tool suite for python
 applications. The name is inspired by Pikos Apikos the main character
-in a mid 80s Greek puppet TV series. Pikos was an journalist that was
-investigating a possible assassination attempt of the prime minister
-of Froutopia an country populated by fruits.
+in a mid 80s Greek puppet TV series. Pikos was an investigative journalist 
+that was assigned to find out about a missing person case in the remote
+and stanrge land of of Froutopia an country populated by fruits that
+can talk.
 
 Key aims of Pikos are:
 
