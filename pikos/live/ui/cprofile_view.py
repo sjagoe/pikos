@@ -1,12 +1,13 @@
-from traits.api import Any, Int, Bool, on_trait_change, Dict, Button
+from traits.api import Any, Int, Bool, on_trait_change, Dict, Button, Str
 from traitsui.api import View, Item, UItem, VGroup, HGroup, Spring, \
     TabularEditor, HSplit, Group
-from chaco.api import Plot, ScatterInspectorOverlay, LabelAxis
-from chaco.tools.api import ZoomTool, PanTool, ScatterInspector
+from chaco.api import Plot, ScatterInspectorOverlay, LabelAxis, BarPlot
+from chaco.tools.api import ZoomTool, PanTool
 from chaco.ticks import ShowAllTickGenerator
 from enable.component_editor import ComponentEditor
 
 from pikos.live.ui.base_view import BaseView
+from pikos.live.ui.barplot import SelectableBarPlot, BarSelectTool
 
 
 class CProfileView(BaseView):
@@ -14,6 +15,8 @@ class CProfileView(BaseView):
     # Initialization
 
     plotted = Bool(False)
+
+    barplot = Any
 
     sort_values_button = Button('Sort')
 
@@ -25,6 +28,7 @@ class CProfileView(BaseView):
         container = Plot(
             self.model.plot_data,
             )
+        container.renderer_map['bar'] = SelectableBarPlot
         container.padding_left = 100
         container.padding_bottom = 150
         # container.plot(('x', 'y'), type='bar')
@@ -48,7 +52,16 @@ class CProfileView(BaseView):
             y = self.model.plot_data.get_data('y')
             if len(x) == 0 or len(y) == 0:
                 return
-            self.plot.plot(('x', 'y'), type='bar', bar_width=0.8)
+            self.barplot = self.plot.plot(('x', 'y'), type='bar',
+                                          bar_width=0.8)[0]
+            self.barplot.index.sort_order = 'ascending'
+            select = BarSelectTool(
+                self.barplot,
+                selection_mode='single',
+                )
+            self.barplot.tools.append(select)
+            self.barplot.index.on_trait_change(
+                self._metadata_changed, "metadata_changed")
             self.plotted = True
         self.plot.y_mapper.range.low_setting = 'auto'
         self.plot.y_mapper.range.high_setting = 'auto'
@@ -99,12 +112,13 @@ class CProfileView(BaseView):
         self.model.sort_by_current_value()
         self.plot.invalidate_and_redraw()
 
-    # def _metadata_changed(self, new):
-    #     data_indices = self.scatter.index.metadata.get('selections', [])
-    #     if len(data_indices) == 0:
-    #         self.model.selected_index = None
-    #         return
-    #     self.model.selected_index = data_indices[0]
+    def _metadata_changed(self, new):
+        print new
+        # data_indices = self.scatter.index.metadata.get('selections', [])
+        # if len(data_indices) == 0:
+        #     self.model.selected_index = None
+        #     return
+        # self.model.selected_index = data_indices[0]
 
     # def _last_n_points_changed(self):
     #     self.plot.x_mapper.range.tracking_amount = self.last_n_points
