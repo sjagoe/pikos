@@ -29,10 +29,13 @@ The package requires a recent version of psutil (>=0.4.1).
 
     python setup.py install
 
-Optional packages are:
+Optional packages of external profilers:
 
 - yappi (>=0.62),  `<http://code.google.com/p/yappi/>`_
 - line_profiler (>=1.0b3),  `<http://pypi.python.org/pypi/line_profiler>`_
+
+Optional packages for the live monitoring tools:
+
 - pyzmq (>= 2.1.11) `<http://www.zeromq.org/bindings:python>`_
 - traits (>= 4.1.0) `<https://github.com/enthought/traits>`_
 - traitsui (>= 4.1.0) `<https://github.com/enthought/traitsui>`_
