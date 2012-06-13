@@ -15,4 +15,5 @@ setup(name='pikos',
     description='Enthought profiling tools',
     requires=['psutil'],
     install_requires=['distribute'],
-    packages=find_packages())
+    packages=find_packages(),
+    entry_points = dict(console_scripts=["pikos-run = pikos.runner:main"]))
