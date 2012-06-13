@@ -27,11 +27,14 @@ PyObject *os_getpid;
 static char *
 s_recv (void *socket) {
     zmq_msg_t message;
+    int size;
+    char *string;
+
     zmq_msg_init (&message);
     if (zmq_recv (socket, &message, 0))
         return (NULL);
-    int size = zmq_msg_size (&message);
-    char *string = malloc (size + 1);
+    size = zmq_msg_size (&message);
+    string = malloc (size + 1);
     memcpy (string, zmq_msg_data (&message), size);
     zmq_msg_close (&message);
     string [size] = 0;
@@ -48,6 +51,7 @@ s_send (void *socket, PyObject *pyobj) {
     PyObject *pickled;
 
     PyObject *protocol;
+    zmq_msg_t message;
     protocol = PyInt_FromString("0", NULL, 10);
 
     pickled = PyObject_CallFunctionObjArgs(cPickle_dumps, pyobj, protocol, NULL);
@@ -61,7 +65,6 @@ s_send (void *socket, PyObject *pyobj) {
     len = PyString_Size(pickled);
     string = PyString_AsString(pickled);
 
-    zmq_msg_t message;
     zmq_msg_init_size (&message, len);
     memcpy (zmq_msg_data (&message), string, len);
     rc = zmq_send (socket, &message, 0);
@@ -684,7 +687,7 @@ static int statsForEntry(rotating_node_t *node, void *arg)
     return err;
 }
 
-inline double
+static double
 profiler_get_factor(ProfilerObject *pObj)
 {
     if (!pObj->externalTimer)
@@ -699,23 +702,26 @@ static void
 rt_profile_send_record(ProfilerObject *pObj, ProfilerContext *pContext,
                        ProfilerEntry *profEntry)
 {
+    double factor;
+    PyObject *record;
+    PyObject *filename;
+    PyObject *line_number;
+    PyObject *function_name;
+    PyObject *code;
+    PyObject *message;
+
     if (pending_exception(pObj))
         return;
     if (profEntry->callcount == 0)
         return;
 
-    double factor = profiler_get_factor(pObj);
+    factor = profiler_get_factor(pObj);
 
-    PyObject *record;
     record = PyTuple_New(profiler_rt_num_fields);
     if (record == NULL)
         return;
 
-    PyObject *filename;
-    PyObject *line_number;
-    PyObject *function_name;
-
-    PyObject *code = profEntry->userObj;
+    code = profEntry->userObj;
 
     if (PyCode_Check(code)) {
         filename = PyObject_GetAttrString(code, "co_filename");
@@ -741,7 +747,6 @@ rt_profile_send_record(ProfilerObject *pObj, ProfilerContext *pContext,
     PyTuple_SetItem(record, 6, PyFloat_FromDouble(factor * profEntry->tt)); /* total_time */
     PyTuple_SetItem(record, 7, PyFloat_FromDouble(factor * profEntry->it)); /* cumulative_time */
 
-    PyObject *message;
     message = PyTuple_New(2);
     if (!message) {
         goto rt_profile_send_record_error;
@@ -932,6 +937,13 @@ profiler_init(ProfilerObject *pObj, PyObject *args, PyObject *kw)
     static char *kwlist[] = {"timer", "timeunit",
                                    "subcalls", "builtins", 0};
 
+    PyObject *fields;
+    char *string;
+    int ix;
+    int string_len;
+    PyObject *handshake;
+    PyObject *my_pid;
+
     if (!PyArg_ParseTupleAndKeywords(args, kw, "|Odii:Profiler", kwlist,
                                      &timer, &timeunit,
                                      &subcalls, &builtins))
@@ -957,13 +969,9 @@ profiler_init(ProfilerObject *pObj, PyObject *args, PyObject *kw)
         return -1;
     zmq_connect(pObj->prepare_socket, "tcp://127.0.0.1:9002");
 
-    PyObject *fields;
     fields = PyTuple_New(profiler_rt_num_fields);
     if (fields == NULL)
         return -1;
-    char *string;
-    int ix;
-    int string_len;
     for (ix = 0; ix < profiler_rt_num_fields; ix++) {
         string_len = strlen(profiler_rt_field_names[ix]);
         string = malloc(sizeof(char) * (string_len + 1));
@@ -972,14 +980,12 @@ profiler_init(ProfilerObject *pObj, PyObject *args, PyObject *kw)
         PyTuple_SetItem(fields, ix, PyString_FromString(string));
         free(string);
     };
-    PyObject *handshake;
     handshake = PyTuple_New(3);
     if (handshake == NULL) {
         Py_XDECREF(fields);
         return -1;
     }
 
-    PyObject *my_pid;
     my_pid = PyObject_CallFunctionObjArgs(os_getpid, NULL);
     pObj->pid = my_pid;
 
@@ -1068,11 +1074,13 @@ PyMODINIT_FUNC
 init_lsprof_rt(void)
 {
     PyObject *module, *d;
+    PyObject *cPickle;
+    PyObject *os;
+
     module = Py_InitModule3("_lsprof_rt", moduleMethods, "Fast RT profiler");
     if (module == NULL)
         return;
 
-    PyObject *cPickle;
     cPickle = PyImport_ImportModuleLevel("cPickle", NULL, NULL, NULL, 0);
     if (!cPickle)
         return;
@@ -1080,7 +1088,6 @@ init_lsprof_rt(void)
     cPickle_dumps = PyObject_GetAttrString(cPickle, "dumps");
     Py_XDECREF(cPickle);
 
-    PyObject *os;
     os = PyImport_ImportModuleLevel("os", NULL, NULL, NULL, 0);
     if (!os)
         return;
