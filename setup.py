@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 #------------------------------------------------------------------------------
 #  file: setup.py
 #  License: LICENSE.TXT
@@ -8,11 +8,12 @@
 #------------------------------------------------------------------------------
 from setuptools import setup, find_packages
 
-setup(name='pikos',
+setup(
+    name='pikos',
     version='0.1a',
     author='Enthought, Inc',
-    author_email='ioannist@enthought.com',
-    description='Enthought profiling tools',
+    author_email='info@enthought.com',
+    description='Enthought monitoring and profiling tools',
     requires=['psutil'],
     install_requires=['distribute'],
     packages=find_packages(),
