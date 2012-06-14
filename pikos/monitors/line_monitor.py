@@ -17,7 +17,7 @@ from pikos._internal.keep_track import KeepTrack
 
 
 LINE_RECORD = ('index', 'function', 'lineNo', 'line', 'filename')
-LINE_RECORD_TEMPLATE = '{:<12} {:<50} {:<7} {} {}{newline}'
+LINE_RECORD_TEMPLATE = '{:<12} {:<50} {:<7} {} -- {}{newline}'
 
 class LineRecord(namedtuple('LineRecord', LINE_RECORD)):
 
@@ -32,7 +32,6 @@ class LineRecord(namedtuple('LineRecord', LINE_RECORD)):
     def line(self):
         """ Return a formated header line """
         return LINE_RECORD_TEMPLATE.format(*self, newline=os.linesep)
-
 
 class LineMonitor(object):
     """ Record python line events.
@@ -109,11 +108,13 @@ class LineMonitor(object):
         :class:`LineRecord` and send it to the recorder.
 
         """
-        if why.startswith('l'):
+        if why == 'line':
             filename, lineno, function, line, _ = \
                 inspect.getframeinfo(frame, context=1)
-            record = LineRecord(self._index, function, lineno, line[0].rstrip(),
-                                filename)
+            if line is None:
+                line = ['<compiled string>']
+            record = LineRecord(self._index, function, lineno,
+                                line[0].rstrip(), filename)
             self._recorder.record(record)
             self._index += 1
         return self.on_line_event
