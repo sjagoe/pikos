@@ -32,20 +32,13 @@ def run_code_under_monitor(script, monitor):
        The monitor (i.e. context manager object) to use.
 
     """
-
     sys.path.insert(0, os.path.dirname(script))
     with open(script, 'rb') as handle:
         code = compile(handle.read(), script, 'exec')
 
-    globs = {
-        '__file__': script,
-        '__name__': '__main__',
-        '__package__': None}
-
+    globs = {'__file__': script, '__name__': '__main__', '__package__': None}
     with monitor:
         exec code in globs, None
-
-
 
 def main():
     description = "Execute the python script inside the pikos monitor context."
