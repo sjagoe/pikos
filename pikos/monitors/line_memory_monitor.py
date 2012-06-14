@@ -125,9 +125,9 @@ class LineMemoryMonitor(object):
         if why.startswith('l'):
             usage = self._process.get_memory_info()
             filename, lineno, function, line, _ = \
-                inspect.getframeinfo(frame, context=0)
+                inspect.getframeinfo(frame, context=1)
             record = LineMemoryRecord(self._index, function, lineno, usage.rss,
-                                      usage.vms, line, filename)
+                                      usage.vms, line[0], filename)
             self._recorder.record(record)
             self._index += 1
         return self.on_line_event
