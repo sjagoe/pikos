@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Library Reference &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="index.html" />
+    <link rel="next" title="Monitors" href="monitors.html" />
+    <link rel="prev" title="Pikos" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="monitors.html" title="Monitors"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Pikos"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pikos  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="library-reference">
+<h1>Library Reference<a class="headerlink" href="#library-reference" title="Permalink to this headline">¶</a></h1>
+<p>Pikos is designed in layers.  At the top layer we find the
+<a class="reference internal" href="#pikos.monitor.Monitor" title="pikos.monitor.Monitor"><tt class="xref py py-class docutils literal"><span class="pre">Monitor</span></tt></a> a decorator that acts as an the entry
+point for the <a class="reference internal" href="#monitors">monitors</a> provided to wrap methods to
+be monitored. The next layer is the various monitors that are
+responsible to collect information (e.g. memory) during the execution
+of the decorated function. The retrieved information is recorded
+through the <a class="reference internal" href="#recorders">recorders</a> and controlled with the <a class="reference internal" href="#filters">filters</a>.</p>
+<div class="section" id="monitor-decorator">
+<h2>Monitor Decorator<a class="headerlink" href="#monitor-decorator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.monitor.Monitor">
+<em class="property">class </em><tt class="descclassname">pikos.monitor.</tt><tt class="descname">Monitor</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>The monitor class decorator.</p>
+<p>This is the main entry point for all the monitors, inspectors, loggers and
+profilers that are supported by pikos. The <tt class="xref py py-class docutils literal"><span class="pre">Monitor</span></tt> is simplifies
+setting up and invoking the actual monitoring/profiling class.</p>
+<p class="rubric">Private</p>
+<dl class="attribute">
+<dt id="Monitor._function">
+<tt class="descname">_function</tt><em class="property"> = callable</em><a class="headerlink" href="#Monitor._function" title="Permalink to this definition">¶</a></dt>
+<dd><p>The callable to execute inside the monitor context manager. It can be a
+normal callable object or a generator.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Monitor._monitor_object">
+<tt class="descname">_monitor_object</tt><em class="property"> = object</em><a class="headerlink" href="#Monitor._monitor_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>The monitor object that implements the context manager interface.</p>
+</dd></dl>
+
+<p>The class can be instanciated by the user or used as a decorator for
+functions, methods and generators.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># as a decorator</span>
+<span class="nd">@Monitor</span><span class="p">(</span><span class="n">FunctionMonitor</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">my_function</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="k">return</span>
+
+<span class="c"># as an instance</span>
+<span class="k">def</span> <span class="nf">my_function</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="k">return</span>
+
+<span class="n">logfunctions</span> <span class="o">=</span> <span class="n">Monitor</span><span class="p">(</span><span class="n">FunctionMonitor</span><span class="p">())</span>
+<span class="n">logfunctions</span><span class="p">(</span><span class="n">my_function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwrgs</span><span class="p">)</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Easy to use decorators are provided in <tt class="xref py py-mod docutils literal"><span class="pre">pikos.api</span></tt>.</p>
+</div>
+<dl class="method">
+<dt id="pikos.monitor.Monitor.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class initialization.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> (<em>object</em>) &#8211; A contect manager to monitor, inspect or profile the decorated
+function while it is executed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.monitor.Monitor.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>function</em><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap function for monitoring.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> (<em>callable</em>) &#8211; The callable to wrap</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>fn</strong> (<em>callable</em>) &#8211;
+The wrapped function. <cite>fn</cite> has the same signature as <cite>function</cite>.
+Executing <cite>fn</cite> will run <cite>function</cite> inside the
+<a class="reference internal" href="#Monitor._monitor_object" title="Monitor._monitor_object"><tt class="xref py py-attr docutils literal"><span class="pre">_monitor_object</span></tt></a> context.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><strong>ValueError</strong> &#8211;
+Raised if the provided <a class="reference internal" href="#Monitor._monitor_object" title="Monitor._monitor_object"><tt class="xref py py-attr docutils literal"><span class="pre">_monitor_object</span></tt></a> does not support the
+context manager interface.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.monitor.Monitor._wrap">
+<tt class="descname">_wrap</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor._wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor._wrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap the callable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fn</strong> (<em>callable</em>) &#8211;
+The wrapped function. <cite>fn</cite> has the same signature as
+<cite>function</cite>. Special care it taken if the callable is a
+generator.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.monitor.Monitor._wrap_function">
+<tt class="descname">_wrap_function</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor._wrap_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor._wrap_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap a normal callable object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.monitor.Monitor._wrap_generator">
+<tt class="descname">_wrap_generator</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor._wrap_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor._wrap_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap a generator function.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="monitors">
+<h2>Monitors<a class="headerlink" href="#monitors" title="Permalink to this headline">¶</a></h2>
+<p>A monitor is a context manager object. The class is initialized with a
+recorder class. Each instance of a monitor class can be reused, the
+<tt class="docutils literal"><span class="pre">__enter__</span></tt> method makes sure that the code that is executed insider
+the context will be monitored and that the associated recorder has
+been initialized. During the execution of the decorated function The
+information is collected into a name tuple and the tuple is forwarded
+to recorder that has been associated with the current monitor.</p>
+<p>Pikos currently provides the following monitors:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="monitors.html#pikos.monitors.function_monitor.FunctionMonitor" title="pikos.monitors.function_monitor.FunctionMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.function_monitor.FunctionMonitor</span></tt></a>(...)</td>
+<td>Record python function events.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="monitors.html#pikos.monitors.line_monitor.LineMonitor" title="pikos.monitors.line_monitor.LineMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.line_monitor.LineMonitor</span></tt></a>(recorder)</td>
+<td>Record python line events.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="monitors.html#pikos.monitors.function_memory_monitor.FunctionMemoryMonitor" title="pikos.monitors.function_memory_monitor.FunctionMemoryMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.function_memory_monitor.FunctionMemoryMonitor</span></tt></a>(...)</td>
+<td>Record process memory on python function events.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="monitors.html#pikos.monitors.line_memory_monitor.LineMemoryMonitor" title="pikos.monitors.line_memory_monitor.LineMemoryMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.line_memory_monitor.LineMemoryMonitor</span></tt></a>(...)</td>
+<td>Record process memory on python function events.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="external-monitors">
+<h3>External Monitors<a class="headerlink" href="#external-monitors" title="Permalink to this headline">¶</a></h3>
+<p>Pikos can act as entry point for external libraries and profilers.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="external.html#pikos.external.python_cprofiler.PythonCProfiler" title="pikos.external.python_cprofiler.PythonCProfiler"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.external.python_cprofiler.PythonCProfiler</span></tt></a>(...)</td>
+<td>The normal python <tt class="xref py py-class docutils literal"><span class="pre">Profile</span></tt> subclassed and adapted to</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="external.html#pikos.external.line_profiler.LineProfiler" title="pikos.external.line_profiler.LineProfiler"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.external.line_profiler.LineProfiler</span></tt></a></td>
+<td>A class wrapper for CLineProfiler.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="external.html#pikos.external.yappi_profiler.YappiProfiler" title="pikos.external.yappi_profiler.YappiProfiler"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.external.yappi_profiler.YappiProfiler</span></tt></a>([...])</td>
+<td>A pikos compatible profiler class using the yappi library.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These profilers are experimental and not yet integrated fully
+in the pikos framework. Please check individual documentation for
+more information.</p>
+</div>
+</div>
+</div>
+<div class="section" id="recorders">
+<h2>Recorders<a class="headerlink" href="#recorders" title="Permalink to this headline">¶</a></h2>
+<p>The recorder (a subclass of
+<a class="reference internal" href="recorders.html#pikos.recorders.abstract_recorder.AbstractRecorder" title="pikos.recorders.abstract_recorder.AbstractRecorder"><tt class="xref py py-class docutils literal"><span class="pre">AbstractRecorder</span></tt></a>) is
+responsible for recording the tuples from the monitor. What is
+recordered is controlled by a filter function</p>
+<p>Pikos currently provides the following recorders:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="recorders.html#pikos.recorders.text_stream_recorder.TextStreamRecorder" title="pikos.recorders.text_stream_recorder.TextStreamRecorder"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.recorders.text_stream_recorder.TextStreamRecorder</span></tt></a>(...)</td>
+<td>The TextStreamRecorder is simple recorder that formats and writes the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="recorders.html#pikos.recorders.csv_recorder.CSVRecorder" title="pikos.recorders.csv_recorder.CSVRecorder"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.recorders.csv_recorder.CSVRecorder</span></tt></a>(stream)</td>
+<td>The CSV Recorder is a simple text based recorder that records the</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="recorders.html#pikos.recorders.list_recorder.ListRecorder" title="pikos.recorders.list_recorder.ListRecorder"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.recorders.list_recorder.ListRecorder</span></tt></a>([...])</td>
+<td>The  ListRecorder is simple recorder that records the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="recorders.html#pikos.recorders.zeromq_recorder.ZeroMQRecorder" title="pikos.recorders.zeromq_recorder.ZeroMQRecorder"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.recorders.zeromq_recorder.ZeroMQRecorder</span></tt></a>([...])</td>
+<td>The ZeroMQ Recorder is a recorder that publishes each set of</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The standard Recorders are record type agnostic so it is
+possible to use the same recorder for multiple monitors. However,
+this feature is experimental and users are advised to use with care.</p>
+</div>
+</div>
+<div class="section" id="filters">
+<h2>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h2>
+<p>A filter controls if a record tuple will be recorded or not. The
+callable accepts the record and makes a decision based on that
+(i.e. return <tt class="docutils literal"><span class="pre">True</span></tt> or <tt class="docutils literal"><span class="pre">False</span></tt>.  Functions (normal and lamda) and
+callable classes can be used in this case to remove clutter and speed
+up monitoring only of the desired code.</p>
+<p>Pikos currently provides the following predefined filters:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">pikos.filters.on_value.OnValue</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">pikos.filters.on_change.OnChange</span></tt></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="records">
+<h2>Records<a class="headerlink" href="#records" title="Permalink to this headline">¶</a></h2>
+<p>Each monitor uses a specific record. A record is a subclass of named
+tuple augmented with two methods, <tt class="docutils literal"><span class="pre">header</span></tt>, <tt class="docutils literal"><span class="pre">line</span></tt> that can
+optionally used for formating by the recorders.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Currently only the
+<tt class="xref py py-class docutils literal"><span class="pre">TextStreamRecorder</span></tt>
+can take advantage of the additional formating functionality.</p>
+</div>
+<p>The monitor records available are:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="monitors.html#pikos.monitors.function_monitor.FunctionRecord" title="pikos.monitors.function_monitor.FunctionRecord"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.function_monitor.FunctionRecord</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="monitors.html#pikos.monitors.line_monitor.LineRecord" title="pikos.monitors.line_monitor.LineRecord"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.line_monitor.LineRecord</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="monitors.html#pikos.monitors.function_memory_monitor.FunctionMemoryRecord" title="pikos.monitors.function_memory_monitor.FunctionMemoryRecord"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.function_memory_monitor.FunctionMemoryRecord</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="monitors.html#pikos.monitors.line_memory_monitor.LineMemoryRecord" title="pikos.monitors.line_memory_monitor.LineMemoryRecord"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.line_memory_monitor.LineMemoryRecord</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Library Reference</a><ul>
+<li><a class="reference internal" href="#monitor-decorator">Monitor Decorator</a></li>
+<li><a class="reference internal" href="#monitors">Monitors</a><ul>
+<li><a class="reference internal" href="#external-monitors">External Monitors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#recorders">Recorders</a></li>
+<li><a class="reference internal" href="#filters">Filters</a></li>
+<li><a class="reference internal" href="#records">Records</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Pikos</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="monitors.html"
+                        title="next chapter">Monitors</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/reference.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="monitors.html" title="Monitors"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Pikos"
+             >previous</a> |</li>
+        <li><a href="index.html">pikos  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
