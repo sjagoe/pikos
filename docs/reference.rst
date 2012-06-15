@@ -88,8 +88,8 @@ Pikos currently provides the following predefined filters:
 
 .. autosummary::
 
-    pikos.filters.OnFunction
-    pikos.filters.OnFile
+    pikos.filters.on_value.OnValue
+    pikos.filters.on_change.OnChange
 
 Records
 -------
@@ -121,4 +121,5 @@ The monitor records available are:
 
     monitors
     recorders
+    filters
     external
