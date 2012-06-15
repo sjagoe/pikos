@@ -3,11 +3,11 @@ Library Reference
 
 Pikos is designed in layers.  At the top layer we find the
 :class:`~pikos.monitor.Monitor` a decorator that acts as an the entry
-point for the :ref:`monitors` provided to wrap methods to
+point for the `monitors`_ provided to wrap methods to
 be monitored. The next layer is the various monitors that are
 responsible to collect information (e.g. memory) during the execution
 of the decorated function. The retrieved information is recorded
-through the :ref:`recorders` and controlled with the :ref:`filters`.
+through the `recorders`_ and controlled with the `filters`_.
 
 Monitor Decorator
 -----------------
