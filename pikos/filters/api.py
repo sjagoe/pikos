@@ -8,4 +8,4 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from pikos.filters.on_value import OnValue
-from pikos.filters.on_Changle import OnChange
+from pikos.filters.on_change import OnChange
