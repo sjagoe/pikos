@@ -17,9 +17,12 @@ from pikos._internal.trace_functions import TraceFunctions
 from pikos._internal.keep_track import KeepTrack
 
 
-LINE_MEMORY_RECORD = ('index', 'function', 'lineNo', 'RSS', 'VMS', 'line',
-                      'filename')
-LINE_MEMORY_RECORD_TEMPLATE = '{:<12} {:<50} {:<7} {:<8} {:<8} {} {}{newline}'
+LINE_MEMORY_RECORD = (
+        'index', 'function', 'lineNo', 'RSS', 'VMS', 'line', 'filename')
+LINE_MEMORY_RECORD_TEMPLATE = (
+        '{:<12} | {:<30} | {:<7} | {:>15} | {:>15} | {} {}{newline}')
+LINE_MEMORY_HEADER_TEMPLATE = (
+        '{:^12} | {:^30} | {:^7} | {:^15} | {:^15} | {} {}{newline}')
 
 
 class LineMemoryRecord(namedtuple('LineMemoryRecord', LINE_MEMORY_RECORD)):
@@ -29,7 +32,7 @@ class LineMemoryRecord(namedtuple('LineMemoryRecord', LINE_MEMORY_RECORD)):
     @classmethod
     def header(cls):
         """ Return a formated header line """
-        return LINE_MEMORY_RECORD_TEMPLATE.format(*cls._fields,
+        return LINE_MEMORY_HEADER_TEMPLATE.format(*cls._fields,
                                                newline=os.linesep)
 
     def line(self):
@@ -125,9 +128,11 @@ class LineMemoryMonitor(object):
         if why.startswith('l'):
             usage = self._process.get_memory_info()
             filename, lineno, function, line, _ = \
-                inspect.getframeinfo(frame, context=0)
+                inspect.getframeinfo(frame, context=1)
+            if line is None:
+                line = ['<compiled string>']
             record = LineMemoryRecord(self._index, function, lineno, usage.rss,
-                                      usage.vms, line, filename)
+                                      usage.vms, line[0], filename)
             self._recorder.record(record)
             self._index += 1
         return self.on_line_event

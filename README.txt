@@ -3,9 +3,10 @@ Pikos
 
 Pikos is a profiling and investigation tool suite for python
 applications. The name is inspired by Pikos Apikos the main character
-in a mid 80s Greek puppet TV series. Pikos was an journalist that was
-investigating a possible assassination attempt of the prime minister
-of Froutopia an country populated by fruits.
+in a mid 80s Greek puppet TV series. Pikos was an investigative journalist 
+that was assigned to find out about a missing person in the remote
+and strange land of of Froutopia, a country populated by fruits that
+can talk.
 
 Key aims of Pikos are:
 
@@ -40,10 +41,13 @@ which to link::
 The installation assumes that the libzqm library will be accessible
 from within Python (i.e. you already have pyzmq installed).
 
-Optional packages are:
+Optional packages of external profilers:
 
 - yappi (>=0.62),  `<http://code.google.com/p/yappi/>`_
 - line_profiler (>=1.0b3),  `<http://pypi.python.org/pypi/line_profiler>`_
+
+Optional packages for the live monitoring tools:
+
 - pyzmq (>= 2.1.11) `<http://www.zeromq.org/bindings:python>`_
 - traits (>= 4.1.0) `<https://github.com/enthought/traits>`_
 - traitsui (>= 4.1.0) `<https://github.com/enthought/traitsui>`_

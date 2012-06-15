@@ -38,11 +38,16 @@ def run_setup(extensions=None):
         name='pikos',
         version='0.1a',
         author='Enthought, Inc',
-        author_email='ioannist@enthought.com',
-        description='Enthought profiling tools',
+        author_email='info@enthought.com',
+        description='Enthought monitoring and profiling tools',
         requires=['psutil'],
         install_requires=['distribute'],
         packages=find_packages(),
+        entry_points=dict(
+            console_scripts=[
+                'pikos-run = pikos.runner:main',
+                ],
+            ),
         )
     if extensions is not None:
         kwargs['ext_modules'] = extensions

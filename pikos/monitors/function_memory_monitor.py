@@ -18,7 +18,9 @@ from pikos._internal.keep_track import KeepTrack
 
 FUNCTION_MEMORY_RECORD = ('index', 'type', 'function', 'RSS', 'VMS', 'lineNo',
                           'filename')
-FUNCTION_MEMORY_RECORD_TEMPLATE = ('{:>8} {:<11} {:<12} {:>15} {:>15} {:>6} {}'
+FUNCTION_MEMORY_RECORD_TEMPLATE = ('{:>8} | {:<11} | {:<12} | {:>15} | {:>15} | {:>6} | {}'
+                                   '{newline}')
+FUNCTION_MEMORY_HEADER_TEMPLATE = ('{:<8} | {:<11} | {:<12} | {:<15} | {:<15} | {:>6} | {}'
                                    '{newline}')
 
 
@@ -30,7 +32,7 @@ class FunctionMemoryRecord(namedtuple('FunctionMemoryRecord',
     @classmethod
     def header(cls):
         """ Return a formated header line. """
-        return FUNCTION_MEMORY_RECORD_TEMPLATE.format(*cls._fields,
+        return FUNCTION_MEMORY_HEADER_TEMPLATE.format(*cls._fields,
                                                newline=os.linesep)
 
     def line(self):

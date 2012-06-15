@@ -15,7 +15,8 @@ def baserecorder(filter_=None):
     """
     import sys
     from pikos.recorders.text_stream_recorder import TextStreamRecorder
-    return TextStreamRecorder(sys.stdout, filter_=filter_, auto_flush=True)
+    return TextStreamRecorder(sys.stdout, filter_=filter_,
+                               auto_flush=True, formated=True)
 
 def monitor_functions(filter_=None):
     """ Factory function that returns a basic function monitor.
