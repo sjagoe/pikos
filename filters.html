@@ -55,7 +55,96 @@
             
   <div class="section" id="filters">
 <h1>filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pikos.filters.on_value.OnValue">
+<em class="property">class </em><tt class="descclassname">pikos.filters.on_value.</tt><tt class="descname">OnValue</tt><big>(</big><em>field</em>, <em>*args</em><big>)</big><a class="reference internal" href="_modules/pikos/filters/on_value.html#OnValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.filters.on_value.OnValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A record filter that checks the value of a record field.</p>
+<dl class="attribute">
+<dt id="OnValue.field">
+<tt class="descname">field</tt><em class="property"> = str</em><a class="headerlink" href="#OnValue.field" title="Permalink to this definition">¶</a></dt>
+<dd><p>The field to check for change.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="OnValue.previous">
+<tt class="descname">previous</tt><a class="headerlink" href="#OnValue.previous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Holds the value of the previous field.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.filters.on_value.OnValue.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>field</em>, <em>*args</em><big>)</big><a class="reference internal" href="_modules/pikos/filters/on_value.html#OnValue.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.filters.on_value.OnValue.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the filter class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>field</strong> (<em>str</em>) &#8211; The field to check for change</li>
+<li><strong>*args</strong> &#8211; A list of values to look for.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.filters.on_value.OnValue.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>record</em><big>)</big><a class="reference internal" href="_modules/pikos/filters/on_value.html#OnValue.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.filters.on_value.OnValue.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for the value in the field.</p>
+</dd></dl>
+
+</dd></dl>
+
 <hr class="docutils" />
+<dl class="class">
+<dt id="pikos.filters.on_change.OnChange">
+<em class="property">class </em><tt class="descclassname">pikos.filters.on_change.</tt><tt class="descname">OnChange</tt><big>(</big><em>field</em><big>)</big><a class="reference internal" href="_modules/pikos/filters/on_change.html#OnChange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.filters.on_change.OnChange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A record filter that checks if the record field has changed.</p>
+<p>A copy of the field value is stored in the object and compared against new
+values. On value changed the object returns True.</p>
+<dl class="attribute">
+<dt id="OnChange.field">
+<tt class="descname">field</tt><em class="property"> = str</em><a class="headerlink" href="#OnChange.field" title="Permalink to this definition">¶</a></dt>
+<dd><p>The field to check for change.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="OnChange.previous">
+<tt class="descname">previous</tt><a class="headerlink" href="#OnChange.previous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Holds the value of the field.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Filters and recorders can be shared between monitors. The filter however
+is not aware of ownership so use with care when shareing the same instance.</p>
+</div>
+<dl class="method">
+<dt id="pikos.filters.on_change.OnChange.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>field</em><big>)</big><a class="reference internal" href="_modules/pikos/filters/on_change.html#OnChange.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.filters.on_change.OnChange.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the filter class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>field</strong> (<em>str</em>) &#8211; The field to check for change</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.filters.on_change.OnChange.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>record</em><big>)</big><a class="reference internal" href="_modules/pikos/filters/on_change.html#OnChange.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.filters.on_change.OnChange.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the field in the new record has changed.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

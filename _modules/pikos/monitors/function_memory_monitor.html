@@ -66,7 +66,9 @@
 
 <span class="n">FUNCTION_MEMORY_RECORD</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">,</span> <span class="s">&#39;type&#39;</span><span class="p">,</span> <span class="s">&#39;function&#39;</span><span class="p">,</span> <span class="s">&#39;RSS&#39;</span><span class="p">,</span> <span class="s">&#39;VMS&#39;</span><span class="p">,</span> <span class="s">&#39;lineNo&#39;</span><span class="p">,</span>
                           <span class="s">&#39;filename&#39;</span><span class="p">)</span>
-<span class="n">FUNCTION_MEMORY_RECORD_TEMPLATE</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{:&gt;8} {:&lt;11} {:&lt;12} {:&gt;15} {:&gt;15} {:&gt;6} {}&#39;</span>
+<span class="n">FUNCTION_MEMORY_RECORD_TEMPLATE</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{:&gt;8} | {:&lt;11} | {:&lt;12} | {:&gt;15} | {:&gt;15} | {:&gt;6} | {}&#39;</span>
+                                   <span class="s">&#39;{newline}&#39;</span><span class="p">)</span>
+<span class="n">FUNCTION_MEMORY_HEADER_TEMPLATE</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{:&lt;8} | {:&lt;11} | {:&lt;12} | {:&lt;15} | {:&lt;15} | {:&gt;6} | {}&#39;</span>
                                    <span class="s">&#39;{newline}&#39;</span><span class="p">)</span>
 
 
@@ -78,7 +80,7 @@
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="FunctionMemoryRecord.header"><a class="viewcode-back" href="../../../monitors.html#pikos.monitors.function_memory_monitor.FunctionMemoryRecord.header">[docs]</a>    <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a formated header line. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">FUNCTION_MEMORY_RECORD_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">cls</span><span class="o">.</span><span class="n">_fields</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">FUNCTION_MEMORY_HEADER_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">cls</span><span class="o">.</span><span class="n">_fields</span><span class="p">,</span>
                                                <span class="n">newline</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="FunctionMemoryRecord.line"><a class="viewcode-back" href="../../../monitors.html#pikos.monitors.function_memory_monitor.FunctionMemoryRecord.line">[docs]</a>    <span class="k">def</span> <span class="nf">line</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
