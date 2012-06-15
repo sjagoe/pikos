@@ -112,3 +112,13 @@ The monitor records available are:
     pikos.monitors.line_monitor.LineRecord
     pikos.monitors.function_memory_monitor.FunctionMemoryRecord
     pikos.monitors.line_memory_monitor.LineMemoryRecord
+
+
+----------------------------------
+
+.. toctree::
+    :hidden:
+
+    monitors
+    recorders
+    external
