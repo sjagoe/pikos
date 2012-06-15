@@ -4,9 +4,8 @@ import unittest
 from pikos.monitor import Monitor as monitor
 from pikos.monitors.line_monitor import LineMonitor
 from pikos.recorders.list_recorder import ListRecorder
-from pikos.tests.test_assistant import TestAssistant
 
-class TestLineMonitor(unittest.TestCase, TestAssistant):
+class TestLineMonitor(unittest.TestCase):
 
     def test_issue2(self):
         """ Test for issue #2.
@@ -25,7 +24,6 @@ def foo():
 
 foo()
         """
-
         @monitor(logger)
         def boo():
             code = compile(FOO, 'foo', 'exec')
