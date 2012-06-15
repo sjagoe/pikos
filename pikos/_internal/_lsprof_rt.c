@@ -1,3 +1,5 @@
+/* This file is covered by the license in LICENSE-psf.txt */
+
 #include "Python.h"
 #include "compile.h"
 #include "frameobject.h"

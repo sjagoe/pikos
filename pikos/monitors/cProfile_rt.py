@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# This file is covered by the license in LICENSE-psf.txt
 
 """Python interface for the 'lsprof' profiler.
    Compatible with the 'profile' module.

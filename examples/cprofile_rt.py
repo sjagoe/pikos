@@ -1,4 +1,4 @@
-# Run this with ``python -m pikos._internal.cProfile_rt examples/cprofile_rt.py``
+# Run this with ``python -m pikos.monitors.cProfile_rt examples/cprofile_rt.py``
 
 import time
 import random
