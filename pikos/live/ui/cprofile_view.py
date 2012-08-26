@@ -1,13 +1,110 @@
-from traits.api import Any, Int, Bool, on_trait_change, Dict, Button, Str
+from operator import attrgetter
+
+from traits.api import Any, Int, Bool, on_trait_change, Dict, Button, Str, \
+    HasTraits, cached_property, Property, Event, Either, Float, Instance
 from traitsui.api import View, Item, UItem, VGroup, HGroup, Spring, \
-    TabularEditor, HSplit, Group
-from chaco.api import Plot, ScatterInspectorOverlay, LabelAxis, BarPlot
+    TabularEditor, HSplit, Group, ModelView
+from traitsui.tabular_adapter import TabularAdapter
+from chaco.api import Plot, LabelAxis
 from chaco.tools.api import ZoomTool, PanTool
 from chaco.ticks import ShowAllTickGenerator
 from enable.component_editor import ComponentEditor
 
 from pikos.live.ui.base_view import BaseView
 from pikos.live.ui.barplot import SelectableBarPlot, BarSelectTool
+
+
+class TableItem(HasTraits):
+
+    id = Int
+    filename = Str
+    line_number = Any
+    function_name = Str
+
+    callcount = Int
+    per_call = Float
+    total_time = Float
+    cumulative_time = Float
+
+    def __init__(self, id, filename, line_number, function_name, callcount,
+                 per_call, total_time, cumulative_time, **traits):
+        kwargs = {}
+        kwargs.update(traits)
+        kwargs.update(dict(
+            id=id,
+            filename=filename,
+            function_name=function_name,
+            line_number=line_number,
+            callcount=callcount,
+            per_call=per_call,
+            total_time=total_time,
+            cumulative_time=cumulative_time,
+        ))
+        super(TableItem, self).__init__(**kwargs)
+
+
+class CProfileTabularAdapter(TabularAdapter):
+
+    columns = (
+        ('Filename', 'filename'),
+        ('Function Name', 'function_name'),
+        ('Line Number', 'line_number'),
+
+        ('Number of Calls', 'callcount'),
+        ('Per Call', 'per_call'),
+        # ('Per Call (Cumulative)', 'cumulative_percall'),
+        ('Total Time', 'total_time'),
+        ('Cumulative Time', 'cumulative_time'),
+    )
+
+
+class CProfileTableView(ModelView):
+
+    title = Str
+
+    data_items = Property(depends_on='model.data_items,sort_column,ascending')
+
+    adapter = Any
+
+    column_clicked = Event
+    sort_column = Either(None, Int)
+    ascending = Bool(False)
+
+    def _column_clicked_changed(self, event):
+        if event is None:
+            self.sort_column = None
+        elif self.sort_column == event.column:
+            self.ascending = not self.ascending
+        else:
+            self.sort_column = event.column
+            self.ascending = False
+
+    def _adapter_default(self):
+        return CProfileTabularAdapter()
+
+    @cached_property
+    def _get_data_items(self):
+        items = [TableItem(*args) for args in self.model.data_items]
+        if self.sort_column is None:
+            return items
+        attr = self.adapter.columns[self.sort_column][1]
+        return sorted(items, key=attrgetter(attr), reverse=self.ascending)
+
+    def default_traits_view(self):
+        return View(
+            UItem(
+                'data_items',
+                editor=TabularEditor(
+                    adapter=self.adapter,
+                    column_clicked='column_clicked',
+                ),
+            ),
+            height=800,
+            width=1100,
+            resizable=True,
+            title='CProfile Live',
+        )
+
 
 
 class CProfileView(BaseView):
@@ -159,3 +256,28 @@ class CProfileView(BaseView):
         resizable=True,
         title='Live Recording Plot'
         )
+
+
+class CProfileMixedView(ModelView):
+
+    title = Str
+
+    table_view = Instance(CProfileTableView)
+    plot_view = Instance(CProfileView)
+
+    def _table_view_default(self):
+        return CProfileTableView(title=self.title, model=self.model)
+
+    def _plot_view_default(self):
+        return CProfileView(title=self.title, model=self.model)
+
+    traits_view = View(
+        VGroup(
+            UItem('table_view', style='custom'),
+            UItem('plot_view', style='custom'),
+        ),
+        height=800,
+        width=1100,
+        resizable=True,
+        title='Live CProfile',
+    )

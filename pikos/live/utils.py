@@ -13,10 +13,10 @@ def get_model_for_profile(profile):
 def get_view_for_profile(profile):
     if not hasattr(get_view_for_profile, "_pikos_model_cache"):
         from pikos.live.ui.memory_view import MemoryView
-        from pikos.live.ui.cprofile_table import CProfileTableView
+        from pikos.live.ui.cprofile_view import CProfileMixedView
         cache = {
             "memory": MemoryView,
-            "cprofile": CProfileTableView,
+            "cprofile": CProfileMixedView,
             }
         get_view_for_profile._pikos_view_cache = cache
     return get_view_for_profile._pikos_view_cache.get(profile.lower())
