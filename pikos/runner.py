@@ -13,8 +13,8 @@ import sys
 import warnings
 
 from pikos.monitors.api import (FunctionMonitor, LineMonitor,
-                                  FunctionMemoryMonitor, LineMemoryMonitor)
-from pikos.recorders.api import (TextStreamRecorder, CSVRecorder)
+                                FunctionMemoryMonitor, LineMemoryMonitor)
+from pikos.recorders.api import TextStreamRecorder, CSVRecorder
 
 MONITORS = {'functions': FunctionMonitor,
             'lines': LineMonitor,
