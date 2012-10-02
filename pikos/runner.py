@@ -10,6 +10,7 @@
 import argparse
 import os
 import sys
+import warnings
 
 from pikos.monitors.api import (FunctionMonitor, LineMonitor,
                                   FunctionMemoryMonitor, LineMemoryMonitor)
@@ -65,7 +66,7 @@ def main():
         if not args.buffered:
             msg = ('Unbuffer output is not supported yet for csv recording.'
                    'The default options for the CSVWriter will be used.')
-            warning.warn(msg)
+            warnings.warn(msg)
         recorder = CSVRecorder(stream)
 
     monitor = MONITORS[args.monitor](recorder=recorder)
