@@ -6,7 +6,7 @@ from pikos.filters.on_change import OnChange
 MockRecord = collections.namedtuple('MockRecord',['function', 'filename','line'])
 
 
-class TestOnValue(unittest.TestCase):
+class TestOnChange(unittest.TestCase):
 
     def test_initialization(self):
 
