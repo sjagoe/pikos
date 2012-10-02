@@ -21,6 +21,7 @@ MONITORS = {'functions': FunctionMonitor,
             'function_memory': FunctionMemoryMonitor,
             'line_memory': LineMemoryMonitor}
 
+
 def run_code_under_monitor(script, monitor):
     """Compile the file and run inside the monitor context.
 
@@ -40,6 +41,7 @@ def run_code_under_monitor(script, monitor):
     globs = {'__file__': script, '__name__': '__main__', '__package__': None}
     with monitor:
         exec code in globs, None
+
 
 def main():
     description = "Execute the python script inside the pikos monitor context."
