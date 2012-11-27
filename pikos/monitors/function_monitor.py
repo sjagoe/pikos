@@ -12,7 +12,7 @@ import os
 import inspect
 from collections import namedtuple
 
-from pikos._internal.profile_functions import ProfileFunctions
+from pikos._internal.profile_function_manager import ProfileFunctionManager
 from pikos._internal.keep_track import KeepTrack
 from pikos.monitors.monitor import Monitor
 
@@ -76,7 +76,7 @@ class FunctionMonitor(Monitor):
 
         """
         self._recorder = recorder
-        self._profiler = ProfileFunctions()
+        self._profiler = ProfileFunctionManager()
         self._index = 0
         self._call_tracker = KeepTrack()
 
@@ -89,7 +89,7 @@ class FunctionMonitor(Monitor):
         """
         if self._call_tracker('ping'):
             self._recorder.prepare(FunctionRecord)
-            self._profiler.set(self.on_function_event)
+            self._profiler.replace(self.on_function_event)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """ Exit the monitor context.
@@ -99,7 +99,7 @@ class FunctionMonitor(Monitor):
 
         """
         if self._call_tracker('pong'):
-            self._profiler.unset()
+            self._profiler.recover()
             self._recorder.finalize()
 
     def on_function_event(self, frame, event, arg):
