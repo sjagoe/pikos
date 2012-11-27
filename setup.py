@@ -31,6 +31,7 @@ setup(
     requires=['psutil'],
     install_requires=['distribute'],
     packages=find_packages(),
+    test_suite='pikos.tests',
     entry_points=dict(
         console_scripts=['pikos-run = pikos.runner:main']),
     features={'real-time-lsprof': real_time_lsprof})
