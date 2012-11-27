@@ -8,6 +8,9 @@
 #------------------------------------------------------------------------------
 from setuptools import setup, find_packages, Extension, Feature
 
+with open('README.txt', 'r') as readme:
+    README_TEXT = readme.read()
+
 real_time_lsprof = Feature(
     'optional real time lsrof using zmq',
     standard=False,
@@ -24,6 +27,7 @@ setup(
     author='Enthought Inc',
     author_email='info@enthought.com',
     description='Enthought monitoring and profiling tools',
+    long_description=README_TEXT,
     requires=['psutil'],
     install_requires=['distribute'],
     packages=find_packages(),
