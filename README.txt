@@ -36,9 +36,9 @@ To build with the real-time fork of cProfile please provide the
 
     python setup.py --with-real-time-lsprof install
 
-You will need a build of libzmq to compile and link against. If these files
-are not available in the include paths of they the system they will need to
-be manually provided to the ``build_ext`` command::
+You will need a build of libzmq to compile and link against. If the needed files
+are not available at system default locations, they will need to be manually 
+provided to the ``build_ext`` command::
 
     python setup.py --with-real-time-lsprof build_ext -I <include directory for zmq> -L <libary directory for zmq>
     python setup.py --with-real-time-lsprof install
