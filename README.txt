@@ -40,12 +40,12 @@ You will need a build of libzmq to compile and link against. If these files
 are not available in the include paths of they the system they will need to
 be manually provided to the ``build_ext`` command::
 
-    python setup.py --with-real-time-lsprof build_ext -I <path to zmq.h> -L <path to zmq binary>
+    python setup.py --with-real-time-lsprof build_ext -I <include directory for zmq> -L <libary directory for zmq>
     python setup.py --with-real-time-lsprof install
 
 or in one line as::
 
-    python setup.py --with-real-time-lsprof build_ext -I <path to zmq.h> -L <path to zmq binary> install
+    python setup.py --with-real-time-lsprof build_ext -I <include directory for zmq> -L <library directory for zmq> install
 
 Finally to run the test suite please give::
 
