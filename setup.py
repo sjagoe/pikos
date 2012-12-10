@@ -18,7 +18,8 @@ real_time_lsprof = Feature(
         Extension(
             'pikos._internal._lsprof_rt',
             sources=['pikos/_internal/_lsprof_rt.c',
-                     'pikos/_internal/rotatingtree.c'])]
+                     'pikos/_internal/rotatingtree.c'],
+            libraries=['zmq'])]
     )
 
 setup(
