@@ -1,9 +1,8 @@
 import unittest
 
-from pikos.monitor import Monitor as monitor
+from pikos.monitors.monitor import Monitor
 
-# FIXME: might be better to use a mock library
-class MockNativeMonitor():
+class MockNativeMonitor(Monitor):
 
     def __init__(self):
         self._enter_called = 0
@@ -15,20 +14,6 @@ class MockNativeMonitor():
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._exit_called += 1
 
-class MockRuncall():
-
-    def __init__(self):
-        self._runcall_called = 0
-        self._functions = []
-        self._args = []
-        self._kwds = []
-
-    def runcall(self, function, *args, **kwds):
-        self._runcall_called += 1
-        self._functions.append(function)
-        self._args.append(args)
-        self._kwds.append(args)
-        return function(*args, **kwds)
 
 class TestMonitor(unittest.TestCase):
 
@@ -36,7 +21,7 @@ class TestMonitor(unittest.TestCase):
 
         mock_logger = MockNativeMonitor()
 
-        @monitor(mock_logger)
+        @mock_logger.attach
         def my_function(value):
             return "I was called with {}".format(value)
 
@@ -48,8 +33,8 @@ class TestMonitor(unittest.TestCase):
     def test_recursive_with_context_manager(self):
         mock_logger = MockNativeMonitor()
 
-        @monitor(mock_logger)
-        def gcd(x,y):
+        @mock_logger.attach
+        def gcd(x, y):
             return x if y == 0 else gcd(y, (x % y))
 
         result = gcd(21, 28)
@@ -57,12 +42,11 @@ class TestMonitor(unittest.TestCase):
         self.assertEqual(mock_logger._exit_called, 4)
         self.assertEqual(result, 7)
 
-
     def test_generator_with_context_manager(self):
 
         mock_logger = MockNativeMonitor()
 
-        @monitor(mock_logger)
+        @mock_logger.attach
         def my_generator(value):
             for i in range(value):
                 yield i
@@ -71,7 +55,7 @@ class TestMonitor(unittest.TestCase):
         for i in my_generator(5):
             results.append(i)
 
-        self.assertEqual(results,[0,1,2,3,4])
+        self.assertEqual(results, [0, 1, 2, 3, 4])
         self.assertEqual(mock_logger._enter_called, 6)
         self.assertEqual(mock_logger._exit_called, 6)
 

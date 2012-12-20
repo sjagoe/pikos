@@ -10,13 +10,15 @@
 from __future__ import absolute_import
 import os
 import inspect
-
 from collections import namedtuple
-from pikos._internal.profile_functions import ProfileFunctions
+
+from pikos._internal.profile_function_manager import ProfileFunctionManager
 from pikos._internal.keep_track import KeepTrack
+from pikos.monitors.monitor import Monitor
 
 FUNCTION_RECORD = ('index', 'type', 'function', 'lineNo', 'filename')
 FUNCTION_RECORD_TEMPLATE = '{:<8} {:<11} {:<30} {:<5} {}{newline}'
+
 
 class FunctionRecord(namedtuple('FunctionRecord', FUNCTION_RECORD)):
 
@@ -33,7 +35,7 @@ class FunctionRecord(namedtuple('FunctionRecord', FUNCTION_RECORD)):
         return FUNCTION_RECORD_TEMPLATE.format(*self, newline=os.linesep)
 
 
-class FunctionMonitor(object):
+class FunctionMonitor(Monitor):
     """ Record python function events.
 
     The class hooks on the setprofile function to receive function events and
@@ -74,7 +76,7 @@ class FunctionMonitor(object):
 
         """
         self._recorder = recorder
-        self._profiler = ProfileFunctions()
+        self._profiler = ProfileFunctionManager()
         self._index = 0
         self._call_tracker = KeepTrack()
 
@@ -87,7 +89,7 @@ class FunctionMonitor(object):
         """
         if self._call_tracker('ping'):
             self._recorder.prepare(FunctionRecord)
-            self._profiler.set(self.on_function_event)
+            self._profiler.replace(self.on_function_event)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """ Exit the monitor context.
@@ -97,7 +99,7 @@ class FunctionMonitor(object):
 
         """
         if self._call_tracker('pong'):
-            self._profiler.unset()
+            self._profiler.recover()
             self._recorder.finalize()
 
     def on_function_event(self, frame, event, arg):
