@@ -1,4 +1,12 @@
-import os
+# -*- coding: utf-8 -*-
+#------------------------------------------------------------------------------
+#  Package: Pikos toolkit
+#  File: monitors/line_monitor.py
+#  License: LICENSE.TXT
+#
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 import unittest
 
 from pikos.monitors.focused_function_monitor import FocusedFunctionMonitor
@@ -10,7 +18,7 @@ from pikos.tests.test_assistant import TestAssistant
 class TestFocusedFunctionMonitor(unittest.TestCase, TestAssistant):
 
     def setUp(self):
-        self.filename = __file__
+        self.filename = __file__.replace('.pyc', '.py')
         self.maxDiff = None
 
     def test_focus_on_function(self):
@@ -43,31 +51,31 @@ class TestFocusedFunctionMonitor(unittest.TestCase, TestAssistant):
         self.assertEqual(result, 3)
         records = recorder.records
         expected = [FunctionRecord(index=0, type='call', function='gcd',
-                                   lineNo=18, filename=self.filename),
+                                   lineNo=26, filename=self.filename),
                     FunctionRecord(index=1, type='call', function='internal',
-                                   lineNo=23, filename=self.filename),
+                                   lineNo=31, filename=self.filename),
                     FunctionRecord(index=2, type='call',
-                                   function='boo', lineNo=27,
+                                   function='boo', lineNo=35,
                                    filename=self.filename),
                     FunctionRecord(index=3, type='return',
-                                   function='boo', lineNo=28,
+                                   function='boo', lineNo=36,
                                    filename=self.filename),
                     FunctionRecord(index=4, type='return',
-                                   function='internal', lineNo=25,
+                                   function='internal', lineNo=33,
                                    filename=self.filename),
                     FunctionRecord(index=5, type='call', function='internal',
-                                   lineNo=23, filename=self.filename),
+                                   lineNo=31, filename=self.filename),
                     FunctionRecord(index=6, type='call',
-                                   function='boo', lineNo=27,
+                                   function='boo', lineNo=35,
                                    filename=self.filename),
                     FunctionRecord(index=7, type='return',
-                                   function='boo', lineNo=28,
+                                   function='boo', lineNo=36,
                                    filename=self.filename),
                     FunctionRecord(index=8, type='return',
-                                   function='internal', lineNo=25,
+                                   function='internal', lineNo=33,
                                    filename=self.filename),
                     FunctionRecord(index=9, type='return', function='gcd',
-                                   lineNo=21, filename=self.filename)]
+                                   lineNo=29, filename=self.filename)]
         self.assertEqual(records, expected)
         self.assertEqual(logger._code_trackers, {})
 
@@ -105,36 +113,36 @@ class TestFocusedFunctionMonitor(unittest.TestCase, TestAssistant):
         self.assertEqual(result, 3)
         records = recorder.records
         expected = [FunctionRecord(index=0, type='call', function='gcd',
-                                   lineNo=76, filename=self.filename),
+                                   lineNo=84, filename=self.filename),
                     FunctionRecord(index=1, type='call', function='internal',
-                                   lineNo=81, filename=self.filename),
+                                   lineNo=89, filename=self.filename),
                     FunctionRecord(index=2, type='return',
-                                   function='internal', lineNo=82,
+                                   function='internal', lineNo=90,
                                    filename=self.filename),
                     FunctionRecord(index=3, type='call', function='internal',
-                                   lineNo=81, filename=self.filename),
+                                   lineNo=89, filename=self.filename),
                     FunctionRecord(index=4, type='return',
-                                   function='internal', lineNo=82,
+                                   function='internal', lineNo=90,
                                    filename=self.filename),
                     FunctionRecord(index=5, type='return', function='gcd',
-                                   lineNo=79, filename=self.filename),
+                                   lineNo=87, filename=self.filename),
                     FunctionRecord(index=6, type='call',
-                                   function='foo', lineNo=87,
+                                   function='foo', lineNo=95,
                                    filename=self.filename),
                     FunctionRecord(index=7, type='call',
-                                   function='boo', lineNo=84,
+                                   function='boo', lineNo=92,
                                    filename=self.filename),
                     FunctionRecord(index=8, type='return',
-                                   function='boo', lineNo=85,
+                                   function='boo', lineNo=93,
                                    filename=self.filename),
                     FunctionRecord(index=9, type='call',
-                                   function='boo', lineNo=84,
+                                   function='boo', lineNo=92,
                                    filename=self.filename),
                     FunctionRecord(index=10, type='return',
-                                   function='boo', lineNo=85,
+                                   function='boo', lineNo=93,
                                    filename=self.filename),
                     FunctionRecord(index=11, type='return',
-                                   function='foo', lineNo=89,
+                                   function='foo', lineNo=97,
                                    filename=self.filename),]
         self.assertEqual(records, expected)
         self.assertEqual(logger._code_trackers, {})
@@ -168,21 +176,21 @@ class TestFocusedFunctionMonitor(unittest.TestCase, TestAssistant):
         self.assertEqual(result, 3)
         records = recorder.records
         expected = [FunctionRecord(index=0, type='call', function='gcd',
-                                   lineNo=144, filename=self.filename),
+                                   lineNo=152, filename=self.filename),
                     FunctionRecord(index=1, type='call', function='foo',
-                                   lineNo=151, filename=self.filename),
+                                   lineNo=159, filename=self.filename),
                     FunctionRecord(index=2, type='return', function='foo',
-                                   lineNo=152, filename=self.filename),
+                                   lineNo=160, filename=self.filename),
                     FunctionRecord(index=3, type='call', function='gcd',
-                                   lineNo=144, filename=self.filename),
-                    FunctionRecord(index=4, type='call', function='foo',
-                                   lineNo=151, filename=self.filename),
-                    FunctionRecord(index=5, type='return', function='foo',
                                    lineNo=152, filename=self.filename),
+                    FunctionRecord(index=4, type='call', function='foo',
+                                   lineNo=159, filename=self.filename),
+                    FunctionRecord(index=5, type='return', function='foo',
+                                   lineNo=160, filename=self.filename),
                     FunctionRecord(index=6, type='return', function='gcd',
-                                   lineNo=146, filename=self.filename),
+                                   lineNo=154, filename=self.filename),
                     FunctionRecord(index=7, type='return', function='gcd',
-                                   lineNo=146, filename=self.filename),]
+                                   lineNo=154, filename=self.filename),]
         self.assertEqual(records, expected)
         self.assertEqual(logger._code_trackers, {})
 
