@@ -2,6 +2,7 @@ import unittest
 
 from pikos._internal.function_set import FunctionSet
 
+
 class TestFunctionSet(unittest.TestCase):
 
     def setUp(self):
