@@ -17,7 +17,7 @@ from pikos._internal.keep_track import KeepTrack
 class FocusedFunctionMonitor(FunctionMonitor):
     """ Record python function events in a `focused` way.
 
-    Overrides FunctionMonitor to only record events when the interpret is
+    Overrides FunctionMonitor to only record events when the interpreter is
     working inside the functions that are provided in the `functions`
     attribute.
 
@@ -25,16 +25,15 @@ class FocusedFunctionMonitor(FunctionMonitor):
     ------
     functions : FunctionSet
         A set of function or method objects inside which recording will
-        take place. External code can add or remove functions at runtime
-        to change the items that are recorded.
+        take place.
 
     Private
     -------
     _code_trackers : dictionary
         A dictionary of KeepTrack instances associated with the code object
         of each function in `functions`. It is used to keep track and check
-        that we are inside the execution of these functions when you record
-        data.
+        that we are inside the execution of one these functions when we
+        record data.
 
     """
 
@@ -44,9 +43,9 @@ class FocusedFunctionMonitor(FunctionMonitor):
         Parameters
         ----------
         recorder : object
-            A subclass of :class:`~pikos.recorders.AbstractRecorder` or a class
-            that implements the same interface to handle the values to be
-            logged.
+            A subclass of :class:`~pikos.recorders.AbstractRecorder` or a
+            class that implements the same interface to handle the values
+            to be logged.
 
         functions : list
             A list of function or method objects inside which recording will
@@ -69,8 +68,10 @@ class FocusedFunctionMonitor(FunctionMonitor):
                 tracker('ping')
             else:
                 tracker('pong')
-            super(FocusedFunctionMonitor, self).on_function_event(frame, event,
-                                                                  arg)
+            self.on_focused_function_event(frame, event, arg)
+            if not tracker:
+                del self._code_trackers[code]
         elif any(self._code_trackers.viewvalues()):
-            super(FocusedFunctionMonitor, self).on_function_event(frame, event,
-                                                                  arg)
+            self.on_focused_function_event(frame, event, arg)
+
+    on_focused_function_event = FunctionMonitor.on_function_event
