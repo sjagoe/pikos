@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------------------------
 #  Package: Pikos toolkit
-#  File: monitors/line_monitor.py
+#  File: monitors/test_focused_line_monitor.py
 #  License: LICENSE.TXT
 #
 #  Copyright (c) 2012, Enthought, Inc.
@@ -36,7 +36,7 @@ class TestFocusedLineMonitor(unittest.TestCase, TestAssistant):
             pass
 
         recorder = ListRecorder()
-        logger = FocusedLineMonitor(recorder, [gcd])
+        logger = FocusedLineMonitor(recorder, functions=[gcd])
 
         @logger.attach
         def container(x, y):
@@ -88,7 +88,7 @@ class TestFocusedLineMonitor(unittest.TestCase, TestAssistant):
             boo()
 
         recorder = ListRecorder()
-        logger = FocusedLineMonitor(recorder, [gcd, foo])
+        logger = FocusedLineMonitor(recorder, functions=[gcd, foo])
 
         @logger.attach
         def container(x, y):
@@ -142,7 +142,7 @@ class TestFocusedLineMonitor(unittest.TestCase, TestAssistant):
             pass
 
         recorder = ListRecorder()
-        logger = FocusedLineMonitor(recorder, [gcd])
+        logger = FocusedLineMonitor(recorder, functions=[gcd])
 
         @logger.attach
         def container(x, y):
