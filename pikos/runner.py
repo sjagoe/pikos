@@ -50,6 +50,55 @@ def run_code_under_monitor(script, monitor):
     with monitor:
         exec code in globs, None
 
+def get_function(function_path):
+    """ find and import a function dynamically.
+
+    Parameters
+    ----------
+    function_path : string
+       a string with the path to the function. The expected format is::
+
+                `<packages>.<module>.<function>`
+           or::
+
+                `<packages>.<module>.<class>.<method>`
+
+    """
+    if '.' not in function_path:
+        raise ValueError('The module path format should be'
+                         '<packages>.<module>.<function>'
+                         'or <packages>.<module>.<class>.<method>')
+    else:
+        components = function_path.split('.')
+
+    for index, component in enumerate(components):
+        handle, pathname, description = imp.find_module(
+            component,
+            sys.path + ['./'])
+        if description != imp.PKG_DIRECTORY:
+            break
+    else:
+        raise RuntimeError('Could not find module {}'.format(function_path))
+
+    remaining = len(components) - index - 1
+    if remaining > 2:
+        raise ValueError('The module path format should be'
+                         '<packages>.<module>.<function>'
+                         'or <packages>.<module>.<class>.<method>')
+    try:
+        module = imp.load_module('.'.join(components[:-1]),
+                                 handle, pathname, description)
+    finally:
+        handle.close()
+
+    if remaining == 1:
+        return getattr(module, components[-1])
+    elif remaining == 2:
+        class_type = getattr(module, components[-2])
+        return getattr(class_type, components[-1])
+    else:
+        raise RuntimeError('This option should never happen')
+
 
 def main():
     description = "Execute the python script inside the pikos monitor " \
@@ -89,38 +138,7 @@ def main():
     else:
         functions = []
         for item in args.focused_on.split(','):
-            if '.' not in item:
-                raise ValueError('The module path format should be'
-                                 '<packages>.<module>.<function>'
-                                 'or <packages>.<module>.<class>.<method>')
-            else:
-                components = item.split('.')
-
-            for index, component in enumerate(components):
-                handle, pathname, description = imp.find_module(
-                                                           component,
-                                                           sys.path + ['./'])
-                if description != imp.PKG_DIRECTORY:
-                    break
-            else:
-                raise RuntimeError('Could not find module {}'.format(item))
-
-            remaining = len(components) - index - 1
-            if remaining > 2:
-                raise ValueError('The module path format should be'
-                                 '<packages>.<module>.<function>'
-                                 'or <packages>.<module>.<class>.<method>')
-            try:
-                module = imp.load_module('.'.join(components[:-1]),
-                                         handle, pathname, description)
-            finally:
-                handle.close()
-
-            if remaining == 1:
-                function = getattr(module, components[-1])
-            elif remaining == 2:
-                class_type = getattr(module, components[-2])
-                function = getattr(class_type, components[-1])
+            function = get_function(item)
             functions.append(function)
         monitor = FOCUSED_MONITORS[args.monitor](recorder=recorder,
                                                  functions=functions)
