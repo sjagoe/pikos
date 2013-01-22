@@ -7,8 +7,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
 from pikos.monitors.monitor_attach import MonitorAttach
+
 
 def baserecorder(filter_=None):
     """ Factory function that returns a basic recorder.
@@ -17,6 +17,7 @@ def baserecorder(filter_=None):
     from pikos.recorders.text_stream_recorder import TextStreamRecorder
     return TextStreamRecorder(sys.stdout, filter_=filter_,
                                auto_flush=True, formated=True)
+
 
 def monitor_functions(filter_=None, focus_on=None):
     """ Factory function that returns a basic function monitor.
@@ -31,6 +32,7 @@ def monitor_functions(filter_=None, focus_on=None):
                                   functions=focus_on)
         return MonitorAttach(monitor)
 
+
 def monitor_lines(filter_=None, focus_on=None):
     """ Factory function that returns a basic line monitor.
     """
@@ -42,6 +44,7 @@ def monitor_lines(filter_=None, focus_on=None):
         monitor = FocusedLineMonitor(baserecorder(filter_=filter_),
                                      functions=focus_on)
         return MonitorAttach(monitor)
+
 
 def memory_on_functions(filter_=None, focus_on=None):
     """ Factory function that returns a basic function memory monitor.
@@ -57,6 +60,7 @@ def memory_on_functions(filter_=None, focus_on=None):
                                                functions=focus_on)
         return MonitorAttach(monitor)
 
+
 def memory_on_lines(filter_=None, focus_on=None):
     """ Factory function that returns a basic line memory monitor.
     """
@@ -70,11 +74,13 @@ def memory_on_lines(filter_=None, focus_on=None):
                                            functions=focus_on)
         return MonitorAttach(monitor)
 
+
 def yappi_profile(buildins=None):
     """ Factory function that returns a yappi monitor.
     """
     from pikos.external.yappi_profiler import YappiProfiler
     return MonitorAttach(YappiProfiler(buildins))
+
 
 def line_profile(*args, **kwrds):
     """ Factory function that returns a line profiler.

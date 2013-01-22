@@ -9,6 +9,7 @@
 #------------------------------------------------------------------------------
 from pikos._internal.function_set import FunctionSet
 
+
 class FocusedLineMixin(object):
     """ Mixing class to support recording python line events in a `focused`
      way.
@@ -54,4 +55,3 @@ class FocusedLineMixin(object):
             event_method = super(FocusedLineMixin, self).on_line_event
             event_method(frame, why, arg)
         return self.on_line_event
-

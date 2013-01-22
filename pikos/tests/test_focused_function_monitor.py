@@ -143,7 +143,7 @@ class TestFocusedFunctionMonitor(unittest.TestCase, TestAssistant):
                                    filename=self.filename),
                     FunctionRecord(index=11, type='return',
                                    function='foo', lineNo=97,
-                                   filename=self.filename),]
+                                   filename=self.filename), ]
         self.assertEqual(records, expected)
         self.assertEqual(logger._code_trackers, {})
 
@@ -190,7 +190,7 @@ class TestFocusedFunctionMonitor(unittest.TestCase, TestAssistant):
                     FunctionRecord(index=6, type='return', function='gcd',
                                    lineNo=154, filename=self.filename),
                     FunctionRecord(index=7, type='return', function='gcd',
-                                   lineNo=154, filename=self.filename),]
+                                   lineNo=154, filename=self.filename), ]
         self.assertEqual(records, expected)
         self.assertEqual(logger._code_trackers, {})
 

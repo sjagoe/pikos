@@ -30,6 +30,7 @@ FOCUSED_MONITORS = {'functions': FocusedFunctionMonitor,
                     'function_memory': FocusedFunctionMemoryMonitor,
                     'line_memory': FocusedLineMemoryMonitor}
 
+
 def run_code_under_monitor(script, monitor):
     """Compile the file and run inside the monitor context.
 
@@ -49,6 +50,7 @@ def run_code_under_monitor(script, monitor):
     globs = {'__file__': script, '__name__': '__main__', '__package__': None}
     with monitor:
         exec code in globs, None
+
 
 def get_function(function_path):
     """ find and import a function dynamically.

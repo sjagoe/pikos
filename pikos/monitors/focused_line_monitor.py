@@ -10,6 +10,7 @@
 from pikos.monitors.line_monitor import LineMonitor
 from pikos.monitors.focused_line_mixin import FocusedLineMixin
 
+
 class FocusedLineMonitor(FocusedLineMixin, LineMonitor):
     """ Record python line events.
 
