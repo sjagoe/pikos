@@ -35,7 +35,7 @@ def run_code_under_monitor(script, monitor):
 
     Parameters
     ----------
-    filename : str
+    script : str
        The filename of the script to run.
 
     monitor : object
