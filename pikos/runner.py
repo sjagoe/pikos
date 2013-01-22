@@ -8,12 +8,16 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import argparse
+import imp
 import os
 import sys
 import warnings
 
 from pikos.monitors.api import (FunctionMonitor, LineMonitor,
-                                FunctionMemoryMonitor, LineMemoryMonitor)
+                                FunctionMemoryMonitor, LineMemoryMonitor,
+                                FocusedFunctionMemoryMonitor,
+                                FocusedLineMemoryMonitor, FocusedLineMonitor,
+                                FocusedFunctionMonitor)
 from pikos.recorders.api import TextStreamRecorder, CSVRecorder
 
 MONITORS = {'functions': FunctionMonitor,
@@ -21,6 +25,10 @@ MONITORS = {'functions': FunctionMonitor,
             'function_memory': FunctionMemoryMonitor,
             'line_memory': LineMemoryMonitor}
 
+FOCUSED_MONITORS = {'functions': FocusedFunctionMonitor,
+                    'lines': FocusedLineMonitor,
+                    'function_memory': FocusedFunctionMemoryMonitor,
+                    'line_memory': FocusedLineMemoryMonitor}
 
 def run_code_under_monitor(script, monitor):
     """Compile the file and run inside the monitor context.
@@ -44,7 +52,8 @@ def run_code_under_monitor(script, monitor):
 
 
 def main():
-    description = "Execute the python script inside the pikos monitor context."
+    description = "Execute the python script inside the pikos monitor " \
+                  "context."
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('monitor', choices=MONITORS.keys(),
                         help='The monitor to use')
@@ -55,23 +64,66 @@ def main():
     parser.add_argument('--recording', choices=['text', 'csv'],
                         help='Select the type of recording to use.',
                         default='text'),
-
+    parser.add_argument('--focused-on', help='Provide the module path(s) of '
+                        'the method where recording will be focused. '
+                        'Comma separated list of importable functions',
+                        default=None),
     parser.add_argument('script', help='The script to run.')
     args = parser.parse_args()
 
-    stream = args.output if  args.output is not None else sys.stdout
+    stream = args.output if args.output is not None else sys.stdout
 
     if args.recording == 'text':
-        recorder = TextStreamRecorder(stream, auto_flush=(not args.buffered),
-                                                           formated=True)
+        recorder = TextStreamRecorder(stream,
+                                      auto_flush=(not args.buffered),
+                                      formated=True)
     else:
         if not args.buffered:
-            msg = ('Unbuffer output is not supported yet for csv recording.'
+            msg = ('Unbuffered output is not supported for csv recording.'
                    'The default options for the CSVWriter will be used.')
             warnings.warn(msg)
         recorder = CSVRecorder(stream)
 
-    monitor = MONITORS[args.monitor](recorder=recorder)
+    if args.focused_on is None:
+        monitor = MONITORS[args.monitor](recorder=recorder)
+    else:
+        functions = []
+        for item in args.focused_on.split(','):
+            if '.' not in item:
+                raise ValueError('The module path format should be'
+                                 '<packages>.<module>.<function>'
+                                 'or <packages>.<module>.<class>.<method>')
+            else:
+                components = item.split('.')
+
+            for index, component in enumerate(components):
+                handle, pathname, description = imp.find_module(
+                                                           component,
+                                                           sys.path + ['./'])
+                if description != imp.PKG_DIRECTORY:
+                    break
+            else:
+                raise RuntimeError('Could not find module {}'.format(item))
+
+            remaining = len(components) - index - 1
+            if remaining > 2:
+                raise ValueError('The module path format should be'
+                                 '<packages>.<module>.<function>'
+                                 'or <packages>.<module>.<class>.<method>')
+            try:
+                module = imp.load_module('.'.join(components[:-1]),
+                                         handle, pathname, description)
+            finally:
+                handle.close()
+
+            if remaining == 1:
+                function = getattr(module, components[-1])
+            elif remaining == 2:
+                class_type = getattr(module, components[-2])
+                function = getattr(class_type, components[-1])
+            functions.append(function)
+        monitor = FOCUSED_MONITORS[args.monitor](recorder=recorder,
+                                                 functions=functions)
     run_code_under_monitor(args.script, monitor)
 
 if __name__ == '__main__':
