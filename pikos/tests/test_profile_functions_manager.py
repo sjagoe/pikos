@@ -44,11 +44,9 @@ class TestProfileFunctionsManager(TestCase):
     def test_error_when_set_multiple(self):
         self.monitor._profile.replace(self.bar)
         self.assertIs(sys.getprofile(), self.bar)
-        with self.assertRaises(AssertionError):
-            with self.assertRaises(RuntimeError):
-                self.monitor._profile.replace(self.bar)
-                self.assertIs(sys.getprofile(), self.bar)
-                self.monitor._profile.recover()
+        self.monitor._profile.replace(self.bar)
+        self.assertIs(sys.getprofile(), self.bar)
+        self.monitor._profile.recover()
 
         self.monitor._profile.replace(self.bar)
         self.assertIs(sys.getprofile(), self.bar)
