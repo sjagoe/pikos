@@ -36,6 +36,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="reference.html" title="Library Reference"
              accesskey="N">next</a> |</li>
         <li><a href="#">pikos  documentation</a> &raquo;</li> 
@@ -52,9 +55,8 @@
 <p>Pikos is a profiling and investigation tool suite for python
 applications. The name is inspired by Pikos Apikos the main character
 in a mid 80s Greek puppet TV series. Pikos was an investigative journalist
-that was assigned to find out about a missing person in the remote
-and strange land of of Froutopia, a country populated by fruits that
-can talk.</p>
+assigned to find out about a missing person case in the remote and strange
+land of &#8220;Froutopia&#8221;, a country populated by large fruits that can talk.</p>
 <p>Key aims of Pikos are:</p>
 <blockquote>
 <div><ul class="simple">
@@ -63,6 +65,8 @@ can talk.</p>
 cProfile and line_profiler</li>
 <li>Provide effective memory monitoring throughout python.</li>
 <li>Be multi-platform.</li>
+<li>Provide real-time access to profile data and allow live analysis
+while the application is running.</li>
 </ul>
 </div></blockquote>
 <div class="section" id="repository">
@@ -70,9 +74,25 @@ cProfile and line_profiler</li>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>The package requires a recent version of psutil (&gt;=0.4.1).</p>
-<blockquote>
-<div>python setup.py install</div></blockquote>
+<p>The package requires a recent version of psutil (&gt;=0.4.1):</p>
+<div class="highlight-python"><pre>python setup.py install</pre>
+</div>
+<p>To build with the real-time fork of cProfile please provide the
+<cite>&#8211;with-real-time-lsprof</cite> before any setup command:</p>
+<div class="highlight-python"><pre>python setup.py --with-real-time-lsprof install</pre>
+</div>
+<p>You will need a build of libzmq to compile and link against. If the needed files
+are not available at system default locations, they will need to be manually
+provided to the <tt class="docutils literal"><span class="pre">build_ext</span></tt> command:</p>
+<div class="highlight-python"><pre>python setup.py --with-real-time-lsprof build_ext -I &lt;include directory for zmq&gt; -L &lt;libary directory for zmq&gt;
+python setup.py --with-real-time-lsprof install</pre>
+</div>
+<p>or in one line as:</p>
+<div class="highlight-python"><pre>python setup.py --with-real-time-lsprof build_ext -I &lt;include directory for zmq&gt; -L &lt;library directory for zmq&gt; install</pre>
+</div>
+<p>Finally to run the test suite please give:</p>
+<div class="highlight-python"><pre>python setup.py test</pre>
+</div>
 <p>Optional packages of external profilers:</p>
 <ul class="simple">
 <li>yappi (&gt;=0.62),  <a class="reference external" href="http://code.google.com/p/yappi/">http://code.google.com/p/yappi/</a></li>
@@ -83,6 +103,8 @@ cProfile and line_profiler</li>
 <li>pyzmq (&gt;= 2.1.11) <a class="reference external" href="http://www.zeromq.org/bindings:python">http://www.zeromq.org/bindings:python</a></li>
 <li>traits (&gt;= 4.1.0) <a class="reference external" href="https://github.com/enthought/traits">https://github.com/enthought/traits</a></li>
 <li>traitsui (&gt;= 4.1.0) <a class="reference external" href="https://github.com/enthought/traitsui">https://github.com/enthought/traitsui</a></li>
+<li>pyface (&gt;= 4.1.0 <a class="reference external" href="https://github.com/enthought/pyface">https://github.com/enthought/pyface</a></li>
+<li>envisage (&gt;= 4.1.0 <a class="reference external" href="https://github.com/enthought/envisage">https://github.com/enthought/envisage</a></li>
 <li>chaco (&gt;= 4.1.0) <a class="reference external" href="https://github.com/enthought/chaco">https://github.com/enthought/chaco</a></li>
 <li>numpy (&gt;= 1.6.1) <a class="reference external" href="http://numpy.scipy.org">http://numpy.scipy.org</a></li>
 </ul>
@@ -97,6 +119,16 @@ cProfile and line_profiler</li>
 <li class="toctree-l2"><a class="reference internal" href="reference.html#recorders">Recorders</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference.html#filters">Filters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference.html#records">Records</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="live.html">pikos.live Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.main"><tt class="docutils literal"><span class="pre">main</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.pikos_application"><tt class="docutils literal"><span class="pre">pikos_application</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.pikos_plugin"><tt class="docutils literal"><span class="pre">pikos_plugin</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.pikos_task"><tt class="docutils literal"><span class="pre">pikos_task</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.utils"><tt class="docutils literal"><span class="pre">utils</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.zmq_provider"><tt class="docutils literal"><span class="pre">zmq_provider</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#subpackages">Subpackages</a></li>
 </ul>
 </li>
 </ul>
@@ -162,6 +194,9 @@ cProfile and line_profiler</li>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="reference.html" title="Library Reference"
              >next</a> |</li>

@@ -38,6 +38,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="filters.html" title="filters"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -175,7 +178,7 @@ accept data.</td>
 <dl class="method">
 <dt id="pikos.recorders.csv_recorder.CSVRecorder.record">
 <tt class="descname">record</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="_modules/pikos/recorders/csv_recorder.html#CSVRecorder.record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.recorders.csv_recorder.CSVRecorder.record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rerord the data entry when the filter function returns True.</p>
+<dd><p>Record the data entry when the filter function returns True.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -276,7 +279,7 @@ to be recorded.</td>
 <hr class="docutils" />
 <dl class="class">
 <dt id="pikos.recorders.text_stream_recorder.TextStreamRecorder">
-<em class="property">class </em><tt class="descclassname">pikos.recorders.text_stream_recorder.</tt><tt class="descname">TextStreamRecorder</tt><big>(</big><em>text_stream</em>, <em>filter_=None</em>, <em>formated=False</em>, <em>auto_flush=False</em><big>)</big><a class="reference internal" href="_modules/pikos/recorders/text_stream_recorder.html#TextStreamRecorder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.recorders.text_stream_recorder.TextStreamRecorder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pikos.recorders.text_stream_recorder.</tt><tt class="descname">TextStreamRecorder</tt><big>(</big><em>text_stream</em>, <em>filter_=None</em>, <em>formatted=False</em>, <em>auto_flush=False</em><big>)</big><a class="reference internal" href="_modules/pikos/recorders/text_stream_recorder.html#TextStreamRecorder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.recorders.text_stream_recorder.TextStreamRecorder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pikos.recorders.abstract_recorder.AbstractRecorder" title="pikos.recorders.abstract_recorder.AbstractRecorder"><tt class="xref py py-class docutils literal"><span class="pre">pikos.recorders.abstract_recorder.AbstractRecorder</span></tt></a></p>
 <p>The TextStreamRecorder is simple recorder that formats and writes the
 records directly to a stream.</p>
@@ -284,8 +287,8 @@ records directly to a stream.</p>
 <dl class="attribute">
 <dt id="TextStreamRecorder._stream">
 <tt class="descname">_stream</tt><em class="property"> = TextIOBase</em><a class="headerlink" href="#TextStreamRecorder._stream" title="Permalink to this definition">¶</a></dt>
-<dd><p>A text stream what supports the TextIOBase interface. The Recorder will
-write the values as a single line.</p>
+<dd><p>A text stream what supports the TextIOBase interface. The Recorder
+will write the values as a single line.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -293,15 +296,15 @@ write the values as a single line.</p>
 <tt class="descname">_filter</tt><em class="property"> = callable</em><a class="headerlink" href="#TextStreamRecorder._filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to check if the set <cite>record</cite> should be <cite>recorded</cite>. The function
 accepts a tuple of the <cite>record</cite> values and return True is the input
-sould be recored.</p>
+should be recorded.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="TextStreamRecorder._template">
 <tt class="descname">_template</tt><em class="property"> = str</em><a class="headerlink" href="#TextStreamRecorder._template" title="Permalink to this definition">¶</a></dt>
-<dd><p>A string (using the <cite>Format Specification Mini-Language</cite>) to format the
-set of values in a line. It is constructed when the <cite>prepare</cite> method is
-called.</p>
+<dd><p>A string (using the <cite>Format Specification Mini-Language</cite>) to format
+the set of values in a line. It is constructed when the <cite>prepare</cite>
+method is called.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -314,12 +317,12 @@ record process.</p>
 <dl class="attribute">
 <dt id="TextStreamRecorder._ready">
 <tt class="descname">_ready</tt><em class="property"> = bool</em><a class="headerlink" href="#TextStreamRecorder._ready" title="Permalink to this definition">¶</a></dt>
-<dd><p>Singify that the Recorder is ready to accept data.</p>
+<dd><p>Signify that the Recorder is ready to accept data.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pikos.recorders.text_stream_recorder.TextStreamRecorder.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>text_stream</em>, <em>filter_=None</em>, <em>formated=False</em>, <em>auto_flush=False</em><big>)</big><a class="reference internal" href="_modules/pikos/recorders/text_stream_recorder.html#TextStreamRecorder.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.recorders.text_stream_recorder.TextStreamRecorder.__init__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__init__</tt><big>(</big><em>text_stream</em>, <em>filter_=None</em>, <em>formatted=False</em>, <em>auto_flush=False</em><big>)</big><a class="reference internal" href="_modules/pikos/recorders/text_stream_recorder.html#TextStreamRecorder.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.recorders.text_stream_recorder.TextStreamRecorder.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class initialization.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -329,7 +332,7 @@ record process.</p>
 <li><strong>text_stream</strong> (<em>TextIOBase</em>) &#8211; A text stream what supports the TextIOBase interface.</li>
 <li><strong>filter</strong> (<em>callable</em>) &#8211; A callable function that accepts a data tuple and returns True
 if the input sould be recorded.</li>
-<li><strong>formated</strong> (<em>Bool</em>) &#8211; Use the predefined formating in the records. Default value is
+<li><strong>formatted</strong> (<em>Bool</em>) &#8211; Use the predefined formatting in the records. Default value is
 false.</li>
 <li><strong>auto_flush</strong> (<em>Bool</em>) &#8211; When set the stream buffer is always flushed after each record
 process. Default value is False.</li>
@@ -348,8 +351,8 @@ process. Default value is False.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>NamedTuple</em>) &#8211; An example data record to prepare the recorder and write the header
-to the stream</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>NamedTuple</em>) &#8211; An example data record to prepare the recorder and write the
+header to the stream</td>
 </tr>
 </tbody>
 </table>
@@ -503,6 +506,9 @@ if the input sould be recorded.</td>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="filters.html" title="filters"
              >next</a> |</li>

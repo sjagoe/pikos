@@ -9,6 +9,7 @@ Contents
    :maxdepth: 2
 
    reference
+   live
 
 Indices and tables
 ==================

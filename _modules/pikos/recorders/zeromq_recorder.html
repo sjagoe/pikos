@@ -35,6 +35,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -56,13 +59,15 @@
 <span class="c">#  All rights reserved.</span>
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="kn">import</span> <span class="nn">cPickle</span> <span class="kn">as</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">zmq</span>
 
 <span class="kn">from</span> <span class="nn">pikos.recorders.abstract_recorder</span> <span class="kn">import</span> <span class="n">AbstractRecorder</span>
 
 
-<span class="k">class</span> <span class="nc">RecordingStopped</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span> <span class="k">pass</span>
+<span class="k">class</span> <span class="nc">RecordingStopped</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
 
 
 <div class="viewcode-block" id="ZeroMQRecorder"><a class="viewcode-back" href="../../../recorders.html#pikos.recorders.zeromq_recorder.ZeroMQRecorder">[docs]</a><span class="k">class</span> <span class="nc">ZeroMQRecorder</span><span class="p">(</span><span class="n">AbstractRecorder</span><span class="p">):</span>
@@ -98,8 +103,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s">&#39;tcp://{0}:{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">zmq_host</span><span class="p">,</span> <span class="n">zmq_port</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">wait_for_ready</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_socket</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">REQ</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s">&#39;tcp://{0}:{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">zmq_host</span><span class="p">,</span> <span class="n">zmq_port</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_socket</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&#39;tcp://{0}:{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">zmq_host</span><span class="p">,</span> <span class="n">zmq_port</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_socket</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">filter_</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">filter_</span>
@@ -109,8 +114,10 @@
         <span class="sd">&quot;&quot;&quot; Write the header in the csv file the first time it is called. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span><span class="p">:</span>
             <span class="n">ready</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">handshake_message</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="s">&quot;Memory&quot;</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">_fields</span><span class="p">))</span>
             <span class="k">while</span> <span class="ow">not</span> <span class="n">ready</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_socket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">_fields</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_socket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">handshake_message</span><span class="p">)</span>
                 <span class="n">ready</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prepare_socket</span><span class="o">.</span><span class="n">recv</span><span class="p">())</span> <span class="ow">is</span> <span class="bp">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -130,7 +137,8 @@
 <div class="viewcode-block" id="ZeroMQRecorder.record"><a class="viewcode-back" href="../../../recorders.html#pikos.recorders.zeromq_recorder.ZeroMQRecorder.record">[docs]</a>    <span class="k">def</span> <span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Rerord entry onlty when the filter function returns True. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">record</span><span class="p">))</span></div></div>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">record</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">message</span><span class="p">))</span></div></div>
 </pre></div>
 
           </div>
@@ -161,6 +169,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>

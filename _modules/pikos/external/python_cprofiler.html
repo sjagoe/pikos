@@ -35,6 +35,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,8 +62,10 @@
 <span class="kn">import</span> <span class="nn">cProfile</span>
 
 <span class="kn">from</span> <span class="nn">pikos._internal.keep_track</span> <span class="kn">import</span> <span class="n">KeepTrack</span>
+<span class="kn">from</span> <span class="nn">pikos.monitors.monitor</span> <span class="kn">import</span> <span class="n">Monitor</span>
 
-<div class="viewcode-block" id="PythonCProfiler"><a class="viewcode-back" href="../../../external.html#pikos.external.python_cprofiler.PythonCProfiler">[docs]</a><span class="k">class</span> <span class="nc">PythonCProfiler</span><span class="p">(</span><span class="n">cProfile</span><span class="o">.</span><span class="n">Profile</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PythonCProfiler"><a class="viewcode-back" href="../../../external.html#pikos.external.python_cprofiler.PythonCProfiler">[docs]</a><span class="k">class</span> <span class="nc">PythonCProfiler</span><span class="p">(</span><span class="n">cProfile</span><span class="o">.</span><span class="n">Profile</span><span class="p">,</span> <span class="n">Monitor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The normal python :class:`~cProfiler.Profile` subclassed and adapted to</span>
 <span class="sd">    work with the pikos Monitor decorator.</span>
 
@@ -122,6 +127,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>

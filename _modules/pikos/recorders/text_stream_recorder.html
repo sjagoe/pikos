@@ -35,6 +35,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,6 +62,7 @@
 
 <span class="kn">from</span> <span class="nn">pikos.recorders.abstract_recorder</span> <span class="kn">import</span> <span class="n">AbstractRecorder</span><span class="p">,</span> <span class="n">RecorderError</span>
 
+
 <div class="viewcode-block" id="TextStreamRecorder"><a class="viewcode-back" href="../../../recorders.html#pikos.recorders.text_stream_recorder.TextStreamRecorder">[docs]</a><span class="k">class</span> <span class="nc">TextStreamRecorder</span><span class="p">(</span><span class="n">AbstractRecorder</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The TextStreamRecorder is simple recorder that formats and writes the</span>
 <span class="sd">    records directly to a stream.</span>
@@ -67,29 +71,28 @@
 <span class="sd">    -------</span>
 
 <span class="sd">    _stream : TextIOBase</span>
-<span class="sd">        A text stream what supports the TextIOBase interface. The Recorder will</span>
-<span class="sd">        write the values as a single line.</span>
+<span class="sd">        A text stream what supports the TextIOBase interface. The Recorder</span>
+<span class="sd">        will write the values as a single line.</span>
 
 <span class="sd">    _filter : callable</span>
 <span class="sd">        Used to check if the set `record` should be `recorded`. The function</span>
 <span class="sd">        accepts a tuple of the `record` values and return True is the input</span>
-<span class="sd">        sould be recored.</span>
+<span class="sd">        should be recorded.</span>
 
 <span class="sd">    _template : str</span>
-<span class="sd">        A string (using the `Format Specification Mini-Language`) to format the</span>
-<span class="sd">        set of values in a line. It is constructed when the `prepare` method is</span>
-<span class="sd">        called.</span>
+<span class="sd">        A string (using the `Format Specification Mini-Language`) to format</span>
+<span class="sd">        the set of values in a line. It is constructed when the `prepare`</span>
+<span class="sd">        method is called.</span>
 
 <span class="sd">    _auto_flush : bool</span>
 <span class="sd">        A bool to enable/disable automatic flushing of the string after each</span>
 <span class="sd">        record process.</span>
 
 <span class="sd">    _ready : bool</span>
-<span class="sd">        Singify that the Recorder is ready to accept data.</span>
+<span class="sd">        Signify that the Recorder is ready to accept data.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="TextStreamRecorder.__init__"><a class="viewcode-back" href="../../../recorders.html#pikos.recorders.text_stream_recorder.TextStreamRecorder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_stream</span><span class="p">,</span> <span class="n">filter_</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">formated</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+<div class="viewcode-block" id="TextStreamRecorder.__init__"><a class="viewcode-back" href="../../../recorders.html#pikos.recorders.text_stream_recorder.TextStreamRecorder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_stream</span><span class="p">,</span> <span class="n">filter_</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">formatted</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                  <span class="n">auto_flush</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Class initialization.</span>
 
@@ -102,8 +105,8 @@
 <span class="sd">            A callable function that accepts a data tuple and returns True</span>
 <span class="sd">            if the input sould be recorded.</span>
 
-<span class="sd">        formated : Bool</span>
-<span class="sd">            Use the predefined formating in the records. Default value is</span>
+<span class="sd">        formatted : Bool</span>
+<span class="sd">            Use the predefined formatting in the records. Default value is</span>
 <span class="sd">            false.</span>
 
 <span class="sd">        auto_flush : Bool</span>
@@ -113,7 +116,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">filter_</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">filter_</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span> <span class="o">=</span> <span class="n">text_stream</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_formated</span> <span class="o">=</span> <span class="n">formated</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_formatted</span> <span class="o">=</span> <span class="n">formatted</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_auto_flush</span> <span class="o">=</span> <span class="n">auto_flush</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span> <span class="o">=</span> <span class="bp">False</span>
 </div>
@@ -123,8 +126,8 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        data : NamedTuple</span>
-<span class="sd">            An example data record to prepare the recorder and write the header</span>
-<span class="sd">            to the stream</span>
+<span class="sd">            An example data record to prepare the recorder and write the</span>
+<span class="sd">            header to the stream</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span><span class="p">:</span>
@@ -190,10 +193,11 @@
 <span class="sd">            The class of the data entry record.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formated</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatted</span><span class="p">:</span>
             <span class="n">header</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">header</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">header</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+            <span class="n">header</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
 
         <span class="n">separator</span> <span class="o">=</span> <span class="s">&#39;-&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
@@ -215,7 +219,7 @@
 <span class="sd">            The string representation of the data entry.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formated</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatted</span><span class="p">:</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">line</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">line</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
@@ -250,6 +254,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>

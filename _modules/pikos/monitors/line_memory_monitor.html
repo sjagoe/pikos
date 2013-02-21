@@ -35,6 +35,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -58,11 +61,13 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
 <span class="kn">import</span> <span class="nn">psutil</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
-<span class="kn">from</span> <span class="nn">pikos._internal.trace_functions</span> <span class="kn">import</span> <span class="n">TraceFunctions</span>
+<span class="kn">from</span> <span class="nn">pikos._internal.trace_function_manager</span> <span class="kn">import</span> <span class="n">TraceFunctionManager</span>
 <span class="kn">from</span> <span class="nn">pikos._internal.keep_track</span> <span class="kn">import</span> <span class="n">KeepTrack</span>
+<span class="kn">from</span> <span class="nn">pikos.monitors.monitor</span> <span class="kn">import</span> <span class="n">Monitor</span>
 
 
 <span class="n">LINE_MEMORY_RECORD</span> <span class="o">=</span> <span class="p">(</span>
@@ -79,16 +84,16 @@
 
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="LineMemoryRecord.header"><a class="viewcode-back" href="../../../monitors.html#pikos.monitors.line_memory_monitor.LineMemoryRecord.header">[docs]</a>    <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Return a formated header line &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Return a formatted header line &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">LINE_MEMORY_HEADER_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">cls</span><span class="o">.</span><span class="n">_fields</span><span class="p">,</span>
                                                <span class="n">newline</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="LineMemoryRecord.line"><a class="viewcode-back" href="../../../monitors.html#pikos.monitors.line_memory_monitor.LineMemoryRecord.line">[docs]</a>    <span class="k">def</span> <span class="nf">line</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Return a formated header line &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Return a formatted header line &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">LINE_MEMORY_RECORD_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="LineMemoryMonitor"><a class="viewcode-back" href="../../../monitors.html#pikos.monitors.line_memory_monitor.LineMemoryMonitor">[docs]</a><span class="k">class</span> <span class="nc">LineMemoryMonitor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="LineMemoryMonitor"><a class="viewcode-back" href="../../../monitors.html#pikos.monitors.line_memory_monitor.LineMemoryMonitor">[docs]</a><span class="k">class</span> <span class="nc">LineMemoryMonitor</span><span class="p">(</span><span class="n">Monitor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Record process memory on python function events.</span>
 
 <span class="sd">    The class hooks on the settrace function to receive trace events and</span>
@@ -103,7 +108,7 @@
 
 <span class="sd">    _tracer : object</span>
 <span class="sd">        An instance of the</span>
-<span class="sd">        :class:`~pikos._internal.trace_functions.TraceFunctions` utility</span>
+<span class="sd">        :class:`~pikos._internal.trace_functions.TraceFunctionManager` utility</span>
 <span class="sd">        class that is used to set and unset the settrace function as required</span>
 <span class="sd">        by the monitor.</span>
 
@@ -128,13 +133,13 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        recorder : object</span>
-<span class="sd">            A subclass of :class:`~pikos.recorders.AbstractRecorder` or a class</span>
-<span class="sd">            that implements the same interface to handle the values to be</span>
-<span class="sd">            recorded.</span>
+<span class="sd">            A subclass of :class:`~pikos.recorders.AbstractRecorder` or a</span>
+<span class="sd">            class that implements the same interface to handle the values</span>
+<span class="sd">            to be recorded.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span> <span class="o">=</span> <span class="n">recorder</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tracer</span> <span class="o">=</span> <span class="n">TraceFunctions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tracer</span> <span class="o">=</span> <span class="n">TraceFunctionManager</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_call_tracker</span> <span class="o">=</span> <span class="n">KeepTrack</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_process</span> <span class="o">=</span> <span class="bp">None</span>
@@ -143,14 +148,14 @@
         <span class="sd">&quot;&quot;&quot; Enter the monitor context.</span>
 
 <span class="sd">        The first time the method is called (the context is entered) it will</span>
-<span class="sd">        initialze the Process class, set the settrace hook and initialize the</span>
-<span class="sd">        recorder.</span>
+<span class="sd">        initialize the Process class, set the settrace hook and initialize</span>
+<span class="sd">        the recorder.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_tracker</span><span class="p">(</span><span class="s">&#39;ping&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_process</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">LineMemoryRecord</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_tracer</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_line_event</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tracer</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_line_event</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="LineMemoryMonitor.__exit__"><a class="viewcode-back" href="../../../monitors.html#pikos.monitors.line_memory_monitor.LineMemoryMonitor.__exit__">[docs]</a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Exit the monitor context.</span>
@@ -161,7 +166,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_tracker</span><span class="p">(</span><span class="s">&#39;pong&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_tracer</span><span class="o">.</span><span class="n">unset</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tracer</span><span class="o">.</span><span class="n">recover</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="LineMemoryMonitor.on_line_event"><a class="viewcode-back" href="../../../monitors.html#pikos.monitors.line_memory_monitor.LineMemoryMonitor.on_line_event">[docs]</a>    <span class="k">def</span> <span class="nf">on_line_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">why</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
@@ -179,8 +184,9 @@
                 <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;&lt;compiled string&gt;&#39;</span><span class="p">]</span>
-            <span class="n">record</span> <span class="o">=</span> <span class="n">LineMemoryRecord</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">usage</span><span class="o">.</span><span class="n">rss</span><span class="p">,</span>
-                                      <span class="n">usage</span><span class="o">.</span><span class="n">vms</span><span class="p">,</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="n">LineMemoryRecord</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span>
+                                      <span class="n">usage</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">usage</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                      <span class="n">filename</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_recorder</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_line_event</span></div></div>
@@ -214,6 +220,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>

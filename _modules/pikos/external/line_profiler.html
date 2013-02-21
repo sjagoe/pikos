@@ -35,6 +35,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -58,8 +61,10 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">line_profiler</span> <span class="kn">import</span> <span class="n">CLineProfiler</span><span class="p">,</span> <span class="n">show_text</span>
 
+<span class="kn">from</span> <span class="nn">pikos.monitors.monitor</span> <span class="kn">import</span> <span class="n">Monitor</span>
 
-<div class="viewcode-block" id="LineProfiler"><a class="viewcode-back" href="../../../external.html#pikos.external.line_profiler.LineProfiler">[docs]</a><span class="k">class</span> <span class="nc">LineProfiler</span><span class="p">(</span><span class="n">CLineProfiler</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LineProfiler"><a class="viewcode-back" href="../../../external.html#pikos.external.line_profiler.LineProfiler">[docs]</a><span class="k">class</span> <span class="nc">LineProfiler</span><span class="p">(</span><span class="n">CLineProfiler</span><span class="p">,</span> <span class="n">Monitor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A class wrapper for CLineProfiler.</span>
 
 <span class="sd">    The CLineProfiler is already a context manager so it is compatible with</span>
@@ -79,8 +84,8 @@
 <div class="viewcode-block" id="LineProfiler.print_stats"><a class="viewcode-back" href="../../../external.html#pikos.external.line_profiler.LineProfiler.print_stats">[docs]</a>    <span class="k">def</span> <span class="nf">print_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Write out the results of the timing so far. &quot;&quot;&quot;</span>
         <span class="n">stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
-        <span class="n">show_text</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">timings</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
-</pre></div></div></div>
+        <span class="n">show_text</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">timings</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span></div></div>
+</pre></div>
 
           </div>
         </div>
@@ -110,6 +115,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>

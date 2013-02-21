@@ -37,6 +37,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="monitors.html" title="Monitors"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -64,7 +67,7 @@ through the <a class="reference internal" href="#recorders">recorders</a> and co
 <h2>Monitor Decorator<a class="headerlink" href="#monitor-decorator" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pikos.monitor.Monitor">
-<em class="property">class </em><tt class="descclassname">pikos.monitor.</tt><tt class="descname">Monitor</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pikos.monitor.</tt><tt class="descname">Monitor</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#pikos.monitor.Monitor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>The monitor class decorator.</p>
 <p>This is the main entry point for all the monitors, inspectors, loggers and
@@ -109,7 +112,7 @@ functions, methods and generators.</p>
 </div>
 <dl class="method">
 <dt id="pikos.monitor.Monitor.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor.__init__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__init__</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#pikos.monitor.Monitor.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class initialization.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -124,7 +127,7 @@ function while it is executed.</td>
 
 <dl class="method">
 <dt id="pikos.monitor.Monitor.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>function</em><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor.__call__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__call__</tt><big>(</big><em>function</em><big>)</big><a class="headerlink" href="#pikos.monitor.Monitor.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap function for monitoring.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -147,7 +150,7 @@ context manager interface.</td>
 
 <dl class="method">
 <dt id="pikos.monitor.Monitor._wrap">
-<tt class="descname">_wrap</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor._wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor._wrap" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_wrap</tt><big>(</big><em>function</em><big>)</big><a class="headerlink" href="#pikos.monitor.Monitor._wrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap the callable.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -164,13 +167,13 @@ generator.</td>
 
 <dl class="method">
 <dt id="pikos.monitor.Monitor._wrap_function">
-<tt class="descname">_wrap_function</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor._wrap_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor._wrap_function" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_wrap_function</tt><big>(</big><em>function</em><big>)</big><a class="headerlink" href="#pikos.monitor.Monitor._wrap_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap a normal callable object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pikos.monitor.Monitor._wrap_generator">
-<tt class="descname">_wrap_generator</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/monitor.html#Monitor._wrap_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.monitor.Monitor._wrap_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_wrap_generator</tt><big>(</big><em>function</em><big>)</big><a class="headerlink" href="#pikos.monitor.Monitor._wrap_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap a generator function.</p>
 </dd></dl>
 
@@ -181,7 +184,7 @@ generator.</td>
 <h2>Monitors<a class="headerlink" href="#monitors" title="Permalink to this headline">¶</a></h2>
 <p>A monitor is a context manager object. The class is initialized with a
 recorder class. Each instance of a monitor class can be reused, the
-<tt class="docutils literal"><span class="pre">__enter__</span></tt> method makes sure that the code that is executed insider
+<tt class="docutils literal"><span class="pre">__enter__</span></tt> method makes sure that the code that is executed inside
 the context will be monitored and that the associated recorder has
 been initialized. During the execution of the decorated function The
 information is collected into a name tuple and the tuple is forwarded
@@ -203,6 +206,18 @@ to recorder that has been associated with the current monitor.</p>
 <td>Record process memory on python function events.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="monitors.html#pikos.monitors.line_memory_monitor.LineMemoryMonitor" title="pikos.monitors.line_memory_monitor.LineMemoryMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.line_memory_monitor.LineMemoryMonitor</span></tt></a>(...)</td>
+<td>Record process memory on python function events.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.focused_function_monitor.FocusedFunctionMonitor</span></tt>(...)</td>
+<td>Record python function events.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="monitors.html#pikos.monitors.focused_line_monitor.FocusedLineMonitor" title="pikos.monitors.focused_line_monitor.FocusedLineMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.focused_line_monitor.FocusedLineMonitor</span></tt></a>(...)</td>
+<td>Record python line events.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="monitors.html#pikos.monitors.focused_function_memory_monitor.FocusedFunctionMemoryMonitor" title="pikos.monitors.focused_function_memory_monitor.FocusedFunctionMemoryMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.focused_function_memory_monitor.FocusedFunctionMemoryMonitor</span></tt></a>(...)</td>
+<td>Record process memory on python function events.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="monitors.html#pikos.monitors.focused_line_memory_monitor.FocusedLineMemoryMonitor" title="pikos.monitors.focused_line_memory_monitor.FocusedLineMemoryMonitor"><tt class="xref py py-obj docutils literal"><span class="pre">pikos.monitors.focused_line_memory_monitor.FocusedLineMemoryMonitor</span></tt></a>(...)</td>
 <td>Record process memory on python function events.</td>
 </tr>
 </tbody>
@@ -230,7 +245,7 @@ to recorder that has been associated with the current monitor.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">These profilers are experimental and not yet integrated fully
-in the pikos framework. Please check individual documentation for
+with the pikos framework. Please check individual documentation for
 more information.</p>
 </div>
 </div>
@@ -295,13 +310,13 @@ up monitoring only of the desired code.</p>
 <div class="section" id="records">
 <h2>Records<a class="headerlink" href="#records" title="Permalink to this headline">¶</a></h2>
 <p>Each monitor uses a specific record. A record is a subclass of named
-tuple augmented with two methods, <tt class="docutils literal"><span class="pre">header</span></tt>, <tt class="docutils literal"><span class="pre">line</span></tt> that can
-optionally used for formating by the recorders.</p>
+tuple augmented with two methods, <tt class="docutils literal"><span class="pre">header</span></tt>, <tt class="docutils literal"><span class="pre">line</span></tt> that can be
+optionally used to format the output.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Currently only the
 <tt class="xref py py-class docutils literal"><span class="pre">TextStreamRecorder</span></tt>
-can take advantage of the additional formating functionality.</p>
+can take advantage of the additional format information.</p>
 </div>
 <p>The monitor records available are:</p>
 <table border="1" class="longtable docutils">
@@ -387,6 +402,9 @@ can take advantage of the additional formating functionality.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="monitors.html" title="Monitors"
              >next</a> |</li>

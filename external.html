@@ -27,6 +27,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="pikos  documentation" href="index.html" />
     <link rel="up" title="Library Reference" href="reference.html" />
+    <link rel="next" title="pikos.live Package" href="live.html" />
     <link rel="prev" title="filters" href="filters.html" /> 
   </head>
   <body>
@@ -36,6 +37,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="live.html" title="pikos.live Package"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="filters.html" title="filters"
              accesskey="P">previous</a> |</li>
@@ -54,7 +61,7 @@
 <dl class="class">
 <dt id="pikos.external.python_cprofiler.PythonCProfiler">
 <em class="property">class </em><tt class="descclassname">pikos.external.python_cprofiler.</tt><tt class="descname">PythonCProfiler</tt><big>(</big><em>*args</em>, <em>**kwrds</em><big>)</big><a class="reference internal" href="_modules/pikos/external/python_cprofiler.html#PythonCProfiler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.python_cprofiler.PythonCProfiler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">cProfile.Profile</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">cProfile.Profile</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">pikos.monitors.monitor.Monitor</span></tt></p>
 <p>The normal python <tt class="xref py py-class docutils literal"><span class="pre">Profile</span></tt> subclassed and adapted to
 work with the pikos Monitor decorator.</p>
 <p>The class fully supports the <tt class="docutils literal"><span class="pre">Monitor</span></tt> decorator for functions and
@@ -72,7 +79,7 @@ appear in the list of functions that have been called.</p>
 <dl class="class">
 <dt id="pikos.external.yappi_profiler.YappiProfiler">
 <em class="property">class </em><tt class="descclassname">pikos.external.yappi_profiler.</tt><tt class="descname">YappiProfiler</tt><big>(</big><em>recorder=None</em>, <em>builtins=False</em><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pikos.monitors.monitor.Monitor</span></tt></p>
 <p>A pikos compatible profiler class using the yappi library.</p>
 <p class="rubric">Private</p>
 <dl class="attribute">
@@ -140,7 +147,7 @@ interface (<a class="reference external" href="http://code.google.com/p/yappi/">
 <dl class="class">
 <dt id="pikos.external.line_profiler.LineProfiler">
 <em class="property">class </em><tt class="descclassname">pikos.external.line_profiler.</tt><tt class="descname">LineProfiler</tt><a class="reference internal" href="_modules/pikos/external/line_profiler.html#LineProfiler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.line_profiler.LineProfiler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">_line_profiler.LineProfiler</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">_line_profiler.LineProfiler</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">pikos.monitors.monitor.Monitor</span></tt></p>
 <p>A class wrapper for CLineProfiler.</p>
 <p>The CLineProfiler is already a context manager so it is compatible with
 the pikos Monitor class for functions. However it does not support
@@ -172,6 +179,9 @@ on the line_profiler.</p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="filters.html"
                         title="previous chapter">filters</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="live.html"
+                        title="next chapter">pikos.live Package</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/external.txt"
@@ -200,6 +210,12 @@ on the line_profiler.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="live.html" title="pikos.live Package"
+             >next</a> |</li>
         <li class="right" >
           <a href="filters.html" title="filters"
              >previous</a> |</li>
