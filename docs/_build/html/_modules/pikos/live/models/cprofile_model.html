@@ -1,0 +1,170 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pikos.live.models.cprofile_model &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pikos.live.models.cprofile_model</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Enum</span>
+
+<span class="kn">from</span> <span class="nn">pikos.live.models.base_model</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="CProfileModel"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.cprofile_model.CProfileModel">[docs]</a><span class="k">class</span> <span class="nc">CProfileModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">_data_items</span> <span class="o">=</span> <span class="n">Dict</span>
+    <span class="n">data_items</span> <span class="o">=</span> <span class="n">List</span>
+    <span class="n">plot_keys</span> <span class="o">=</span> <span class="n">List</span>
+    <span class="n">selected_index</span> <span class="o">=</span> <span class="n">Any</span>
+    <span class="n">selected_item</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;selected_index&#39;</span><span class="p">)</span>
+
+    <span class="n">index_item</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="s">&#39;fields&#39;</span><span class="p">)</span>
+
+    <span class="c"># def _TRANSFORMS_default(self):</span>
+    <span class="c">#     return {</span>
+    <span class="c">#         &#39;RSS&#39;: 1./(1024**2),</span>
+    <span class="c">#         &#39;VMS&#39;: 1./(1024**2),</span>
+    <span class="c">#         }</span>
+
+    <span class="c"># def _UNITS_default(self):</span>
+    <span class="c">#     return {</span>
+    <span class="c">#         &#39;RSS&#39;: &#39;MB&#39;,</span>
+    <span class="c">#         &#39;VMS&#39;: &#39;MB&#39;,</span>
+    <span class="c">#         }</span>
+
+<div class="viewcode-block" id="CProfileModel._get_selected_item"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.cprofile_model.CProfileModel._get_selected_item">[docs]</a>    <span class="k">def</span> <span class="nf">_get_selected_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[]</span>
+        <span class="c"># if self.selected_index is not None:</span>
+        <span class="c">#     values = self.data_items[self.selected_index]</span>
+        <span class="c">#     return [Details(f, v) for f, v in zip(self.fields, values)]</span>
+        <span class="c"># return []</span>
+</div>
+<div class="viewcode-block" id="CProfileModel._update_index"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.cprofile_model.CProfileModel._update_index">[docs]</a>    <span class="k">def</span> <span class="nf">_update_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">data_items</span><span class="p">)[</span><span class="n">index</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="CProfileModel._update_value"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.cprofile_model.CProfileModel._update_value">[docs]</a>    <span class="k">def</span> <span class="nf">_update_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CProfileModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_update_value</span><span class="p">()</span>
+        <span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_data</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_data</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">data_len</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="CProfileModel._rebuild_data"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.cprofile_model.CProfileModel._rebuild_data">[docs]</a>    <span class="k">def</span> <span class="nf">_rebuild_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sort_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_items</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                                 <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="n">sort_index</span><span class="p">),</span>
+                                 <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">data_items</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plottable_item_indices</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_data</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]))</span>
+</div>
+<div class="viewcode-block" id="CProfileModel.sort_by_current_value"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.cprofile_model.CProfileModel.sort_by_current_value">[docs]</a>    <span class="k">def</span> <span class="nf">sort_by_current_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rebuild_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_index</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_value</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CProfileModel.add_data"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.cprofile_model.CProfileModel.add_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">records</span><span class="p">):</span>
+            <span class="n">id_</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">id_</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_items</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plottable_item_indices</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_plottable_item_indices</span><span class="p">(</span><span class="n">records</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rebuild_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_index</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_value</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updated</span> <span class="o">=</span> <span class="bp">True</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

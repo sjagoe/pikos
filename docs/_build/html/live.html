@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pikos.live Package &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="index.html" />
+    <link rel="next" title="models Package" href="live.models.html" />
+    <link rel="prev" title="External monitors" href="external.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="live.models.html" title="models Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="external.html" title="External monitors"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pikos  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pikos-live-package">
+<h1>pikos.live Package<a class="headerlink" href="#pikos-live-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pikos.live.main">
+<span id="main-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">main</span></tt> Module<a class="headerlink" href="#module-pikos.live.main" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pikos.live.main.main">
+<tt class="descclassname">pikos.live.main.</tt><tt class="descname">main</tt><big>(</big><em>argv</em><big>)</big><a class="reference internal" href="_modules/pikos/live/main.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.main.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.pikos_application">
+<span id="pikos-application-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">pikos_application</span></tt> Module<a class="headerlink" href="#module-pikos.live.pikos_application" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.pikos_application.PikosApplication">
+<em class="property">class </em><tt class="descclassname">pikos.live.pikos_application.</tt><tt class="descname">PikosApplication</tt><big>(</big><em>plugins=None</em>, <em>**traits</em><big>)</big><a class="reference internal" href="_modules/pikos/live/pikos_application.html#PikosApplication"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.pikos_application.PikosApplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">envisage.ui.tasks.tasks_application.TasksApplication</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.pikos_application.PikosApplication._default_layout_default">
+<tt class="descname">_default_layout_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/pikos_application.html#PikosApplication._default_layout_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.pikos_application.PikosApplication._default_layout_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.pikos_plugin">
+<span id="pikos-plugin-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">pikos_plugin</span></tt> Module<a class="headerlink" href="#module-pikos.live.pikos_plugin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.pikos_plugin.PikosPlugin">
+<em class="property">class </em><tt class="descclassname">pikos.live.pikos_plugin.</tt><tt class="descname">PikosPlugin</tt><a class="reference internal" href="_modules/pikos/live/pikos_plugin.html#PikosPlugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.pikos_plugin.PikosPlugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">envisage.plugin.Plugin</span></tt></p>
+<p>The chaotic attractors plugin.</p>
+<dl class="attribute">
+<dt id="pikos.live.pikos_plugin.PikosPlugin.TASKS">
+<tt class="descname">TASKS</tt><em class="property"> = 'envisage.ui.tasks.tasks'</em><a class="headerlink" href="#pikos.live.pikos_plugin.PikosPlugin.TASKS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.pikos_plugin.PikosPlugin._tasks_default">
+<tt class="descname">_tasks_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/pikos_plugin.html#PikosPlugin._tasks_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.pikos_plugin.PikosPlugin._tasks_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.pikos_plugin.PikosPlugin.start">
+<tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/pikos_plugin.html#PikosPlugin.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.pikos_plugin.PikosPlugin.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.pikos_plugin.PikosPlugin.stop">
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/pikos_plugin.html#PikosPlugin.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.pikos_plugin.PikosPlugin.stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.pikos_task">
+<span id="pikos-task-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">pikos_task</span></tt> Module<a class="headerlink" href="#module-pikos.live.pikos_task" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.pikos_task.PikosTask">
+<em class="property">class </em><tt class="descclassname">pikos.live.pikos_task.</tt><tt class="descname">PikosTask</tt><a class="reference internal" href="_modules/pikos/live/pikos_task.html#PikosTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.pikos_task.PikosTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyface.tasks.task.Task</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.pikos_task.PikosTask.create_central_pane">
+<tt class="descname">create_central_pane</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/pikos_task.html#PikosTask.create_central_pane"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.pikos_task.PikosTask.create_central_pane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a plot pane with a list of models. Keep track of which model
+is active so that dock panes can introspect it.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.utils">
+<span id="utils-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">utils</span></tt> Module<a class="headerlink" href="#module-pikos.live.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pikos.live.utils.get_model_for_profile">
+<tt class="descclassname">pikos.live.utils.</tt><tt class="descname">get_model_for_profile</tt><big>(</big><em>profile</em><big>)</big><a class="reference internal" href="_modules/pikos/live/utils.html#get_model_for_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.utils.get_model_for_profile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pikos.live.utils.get_view_for_profile">
+<tt class="descclassname">pikos.live.utils.</tt><tt class="descname">get_view_for_profile</tt><big>(</big><em>profile</em><big>)</big><a class="reference internal" href="_modules/pikos/live/utils.html#get_view_for_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.utils.get_view_for_profile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.zmq_provider">
+<span id="zmq-provider-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">zmq_provider</span></tt> Module<a class="headerlink" href="#module-pikos.live.zmq_provider" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.zmq_provider.ZmqProvider">
+<em class="property">class </em><tt class="descclassname">pikos.live.zmq_provider.</tt><tt class="descname">ZmqProvider</tt><a class="reference internal" href="_modules/pikos/live/zmq_provider.html#ZmqProvider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.zmq_provider.ZmqProvider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.zmq_provider.ZmqProvider._get_handshake_string">
+<tt class="descname">_get_handshake_string</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/zmq_provider.html#ZmqProvider._get_handshake_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.zmq_provider.ZmqProvider._get_handshake_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.zmq_provider.ZmqProvider._get_data_string">
+<tt class="descname">_get_data_string</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/zmq_provider.html#ZmqProvider._get_data_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.zmq_provider.ZmqProvider._get_data_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.zmq_provider.ZmqProvider.start">
+<tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/zmq_provider.html#ZmqProvider.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.zmq_provider.ZmqProvider.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.zmq_provider.ZmqProvider.stop">
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/zmq_provider.html#ZmqProvider.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.zmq_provider.ZmqProvider.stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.zmq_provider.ZmqProvider._add_view">
+<tt class="descname">_add_view</tt><big>(</big><em>pid</em>, <em>profile</em>, <em>fields</em><big>)</big><a class="reference internal" href="_modules/pikos/live/zmq_provider.html#ZmqProvider._add_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.zmq_provider.ZmqProvider._add_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.zmq_provider.ZmqProvider._handle_data">
+<tt class="descname">_handle_data</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/zmq_provider.html#ZmqProvider._handle_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.zmq_provider.ZmqProvider._handle_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.zmq_provider.ZmqProvider._handle_connection">
+<tt class="descname">_handle_connection</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/zmq_provider.html#ZmqProvider._handle_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.zmq_provider.ZmqProvider._handle_connection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.zmq_provider.ZmqProvider._wait_for_data">
+<tt class="descname">_wait_for_data</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/zmq_provider.html#ZmqProvider._wait_for_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.zmq_provider.ZmqProvider._wait_for_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="live.models.html">models Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="live.models.html#module-pikos.live.models.base_model"><tt class="docutils literal"><span class="pre">base_model</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.models.html#module-pikos.live.models.cprofile_model"><tt class="docutils literal"><span class="pre">cprofile_model</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.models.html#module-pikos.live.models.memory_model"><tt class="docutils literal"><span class="pre">memory_model</span></tt> Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="live.ui.html">ui Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="live.ui.html#module-pikos.live.ui.barplot"><tt class="docutils literal"><span class="pre">barplot</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.ui.html#module-pikos.live.ui.base_view"><tt class="docutils literal"><span class="pre">base_view</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.ui.html#module-pikos.live.ui.cprofile_view"><tt class="docutils literal"><span class="pre">cprofile_view</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.ui.html#module-pikos.live.ui.memory_view"><tt class="docutils literal"><span class="pre">memory_view</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.ui.html#module-pikos.live.ui.pikos_task_pane"><tt class="docutils literal"><span class="pre">pikos_task_pane</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pikos.live Package</a><ul>
+<li><a class="reference internal" href="#module-pikos.live.main"><tt class="docutils literal"><span class="pre">main</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.pikos_application"><tt class="docutils literal"><span class="pre">pikos_application</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.pikos_plugin"><tt class="docutils literal"><span class="pre">pikos_plugin</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.pikos_task"><tt class="docutils literal"><span class="pre">pikos_task</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.utils"><tt class="docutils literal"><span class="pre">utils</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.zmq_provider"><tt class="docutils literal"><span class="pre">zmq_provider</span></tt> Module</a></li>
+<li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="external.html"
+                        title="previous chapter">External monitors</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="live.models.html"
+                        title="next chapter">models Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/live.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="live.models.html" title="models Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="external.html" title="External monitors"
+             >previous</a> |</li>
+        <li><a href="index.html">pikos  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

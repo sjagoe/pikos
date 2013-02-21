@@ -1,0 +1,221 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pikos.live.ui.memory_view &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pikos.live.ui.memory_view</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Bool</span>
+<span class="kn">from</span> <span class="nn">traitsui.api</span> <span class="kn">import</span> <span class="n">View</span><span class="p">,</span> <span class="n">Item</span><span class="p">,</span> <span class="n">UItem</span><span class="p">,</span> <span class="n">VGroup</span><span class="p">,</span> <span class="n">HGroup</span><span class="p">,</span> <span class="n">Spring</span><span class="p">,</span> \
+    <span class="n">TabularEditor</span><span class="p">,</span> <span class="n">HSplit</span><span class="p">,</span> <span class="n">Group</span>
+<span class="kn">from</span> <span class="nn">chaco.api</span> <span class="kn">import</span> <span class="n">ScatterInspectorOverlay</span>
+<span class="kn">from</span> <span class="nn">chaco.tools.api</span> <span class="kn">import</span> <span class="n">ZoomTool</span><span class="p">,</span> <span class="n">PanTool</span><span class="p">,</span> <span class="n">ScatterInspector</span>
+<span class="kn">from</span> <span class="nn">enable.component_editor</span> <span class="kn">import</span> <span class="n">ComponentEditor</span>
+
+<span class="kn">from</span> <span class="nn">pikos.live.ui.base_view</span> <span class="kn">import</span> <span class="n">BaseView</span><span class="p">,</span> <span class="n">DisableTrackingPlot</span><span class="p">,</span> \
+    <span class="n">DetailsAdapter</span>
+
+
+<div class="viewcode-block" id="MemoryView"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.memory_view.MemoryView">[docs]</a><span class="k">class</span> <span class="nc">MemoryView</span><span class="p">(</span><span class="n">BaseView</span><span class="p">):</span>
+
+    <span class="n">scatter</span> <span class="o">=</span> <span class="n">Any</span>
+
+    <span class="n">follow_plot</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">last_n_points</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="mi">100000</span><span class="p">)</span>
+
+    <span class="c"># Initialization</span>
+
+<div class="viewcode-block" id="MemoryView._plot_default"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.memory_view.MemoryView._plot_default">[docs]</a>    <span class="k">def</span> <span class="nf">_plot_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">container</span> <span class="o">=</span> <span class="n">DisableTrackingPlot</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">plot_data</span><span class="p">,</span>
+            <span class="n">live_plot</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">padding_left</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;line&#39;</span><span class="p">)</span>
+
+        <span class="n">scatter</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">),</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s">&#39;scatter&#39;</span><span class="p">,</span>
+            <span class="n">marker_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">show_selection</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s">&#39;lightskyblue&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scatter</span> <span class="o">=</span> <span class="n">scatter</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">inspector</span> <span class="o">=</span> <span class="n">ScatterInspector</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scatter</span><span class="p">,</span>
+            <span class="n">selection_mode</span><span class="o">=</span><span class="s">&#39;single&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scatter</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inspector</span><span class="p">)</span>
+        <span class="n">overlay</span> <span class="o">=</span> <span class="n">ScatterInspectorOverlay</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scatter</span><span class="p">,</span>
+                                          <span class="n">hover_color</span><span class="o">=</span><span class="s">&quot;lightskyblue&quot;</span><span class="p">,</span>
+                                          <span class="n">hover_marker_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                          <span class="n">selection_marker_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                          <span class="n">selection_color</span><span class="o">=</span><span class="s">&quot;lightskyblue&quot;</span><span class="p">,</span>
+                                          <span class="n">selection_outline_color</span><span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">,</span>
+                                          <span class="n">selection_line_width</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scatter</span><span class="o">.</span><span class="n">overlays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">overlay</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scatter</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_changed</span><span class="p">,</span> <span class="s">&quot;metadata_changed&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_tool</span> <span class="o">=</span> <span class="n">ZoomTool</span><span class="p">(</span>
+            <span class="n">container</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">underlays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zoom_tool</span><span class="p">)</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zoom_tool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pan_tool</span> <span class="o">=</span> <span class="n">PanTool</span><span class="p">(</span>
+            <span class="n">container</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pan_tool</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">container</span>
+
+    <span class="c"># Handlers</span>
+</div>
+<div class="viewcode-block" id="MemoryView._reset_view_button_fired"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.memory_view.MemoryView._reset_view_button_fired">[docs]</a>    <span class="k">def</span> <span class="nf">_reset_view_button_fired</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">follow_plot</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MemoryView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_reset_view_button_fired</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="MemoryView._metadata_changed"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.memory_view.MemoryView._metadata_changed">[docs]</a>    <span class="k">def</span> <span class="nf">_metadata_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="n">data_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scatter</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;selections&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">selected_index</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">selected_index</span> <span class="o">=</span> <span class="n">data_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="MemoryView._last_n_points_changed"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.memory_view.MemoryView._last_n_points_changed">[docs]</a>    <span class="k">def</span> <span class="nf">_last_n_points_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">tracking_amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_n_points</span>
+</div>
+<div class="viewcode-block" id="MemoryView._follow_plot_changed"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.memory_view.MemoryView._follow_plot_changed">[docs]</a>    <span class="k">def</span> <span class="nf">_follow_plot_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">follow_plot</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">low_setting</span> <span class="o">=</span> <span class="s">&#39;track&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">high_setting</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">tracking_amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_n_points</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">low_setting</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">low</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">high_setting</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">high</span>
+</div>
+    <span class="n">traits_view</span> <span class="o">=</span> <span class="n">View</span><span class="p">(</span>
+        <span class="n">Group</span><span class="p">(</span>
+            <span class="n">VGroup</span><span class="p">(</span>
+                <span class="n">HGroup</span><span class="p">(</span>
+                    <span class="n">Item</span><span class="p">(</span><span class="s">&#39;model.index_item&#39;</span><span class="p">),</span>
+                    <span class="n">Item</span><span class="p">(</span><span class="s">&#39;model.value_item&#39;</span><span class="p">),</span>
+                    <span class="p">),</span>
+                <span class="n">HGroup</span><span class="p">(</span>
+                    <span class="n">Item</span><span class="p">(</span>
+                        <span class="s">&#39;follow_plot&#39;</span><span class="p">,</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s">&#39;Follow plot&#39;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="n">Item</span><span class="p">(</span>
+                        <span class="s">&#39;last_n_points&#39;</span><span class="p">,</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s">&#39;Number of points to show&#39;</span><span class="p">,</span>
+                        <span class="n">enabled_when</span><span class="o">=</span><span class="s">&#39;follow_plot&#39;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">),</span>
+                <span class="n">HGroup</span><span class="p">(</span>
+                    <span class="n">Spring</span><span class="p">(),</span>
+                    <span class="n">UItem</span><span class="p">(</span><span class="s">&#39;reset_view_button&#39;</span><span class="p">),</span>
+                    <span class="p">),</span>
+                <span class="p">),</span>
+            <span class="n">HSplit</span><span class="p">(</span>
+                <span class="n">UItem</span><span class="p">(</span><span class="s">&#39;plot&#39;</span><span class="p">,</span> <span class="n">editor</span><span class="o">=</span><span class="n">ComponentEditor</span><span class="p">()),</span>
+                <span class="n">UItem</span><span class="p">(</span>
+                    <span class="s">&#39;model.selected_item&#39;</span><span class="p">,</span>
+                    <span class="n">editor</span><span class="o">=</span><span class="n">TabularEditor</span><span class="p">(</span><span class="n">adapter</span><span class="o">=</span><span class="n">DetailsAdapter</span><span class="p">()),</span>
+                    <span class="n">width</span><span class="o">=</span><span class="mi">350</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="n">height</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="mi">1100</span><span class="p">,</span>
+        <span class="n">resizable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s">&#39;Live Recording Plot&#39;</span>
+        <span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

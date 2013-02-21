@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pikos.live.ui.barplot &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pikos.live.ui.barplot</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Str</span>
+
+<span class="kn">from</span> <span class="nn">chaco.api</span> <span class="kn">import</span> <span class="n">BarPlot</span>
+<span class="kn">from</span> <span class="nn">chaco.tools.api</span> <span class="kn">import</span> <span class="n">SelectTool</span>
+<span class="kn">from</span> <span class="nn">enable.api</span> <span class="kn">import</span> <span class="n">ColorTrait</span>
+
+
+<div class="viewcode-block" id="SelectableBarPlot"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.barplot.SelectableBarPlot">[docs]</a><span class="k">class</span> <span class="nc">SelectableBarPlot</span><span class="p">(</span><span class="n">BarPlot</span><span class="p">):</span>
+
+    <span class="n">hover_color</span> <span class="o">=</span> <span class="n">ColorTrait</span><span class="p">(</span><span class="s">&#39;lightsteelblue&#39;</span><span class="p">)</span>
+    <span class="n">selection_color</span> <span class="o">=</span> <span class="n">ColorTrait</span><span class="p">(</span><span class="s">&#39;lightskyblue&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SelectableBarPlot._draw_plot"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.barplot.SelectableBarPlot._draw_plot">[docs]</a>    <span class="k">def</span> <span class="nf">_draw_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gc</span><span class="p">,</span> <span class="n">view_bounds</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;normal&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Draws the &#39;plot&#39; layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_valid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_gather_points</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data_pts</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c"># Nothing to draw.</span>
+            <span class="k">return</span>
+
+        <span class="n">met</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cached_data_pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="s">&#39;hover&#39;</span> <span class="ow">in</span> <span class="n">met</span><span class="p">:</span>
+            <span class="n">hover_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data_pts</span><span class="p">[</span><span class="n">met</span><span class="p">[</span><span class="s">&#39;hover&#39;</span><span class="p">]]</span>
+            <span class="n">mask</span><span class="p">[</span><span class="n">met</span><span class="p">[</span><span class="s">&#39;hover&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hover_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="s">&#39;selections&#39;</span> <span class="ow">in</span> <span class="n">met</span><span class="p">:</span>
+            <span class="n">selections_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data_pts</span><span class="p">[</span><span class="n">met</span><span class="p">[</span><span class="s">&#39;selections&#39;</span><span class="p">]]</span>
+            <span class="n">mask</span><span class="p">[</span><span class="n">met</span><span class="p">[</span><span class="s">&#39;selections&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">selections_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">normal_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data_pts</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+        <span class="k">with</span> <span class="n">gc</span><span class="p">:</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">clip_to_rect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">set_antialias</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">antialias</span><span class="p">)</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">set_stroke_color</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line_color_</span><span class="p">)</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">set_line_width</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line_width</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">fill_color_</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="p">(</span><span class="n">normal_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_color_</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">hover_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hover_color_</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">selections_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection_color_</span><span class="p">),</span>
+                <span class="p">):</span>
+                <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">gc</span><span class="o">.</span><span class="n">set_fill_color</span><span class="p">(</span><span class="n">fill_color_</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bar_width_type</span> <span class="o">==</span> <span class="s">&quot;data&quot;</span><span class="p">:</span>
+                    <span class="c"># map the bar start and stop locations into screen space</span>
+                    <span class="n">lower_left_pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_screen</span><span class="p">(</span><span class="n">data</span><span class="p">[:,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)])</span>
+                    <span class="n">upper_right_pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_screen</span><span class="p">(</span><span class="n">data</span><span class="p">[:,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">half_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bar_width</span> <span class="o">/</span> <span class="mf">2.0</span>
+                    <span class="c"># map the bar centers into screen space and then compute the bar</span>
+                    <span class="c"># start and end positions</span>
+                    <span class="n">lower_left_pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_screen</span><span class="p">(</span><span class="n">data</span><span class="p">[:,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)])</span>
+                    <span class="n">upper_right_pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_screen</span><span class="p">(</span><span class="n">data</span><span class="p">[:,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)])</span>
+                    <span class="n">lower_left_pts</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="n">half_width</span>
+                    <span class="n">upper_right_pts</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">half_width</span>
+
+                <span class="n">bounds</span> <span class="o">=</span> <span class="n">upper_right_pts</span> <span class="o">-</span> <span class="n">lower_left_pts</span>
+                <span class="n">gc</span><span class="o">.</span><span class="n">rects</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">lower_left_pts</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)))</span>
+                <span class="n">gc</span><span class="o">.</span><span class="n">draw_path</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="SelectableBarPlot.map_index"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.barplot.SelectableBarPlot.map_index">[docs]</a>    <span class="k">def</span> <span class="nf">map_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen_pt</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">outside_returns_none</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                  <span class="n">index_only</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Maps a screen space point to an index into the plot&#39;s index array(s).</span>
+
+<span class="sd">        Overrides the BarPlot implementation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index_only</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SelectableBarPlot</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">map_index</span><span class="p">(</span>
+                <span class="n">screen_pt</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">outside_returns_none</span><span class="p">,</span> <span class="n">index_only</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_valid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_gather_points</span><span class="p">()</span>
+
+        <span class="n">data_pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_data</span><span class="p">(</span><span class="n">screen_pt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">data_pt</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">low</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="p">(</span><span class="n">data_pt</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">high</span><span class="p">))</span> <span class="ow">and</span> <span class="n">outside_returns_none</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">index_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="n">value_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">index_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+        <span class="n">bars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_data_pts</span><span class="p">[:,:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">screen_bars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_screen</span><span class="p">(</span><span class="n">bars</span><span class="p">)</span>
+        <span class="n">screen_bars</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_screen</span><span class="p">(</span><span class="n">bars</span><span class="p">[:,::</span><span class="o">-</span><span class="mi">1</span><span class="p">])[:,</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">screen_pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">possible_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">screen_bars</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">threshold</span><span class="p">))</span> <span class="o">&amp;</span> \
+                                        <span class="p">(</span><span class="n">screen_bars</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">threshold</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">possibles</span> <span class="o">=</span> <span class="n">screen_bars</span><span class="p">[</span><span class="n">possible_indices</span><span class="p">]</span>
+        <span class="n">mids</span> <span class="o">=</span> <span class="n">possibles</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">((</span><span class="n">possibles</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">possibles</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">mids</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">possible_indices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">scores</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">scores</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+
+</div></div>
+<div class="viewcode-block" id="BarSelectTool"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.barplot.BarSelectTool">[docs]</a><span class="k">class</span> <span class="nc">BarSelectTool</span><span class="p">(</span><span class="n">SelectTool</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A tool for inspecting scatter plots.</span>
+
+<span class="sd">    It writes the index of the point under the cursor to the metadata of the</span>
+<span class="sd">    index and value data sources, and allows clicking to select the point.</span>
+<span class="sd">    Other components can listen for metadata updates on the data sources.</span>
+
+<span class="sd">    By default, it writes the index of the point under the cursor to the &quot;hover&quot;</span>
+<span class="sd">    key in metadata, and the index of a clicked point to &quot;selection&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># If persistent_hover is False, then a point will be de-hovered as soon as</span>
+    <span class="c"># the mouse leaves its hittesting area.  If persistent_hover is True, then</span>
+    <span class="c"># a point does no de-hover until another point get hover focus.</span>
+    <span class="n">persistent_hover</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c"># The names of the data source metadata for hover and selection.</span>
+    <span class="n">hover_metadata_name</span> <span class="o">=</span> <span class="n">Str</span><span class="p">(</span><span class="s">&#39;hover&#39;</span><span class="p">)</span>
+    <span class="n">selection_metadata_name</span> <span class="o">=</span> <span class="n">Str</span><span class="p">(</span><span class="s">&#39;selections&#39;</span><span class="p">)</span>
+
+    <span class="c">#------------------------------------------------------------------------</span>
+    <span class="c"># Override/configure inherited traits</span>
+    <span class="c">#------------------------------------------------------------------------</span>
+
+    <span class="c"># This tool is not visible</span>
+    <span class="n">visible</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="c"># This tool does not have a visual reprentation</span>
+    <span class="n">draw_mode</span> <span class="o">=</span> <span class="s">&quot;none&quot;</span>
+
+<div class="viewcode-block" id="BarSelectTool.normal_mouse_move"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.barplot.BarSelectTool.normal_mouse_move">[docs]</a>    <span class="k">def</span> <span class="nf">normal_mouse_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handles the mouse moving when the tool is in the &#39;normal&#39; state.</span>
+
+<span class="sd">        If the cursor is within **threshold** of a data point, the method</span>
+<span class="sd">        writes the index to the plot&#39;s data sources&#39; &quot;hover&quot; metadata.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">map_index</span><span class="p">((</span><span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span>
+                               <span class="n">index_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">plot</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hover_metadata_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s">&quot;value&quot;</span><span class="p">):</span>
+                <span class="n">plot</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hover_metadata_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">persistent_hover</span><span class="p">:</span>
+            <span class="n">plot</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hover_metadata_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s">&quot;value&quot;</span><span class="p">):</span>
+                <span class="n">plot</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hover_metadata_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="BarSelectTool._get_selection_state"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.barplot.BarSelectTool._get_selection_state">[docs]</a>    <span class="k">def</span> <span class="nf">_get_selection_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">map_index</span><span class="p">((</span><span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span>
+                               <span class="n">index_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">already_selected</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="c"># FIXME: this is stupid</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">md</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">metadata</span>
+            <span class="k">if</span> <span class="n">md</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">md</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">md</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span><span class="p">]:</span>
+                <span class="n">already_selected</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">already_selected</span><span class="p">,</span> <span class="p">(</span><span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BarSelectTool._get_selection_token"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.barplot.BarSelectTool._get_selection_token">[docs]</a>    <span class="k">def</span> <span class="nf">_get_selection_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">map_index</span><span class="p">((</span><span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span>
+                               <span class="n">index_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">index</span>
+</div>
+<div class="viewcode-block" id="BarSelectTool._deselect"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.barplot.BarSelectTool._deselect">[docs]</a>    <span class="k">def</span> <span class="nf">_deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Deselects a particular index.  If no index is given, then</span>
+<span class="sd">        deselects all points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">md</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">metadata</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span> <span class="ow">in</span> <span class="n">md</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">md</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span><span class="p">]:</span>
+                <span class="n">new_list</span> <span class="o">=</span> <span class="n">md</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span><span class="p">][:]</span>
+                <span class="n">new_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="n">md</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_list</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">metadata_changed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="BarSelectTool._select"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.barplot.BarSelectTool._select">[docs]</a>    <span class="k">def</span> <span class="nf">_select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;index&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">md</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">metadata</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+            <span class="c"># If no existing selection</span>
+            <span class="k">if</span> <span class="n">selection</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">md</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="c"># check for list-like object supporting append</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">append</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">md</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span><span class="p">]:</span>
+                        <span class="n">new_list</span> <span class="o">=</span> <span class="n">md</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+                        <span class="n">md</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_list</span>
+                        <span class="c"># Manually trigger the metadata_changed event on</span>
+                        <span class="c"># the datasource.  Datasources only automatically</span>
+                        <span class="c"># fire notifications when the values inside the</span>
+                        <span class="c"># metadata dict change, but they do not listen</span>
+                        <span class="c"># for further changes on those values.</span>
+                        <span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">metadata_changed</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">md</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_metadata_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">return</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

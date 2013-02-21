@@ -1,0 +1,377 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pikos.live.ui.cprofile_view &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pikos.live.ui.cprofile_view</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">on_trait_change</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> \
+    <span class="n">HasTraits</span><span class="p">,</span> <span class="n">cached_property</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Either</span><span class="p">,</span> <span class="n">Float</span><span class="p">,</span> <span class="n">Instance</span>
+<span class="kn">from</span> <span class="nn">traitsui.api</span> <span class="kn">import</span> <span class="n">View</span><span class="p">,</span> <span class="n">Item</span><span class="p">,</span> <span class="n">UItem</span><span class="p">,</span> <span class="n">VGroup</span><span class="p">,</span> <span class="n">HGroup</span><span class="p">,</span> <span class="n">Spring</span><span class="p">,</span> \
+    <span class="n">TabularEditor</span><span class="p">,</span> <span class="n">HSplit</span><span class="p">,</span> <span class="n">Group</span><span class="p">,</span> <span class="n">ModelView</span>
+<span class="kn">from</span> <span class="nn">traitsui.tabular_adapter</span> <span class="kn">import</span> <span class="n">TabularAdapter</span>
+<span class="kn">from</span> <span class="nn">chaco.api</span> <span class="kn">import</span> <span class="n">Plot</span><span class="p">,</span> <span class="n">LabelAxis</span>
+<span class="kn">from</span> <span class="nn">chaco.tools.api</span> <span class="kn">import</span> <span class="n">ZoomTool</span><span class="p">,</span> <span class="n">PanTool</span>
+<span class="kn">from</span> <span class="nn">chaco.ticks</span> <span class="kn">import</span> <span class="n">ShowAllTickGenerator</span>
+<span class="kn">from</span> <span class="nn">enable.component_editor</span> <span class="kn">import</span> <span class="n">ComponentEditor</span>
+
+<span class="kn">from</span> <span class="nn">pikos.live.ui.base_view</span> <span class="kn">import</span> <span class="n">BaseView</span>
+<span class="kn">from</span> <span class="nn">pikos.live.ui.barplot</span> <span class="kn">import</span> <span class="n">SelectableBarPlot</span><span class="p">,</span> <span class="n">BarSelectTool</span>
+
+
+<div class="viewcode-block" id="TableItem"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.TableItem">[docs]</a><span class="k">class</span> <span class="nc">TableItem</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Int</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">Str</span>
+    <span class="n">line_number</span> <span class="o">=</span> <span class="n">Any</span>
+    <span class="n">function_name</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="n">callcount</span> <span class="o">=</span> <span class="n">Int</span>
+    <span class="n">per_call</span> <span class="o">=</span> <span class="n">Float</span>
+    <span class="n">total_time</span> <span class="o">=</span> <span class="n">Float</span>
+    <span class="n">cumulative_time</span> <span class="o">=</span> <span class="n">Float</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">line_number</span><span class="p">,</span> <span class="n">function_name</span><span class="p">,</span> <span class="n">callcount</span><span class="p">,</span>
+                 <span class="n">per_call</span><span class="p">,</span> <span class="n">total_time</span><span class="p">,</span> <span class="n">cumulative_time</span><span class="p">,</span> <span class="o">**</span><span class="n">traits</span><span class="p">):</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">traits</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+            <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+            <span class="n">function_name</span><span class="o">=</span><span class="n">function_name</span><span class="p">,</span>
+            <span class="n">line_number</span><span class="o">=</span><span class="n">line_number</span><span class="p">,</span>
+            <span class="n">callcount</span><span class="o">=</span><span class="n">callcount</span><span class="p">,</span>
+            <span class="n">per_call</span><span class="o">=</span><span class="n">per_call</span><span class="p">,</span>
+            <span class="n">total_time</span><span class="o">=</span><span class="n">total_time</span><span class="p">,</span>
+            <span class="n">cumulative_time</span><span class="o">=</span><span class="n">cumulative_time</span><span class="p">,</span>
+        <span class="p">))</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TableItem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="CProfileTabularAdapter"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileTabularAdapter">[docs]</a><span class="k">class</span> <span class="nc">CProfileTabularAdapter</span><span class="p">(</span><span class="n">TabularAdapter</span><span class="p">):</span>
+
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s">&#39;Filename&#39;</span><span class="p">,</span> <span class="s">&#39;filename&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;Function Name&#39;</span><span class="p">,</span> <span class="s">&#39;function_name&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;Line Number&#39;</span><span class="p">,</span> <span class="s">&#39;line_number&#39;</span><span class="p">),</span>
+
+        <span class="p">(</span><span class="s">&#39;Number of Calls&#39;</span><span class="p">,</span> <span class="s">&#39;callcount&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;Per Call&#39;</span><span class="p">,</span> <span class="s">&#39;per_call&#39;</span><span class="p">),</span>
+        <span class="c"># (&#39;Per Call (Cumulative)&#39;, &#39;cumulative_percall&#39;),</span>
+        <span class="p">(</span><span class="s">&#39;Total Time&#39;</span><span class="p">,</span> <span class="s">&#39;total_time&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;Cumulative Time&#39;</span><span class="p">,</span> <span class="s">&#39;cumulative_time&#39;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="CProfileTableView"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileTableView">[docs]</a><span class="k">class</span> <span class="nc">CProfileTableView</span><span class="p">(</span><span class="n">ModelView</span><span class="p">):</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="n">data_items</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;model.data_items,sort_column,ascending&#39;</span><span class="p">)</span>
+
+    <span class="n">adapter</span> <span class="o">=</span> <span class="n">Any</span>
+
+    <span class="n">column_clicked</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">sort_column</span> <span class="o">=</span> <span class="n">Either</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">Int</span><span class="p">)</span>
+    <span class="n">ascending</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CProfileTableView._column_clicked_changed"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileTableView._column_clicked_changed">[docs]</a>    <span class="k">def</span> <span class="nf">_column_clicked_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sort_column</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_column</span> <span class="o">==</span> <span class="n">event</span><span class="o">.</span><span class="n">column</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ascending</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ascending</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sort_column</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">column</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ascending</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="CProfileTableView._adapter_default"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileTableView._adapter_default">[docs]</a>    <span class="k">def</span> <span class="nf">_adapter_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CProfileTabularAdapter</span><span class="p">()</span>
+</div>
+    <span class="nd">@cached_property</span>
+<div class="viewcode-block" id="CProfileTableView._get_data_items"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileTableView._get_data_items">[docs]</a>    <span class="k">def</span> <span class="nf">_get_data_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">TableItem</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="k">for</span> <span class="n">args</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">data_items</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_column</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">items</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sort_column</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="n">attr</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ascending</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CProfileTableView.default_traits_view"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileTableView.default_traits_view">[docs]</a>    <span class="k">def</span> <span class="nf">default_traits_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">View</span><span class="p">(</span>
+            <span class="n">UItem</span><span class="p">(</span>
+                <span class="s">&#39;data_items&#39;</span><span class="p">,</span>
+                <span class="n">editor</span><span class="o">=</span><span class="n">TabularEditor</span><span class="p">(</span>
+                    <span class="n">adapter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="p">,</span>
+                    <span class="n">column_clicked</span><span class="o">=</span><span class="s">&#39;column_clicked&#39;</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">height</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">1100</span><span class="p">,</span>
+            <span class="n">resizable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s">&#39;CProfile Live&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+</div></div>
+<div class="viewcode-block" id="CProfileView"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileView">[docs]</a><span class="k">class</span> <span class="nc">CProfileView</span><span class="p">(</span><span class="n">BaseView</span><span class="p">):</span>
+
+    <span class="c"># Initialization</span>
+
+    <span class="n">plotted</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="n">barplot</span> <span class="o">=</span> <span class="n">Any</span>
+
+    <span class="n">sort_values_button</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="s">&#39;Sort&#39;</span><span class="p">)</span>
+
+    <span class="n">FORMATS</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">({</span>
+            <span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="s">&#39;0x{0:x}&#39;</span><span class="p">,</span>
+            <span class="p">})</span>
+
+<div class="viewcode-block" id="CProfileView._plot_default"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileView._plot_default">[docs]</a>    <span class="k">def</span> <span class="nf">_plot_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">container</span> <span class="o">=</span> <span class="n">Plot</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">plot_data</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">renderer_map</span><span class="p">[</span><span class="s">&#39;bar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SelectableBarPlot</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">padding_left</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">padding_bottom</span> <span class="o">=</span> <span class="mi">150</span>
+        <span class="c"># container.plot((&#39;x&#39;, &#39;y&#39;), type=&#39;bar&#39;)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_tool</span> <span class="o">=</span> <span class="n">ZoomTool</span><span class="p">(</span>
+            <span class="n">container</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">underlays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zoom_tool</span><span class="p">)</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zoom_tool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pan_tool</span> <span class="o">=</span> <span class="n">PanTool</span><span class="p">(</span>
+            <span class="n">container</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pan_tool</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">container</span>
+
+    <span class="c"># @on_trait_change(&#39;model.index_item&#39;)</span>
+    <span class="c"># def _on_model_index_item_change(self, index_item):</span>
+    <span class="c">#     super(CProfileView, self)._on_model_index_item_change(index_item)</span>
+    <span class="c">#     # self.plot.x_axis.tick_generator = ShowAllTickGenerator(</span>
+    <span class="c">#     #     positions=self.model.plot_data.get_data(&#39;x&#39;))</span>
+
+    <span class="c"># @on_trait_change(&#39;model.value_item&#39;)</span>
+    <span class="c"># def _on_model_value_item_change(self, value_item):</span>
+    <span class="c">#     super(CProfileView, self)._on_model_value_item_change(value_item)</span>
+
+    <span class="c"># Handlers</span>
+</div>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;model.updated&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="CProfileView._on_model_update_fired"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileView._on_model_update_fired">[docs]</a>    <span class="k">def</span> <span class="nf">_on_model_update_fired</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotted</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">plot_data</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">plot_data</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">barplot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;bar&#39;</span><span class="p">,</span>
+                                          <span class="n">bar_width</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">barplot</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">sort_order</span> <span class="o">=</span> <span class="s">&#39;ascending&#39;</span>
+            <span class="n">select</span> <span class="o">=</span> <span class="n">BarSelectTool</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">barplot</span><span class="p">,</span>
+                <span class="n">selection_mode</span><span class="o">=</span><span class="s">&#39;single&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">barplot</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">select</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">barplot</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_changed</span><span class="p">,</span> <span class="s">&quot;metadata_changed&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotted</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">y_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">low_setting</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">y_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">high_setting</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
+</div>
+<div class="viewcode-block" id="CProfileView._format_key"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileView._format_key">[docs]</a>    <span class="k">def</span> <span class="nf">_format_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">format_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FORMATS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">index_item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">format_</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">format_</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</div>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;model.plot_keys&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="CProfileView._on_model_plot_keys_changed"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileView._on_model_plot_keys_changed">[docs]</a>    <span class="k">def</span> <span class="nf">_on_model_plot_keys_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">plot_data</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+        <span class="n">label_axis</span> <span class="o">=</span> <span class="n">LabelAxis</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s">&#39;bottom&#39;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s">&#39;Keys&#39;</span><span class="p">,</span>
+            <span class="n">title_spacing</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_key</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">plot_keys</span><span class="p">],</span>
+            <span class="n">small_haxis_style</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">label_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
+            <span class="n">tick_generator</span><span class="o">=</span><span class="n">ShowAllTickGenerator</span><span class="p">(</span>
+                <span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">underlays</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">index_axis</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">index_axis</span> <span class="o">=</span> <span class="n">label_axis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">underlays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_axis</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CProfileView._sort_values_button_fired"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileView._sort_values_button_fired">[docs]</a>    <span class="k">def</span> <span class="nf">_sort_values_button_fired</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">sort_by_current_value</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">invalidate_and_redraw</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CProfileView._metadata_changed"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileView._metadata_changed">[docs]</a>    <span class="k">def</span> <span class="nf">_metadata_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">invalidate_and_redraw</span><span class="p">()</span>
+        <span class="c"># data_indices = self.scatter.index.metadata.get(&#39;selections&#39;, [])</span>
+        <span class="c"># if len(data_indices) == 0:</span>
+        <span class="c">#     self.model.selected_index = None</span>
+        <span class="c">#     return</span>
+        <span class="c"># self.model.selected_index = data_indices[0]</span>
+
+    <span class="c"># def _last_n_points_changed(self):</span>
+    <span class="c">#     self.plot.x_mapper.range.tracking_amount = self.last_n_points</span>
+
+    <span class="c"># def _follow_plot_changed(self):</span>
+    <span class="c">#     if self.follow_plot:</span>
+    <span class="c">#         self.plot.x_mapper.range.low_setting = &#39;track&#39;</span>
+    <span class="c">#         self.plot.x_mapper.range.high_setting = &#39;auto&#39;</span>
+    <span class="c">#         self.plot.x_mapper.range.tracking_amount = self.last_n_points</span>
+    <span class="c">#     else:</span>
+    <span class="c">#         self.plot.x_mapper.range.low_setting = self.plot.x_mapper.range.low</span>
+    <span class="c">#         self.plot.x_mapper.range.high_setting = \</span>
+    <span class="c">#             self.plot.x_mapper.range.high</span>
+</div>
+    <span class="n">traits_view</span> <span class="o">=</span> <span class="n">View</span><span class="p">(</span>
+        <span class="n">Group</span><span class="p">(</span>
+            <span class="n">VGroup</span><span class="p">(</span>
+                <span class="n">HGroup</span><span class="p">(</span>
+                    <span class="n">Item</span><span class="p">(</span><span class="s">&#39;model.index_item&#39;</span><span class="p">),</span>
+                    <span class="n">Item</span><span class="p">(</span><span class="s">&#39;model.value_item&#39;</span><span class="p">),</span>
+                <span class="c">#     ),</span>
+                <span class="c"># HGroup(</span>
+                    <span class="n">Spring</span><span class="p">(),</span>
+                    <span class="n">UItem</span><span class="p">(</span><span class="s">&#39;sort_values_button&#39;</span><span class="p">),</span>
+                    <span class="n">UItem</span><span class="p">(</span><span class="s">&#39;reset_view_button&#39;</span><span class="p">),</span>
+                    <span class="p">),</span>
+                <span class="p">),</span>
+            <span class="n">HSplit</span><span class="p">(</span>
+                <span class="n">UItem</span><span class="p">(</span><span class="s">&#39;plot&#39;</span><span class="p">,</span> <span class="n">editor</span><span class="o">=</span><span class="n">ComponentEditor</span><span class="p">()),</span>
+                <span class="c"># UItem(</span>
+                <span class="c">#     &#39;model.selected_item&#39;,</span>
+                <span class="c">#     editor=TabularEditor(adapter=DetailsAdapter()),</span>
+                <span class="c">#     width=350),</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="n">height</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="mi">1100</span><span class="p">,</span>
+        <span class="n">resizable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s">&#39;Live Recording Plot&#39;</span>
+        <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="CProfileMixedView"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileMixedView">[docs]</a><span class="k">class</span> <span class="nc">CProfileMixedView</span><span class="p">(</span><span class="n">ModelView</span><span class="p">):</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="n">table_view</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">CProfileTableView</span><span class="p">)</span>
+    <span class="n">plot_view</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">CProfileView</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CProfileMixedView._table_view_default"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileMixedView._table_view_default">[docs]</a>    <span class="k">def</span> <span class="nf">_table_view_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CProfileTableView</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CProfileMixedView._plot_view_default"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.cprofile_view.CProfileMixedView._plot_view_default">[docs]</a>    <span class="k">def</span> <span class="nf">_plot_view_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CProfileView</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+</div>
+    <span class="n">traits_view</span> <span class="o">=</span> <span class="n">View</span><span class="p">(</span>
+        <span class="n">VGroup</span><span class="p">(</span>
+            <span class="n">UItem</span><span class="p">(</span><span class="s">&#39;table_view&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s">&#39;custom&#39;</span><span class="p">),</span>
+            <span class="n">UItem</span><span class="p">(</span><span class="s">&#39;plot_view&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s">&#39;custom&#39;</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">height</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="mi">1100</span><span class="p">,</span>
+        <span class="n">resizable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s">&#39;Live CProfile&#39;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>models Package &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="index.html" />
+    <link rel="up" title="pikos.live Package" href="live.html" />
+    <link rel="next" title="ui Package" href="live.ui.html" />
+    <link rel="prev" title="pikos.live Package" href="live.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="live.ui.html" title="ui Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="live.html" title="pikos.live Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="live.html" accesskey="U">pikos.live Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="models-package">
+<h1>models Package<a class="headerlink" href="#models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pikos.live.models.base_model">
+<span id="base-model-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">base_model</span></tt> Module<a class="headerlink" href="#module-pikos.live.models.base_model" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.models.base_model.Details">
+<em class="property">class </em><tt class="descclassname">pikos.live.models.base_model.</tt><tt class="descname">Details</tt><a class="headerlink" href="#pikos.live.models.base_model.Details" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt></p>
+<p>Details(field, value)</p>
+<dl class="method">
+<dt id="pikos.live.models.base_model.Details._asdict">
+<tt class="descname">_asdict</tt><big>(</big><big>)</big><a class="headerlink" href="#pikos.live.models.base_model.Details._asdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new OrderedDict which maps field names to their values</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pikos.live.models.base_model.Details._fields">
+<tt class="descname">_fields</tt><em class="property"> = ('field', 'value')</em><a class="headerlink" href="#pikos.live.models.base_model.Details._fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="pikos.live.models.base_model.Details._make">
+<em class="property">classmethod </em><tt class="descname">_make</tt><big>(</big><em>iterable</em>, <em>new=&lt;built-in method __new__ of type object at 0x1E225160&gt;</em>, <em>len=&lt;built-in function len&gt;</em><big>)</big><a class="headerlink" href="#pikos.live.models.base_model.Details._make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a new Details object from a sequence or iterable</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.Details._replace">
+<tt class="descname">_replace</tt><big>(</big><em>_self</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#pikos.live.models.base_model.Details._replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new Details object replacing specified fields with new values</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pikos.live.models.base_model.Details.field">
+<tt class="descname">field</tt><a class="headerlink" href="#pikos.live.models.base_model.Details.field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pikos.live.models.base_model.Details.value">
+<tt class="descname">value</tt><a class="headerlink" href="#pikos.live.models.base_model.Details.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="pikos.live.models.base_model.ModelRegistrationError">
+<em class="property">exception </em><tt class="descclassname">pikos.live.models.base_model.</tt><tt class="descname">ModelRegistrationError</tt><a class="reference internal" href="_modules/pikos/live/models/base_model.html#ModelRegistrationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.ModelRegistrationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pikos.live.models.base_model.BaseModel">
+<em class="property">class </em><tt class="descclassname">pikos.live.models.base_model.</tt><tt class="descname">BaseModel</tt><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel._plot_data_default">
+<tt class="descname">_plot_data_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel._plot_data_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel._plot_data_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel._plottable_item_indices_changed">
+<tt class="descname">_plottable_item_indices_changed</tt><big>(</big><em>new</em><big>)</big><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel._plottable_item_indices_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel._plottable_item_indices_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel._plottable_fields_changed">
+<tt class="descname">_plottable_fields_changed</tt><big>(</big><em>new</em><big>)</big><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel._plottable_fields_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel._plottable_fields_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel._update_index">
+<tt class="descname">_update_index</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel._update_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel._update_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel._update_value">
+<tt class="descname">_update_value</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel._update_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel._update_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel._index_item_changed">
+<tt class="descname">_index_item_changed</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel._index_item_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel._index_item_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel._value_item_changed">
+<tt class="descname">_value_item_changed</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel._value_item_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel._value_item_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel._add_data_item">
+<tt class="descname">_add_data_item</tt><big>(</big><em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel._add_data_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel._add_data_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel._calculate_plottable_item_indices">
+<tt class="descname">_calculate_plottable_item_indices</tt><big>(</big><em>item</em><big>)</big><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel._calculate_plottable_item_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel._calculate_plottable_item_indices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel.add_data">
+<tt class="descname">add_data</tt><big>(</big><em>records</em><big>)</big><a class="reference internal" href="_modules/pikos/live/models/base_model.html#BaseModel.add_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.base_model.BaseModel.add_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.base_model.BaseModel._BaseModel__update_plot_values">
+<tt class="descname">_BaseModel__update_plot_values</tt><big>(</big><em>axis</em>, <em>value_name</em><big>)</big><a class="headerlink" href="#pikos.live.models.base_model.BaseModel._BaseModel__update_plot_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.models.cprofile_model">
+<span id="cprofile-model-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">cprofile_model</span></tt> Module<a class="headerlink" href="#module-pikos.live.models.cprofile_model" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.models.cprofile_model.CProfileModel">
+<em class="property">class </em><tt class="descclassname">pikos.live.models.cprofile_model.</tt><tt class="descname">CProfileModel</tt><a class="reference internal" href="_modules/pikos/live/models/cprofile_model.html#CProfileModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.cprofile_model.CProfileModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pikos.live.models.base_model.BaseModel" title="pikos.live.models.base_model.BaseModel"><tt class="xref py py-class docutils literal"><span class="pre">pikos.live.models.base_model.BaseModel</span></tt></a></p>
+<dl class="method">
+<dt id="pikos.live.models.cprofile_model.CProfileModel._get_selected_item">
+<tt class="descname">_get_selected_item</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/cprofile_model.html#CProfileModel._get_selected_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.cprofile_model.CProfileModel._get_selected_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.cprofile_model.CProfileModel._update_index">
+<tt class="descname">_update_index</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/cprofile_model.html#CProfileModel._update_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.cprofile_model.CProfileModel._update_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.cprofile_model.CProfileModel._update_value">
+<tt class="descname">_update_value</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/cprofile_model.html#CProfileModel._update_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.cprofile_model.CProfileModel._update_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.cprofile_model.CProfileModel._rebuild_data">
+<tt class="descname">_rebuild_data</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/cprofile_model.html#CProfileModel._rebuild_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.cprofile_model.CProfileModel._rebuild_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.cprofile_model.CProfileModel.sort_by_current_value">
+<tt class="descname">sort_by_current_value</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/cprofile_model.html#CProfileModel.sort_by_current_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.cprofile_model.CProfileModel.sort_by_current_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.cprofile_model.CProfileModel.add_data">
+<tt class="descname">add_data</tt><big>(</big><em>records</em><big>)</big><a class="reference internal" href="_modules/pikos/live/models/cprofile_model.html#CProfileModel.add_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.cprofile_model.CProfileModel.add_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.models.memory_model">
+<span id="memory-model-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">memory_model</span></tt> Module<a class="headerlink" href="#module-pikos.live.models.memory_model" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.models.memory_model.MemoryModel">
+<em class="property">class </em><tt class="descclassname">pikos.live.models.memory_model.</tt><tt class="descname">MemoryModel</tt><a class="reference internal" href="_modules/pikos/live/models/memory_model.html#MemoryModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.memory_model.MemoryModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pikos.live.models.base_model.BaseModel" title="pikos.live.models.base_model.BaseModel"><tt class="xref py py-class docutils literal"><span class="pre">pikos.live.models.base_model.BaseModel</span></tt></a></p>
+<dl class="method">
+<dt id="pikos.live.models.memory_model.MemoryModel._TRANSFORMS_default">
+<tt class="descname">_TRANSFORMS_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/memory_model.html#MemoryModel._TRANSFORMS_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.memory_model.MemoryModel._TRANSFORMS_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.memory_model.MemoryModel._UNITS_default">
+<tt class="descname">_UNITS_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/memory_model.html#MemoryModel._UNITS_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.memory_model.MemoryModel._UNITS_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.memory_model.MemoryModel._get_selected_item">
+<tt class="descname">_get_selected_item</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/models/memory_model.html#MemoryModel._get_selected_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.memory_model.MemoryModel._get_selected_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.memory_model.MemoryModel._add_data_item">
+<tt class="descname">_add_data_item</tt><big>(</big><em>name</em>, <em>values</em><big>)</big><a class="reference internal" href="_modules/pikos/live/models/memory_model.html#MemoryModel._add_data_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.memory_model.MemoryModel._add_data_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.models.memory_model.MemoryModel.add_data">
+<tt class="descname">add_data</tt><big>(</big><em>records</em><big>)</big><a class="reference internal" href="_modules/pikos/live/models/memory_model.html#MemoryModel.add_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.models.memory_model.MemoryModel.add_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">models Package</a><ul>
+<li><a class="reference internal" href="#module-pikos.live.models.base_model"><tt class="docutils literal"><span class="pre">base_model</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.models.cprofile_model"><tt class="docutils literal"><span class="pre">cprofile_model</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.models.memory_model"><tt class="docutils literal"><span class="pre">memory_model</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="live.html"
+                        title="previous chapter">pikos.live Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="live.ui.html"
+                        title="next chapter">ui Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/live.models.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="live.ui.html" title="ui Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="live.html" title="pikos.live Package"
+             >previous</a> |</li>
+        <li><a href="index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="live.html" >pikos.live Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

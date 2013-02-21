@@ -1,0 +1,211 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Pikos &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="#" />
+    <link rel="next" title="Library Reference" href="reference.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Library Reference"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">pikos  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pikos">
+<h1>Pikos<a class="headerlink" href="#pikos" title="Permalink to this headline">¶</a></h1>
+<p>Pikos is a profiling and investigation tool suite for python
+applications. The name is inspired by Pikos Apikos the main character
+in a mid 80s Greek puppet TV series. Pikos was an investigative journalist
+assigned to find out about a missing person case in the remote and strange
+land of &#8220;Froutopia&#8221;, a country populated by large fruits that can talk.</p>
+<p>Key aims of Pikos are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Help identify areas of the an application that need to improve.</li>
+<li>Use, group and augment rather than replace commonly used tools like
+cProfile and line_profiler</li>
+<li>Provide effective memory monitoring throughout python.</li>
+<li>Be multi-platform.</li>
+<li>Provide real-time access to profile data and allow live analysis
+while the application is running.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="repository">
+<h2>Repository<a class="headerlink" href="#repository" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The package requires a recent version of psutil (&gt;=0.4.1):</p>
+<div class="highlight-python"><pre>python setup.py install</pre>
+</div>
+<p>To build with the real-time fork of cProfile please provide the
+<cite>&#8211;with-real-time-lsprof</cite> before any setup command:</p>
+<div class="highlight-python"><pre>python setup.py --with-real-time-lsprof install</pre>
+</div>
+<p>You will need a build of libzmq to compile and link against. If the needed files
+are not available at system default locations, they will need to be manually
+provided to the <tt class="docutils literal"><span class="pre">build_ext</span></tt> command:</p>
+<div class="highlight-python"><pre>python setup.py --with-real-time-lsprof build_ext -I &lt;include directory for zmq&gt; -L &lt;libary directory for zmq&gt;
+python setup.py --with-real-time-lsprof install</pre>
+</div>
+<p>or in one line as:</p>
+<div class="highlight-python"><pre>python setup.py --with-real-time-lsprof build_ext -I &lt;include directory for zmq&gt; -L &lt;library directory for zmq&gt; install</pre>
+</div>
+<p>Finally to run the test suite please give:</p>
+<div class="highlight-python"><pre>python setup.py test</pre>
+</div>
+<p>Optional packages of external profilers:</p>
+<ul class="simple">
+<li>yappi (&gt;=0.62),  <a class="reference external" href="http://code.google.com/p/yappi/">http://code.google.com/p/yappi/</a></li>
+<li>line_profiler (&gt;=1.0b3),  <a class="reference external" href="http://pypi.python.org/pypi/line_profiler">http://pypi.python.org/pypi/line_profiler</a></li>
+</ul>
+<p>Optional packages for the live monitoring tools:</p>
+<ul class="simple">
+<li>pyzmq (&gt;= 2.1.11) <a class="reference external" href="http://www.zeromq.org/bindings:python">http://www.zeromq.org/bindings:python</a></li>
+<li>traits (&gt;= 4.1.0) <a class="reference external" href="https://github.com/enthought/traits">https://github.com/enthought/traits</a></li>
+<li>traitsui (&gt;= 4.1.0) <a class="reference external" href="https://github.com/enthought/traitsui">https://github.com/enthought/traitsui</a></li>
+<li>pyface (&gt;= 4.1.0 <a class="reference external" href="https://github.com/enthought/pyface">https://github.com/enthought/pyface</a></li>
+<li>envisage (&gt;= 4.1.0 <a class="reference external" href="https://github.com/enthought/envisage">https://github.com/enthought/envisage</a></li>
+<li>chaco (&gt;= 4.1.0) <a class="reference external" href="https://github.com/enthought/chaco">https://github.com/enthought/chaco</a></li>
+<li>numpy (&gt;= 1.6.1) <a class="reference external" href="http://numpy.scipy.org">http://numpy.scipy.org</a></li>
+</ul>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#monitor-decorator">Monitor Decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#monitors">Monitors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#recorders">Recorders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#filters">Filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#records">Records</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="live.html">pikos.live Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.main"><tt class="docutils literal"><span class="pre">main</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.pikos_application"><tt class="docutils literal"><span class="pre">pikos_application</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.pikos_plugin"><tt class="docutils literal"><span class="pre">pikos_plugin</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.pikos_task"><tt class="docutils literal"><span class="pre">pikos_task</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.utils"><tt class="docutils literal"><span class="pre">utils</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#module-pikos.live.zmq_provider"><tt class="docutils literal"><span class="pre">zmq_provider</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live.html#subpackages">Subpackages</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Pikos</a><ul>
+<li><a class="reference internal" href="#repository">Repository</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#contents">Contents</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="next chapter">Library Reference</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Library Reference"
+             >next</a> |</li>
+        <li><a href="#">pikos  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,156 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pikos.monitors.focused_function_memory_monitor &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pikos.monitors.focused_function_memory_monitor</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Package: Pikos toolkit</span>
+<span class="c">#  File: monitors/focused_function_memory_monitor.py</span>
+<span class="c">#  License: LICENSE.TXT</span>
+<span class="c">#</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">from</span> <span class="nn">pikos.monitors.function_memory_monitor</span> <span class="kn">import</span> <span class="n">FunctionMemoryMonitor</span>
+<span class="kn">from</span> <span class="nn">pikos.monitors.focused_function_mixin</span> <span class="kn">import</span> <span class="n">FocusedFunctionMixin</span>
+
+
+<div class="viewcode-block" id="FocusedFunctionMemoryMonitor"><a class="viewcode-back" href="../../../monitors.html#pikos.monitors.focused_function_memory_monitor.FocusedFunctionMemoryMonitor">[docs]</a><span class="k">class</span> <span class="nc">FocusedFunctionMemoryMonitor</span><span class="p">(</span><span class="n">FocusedFunctionMixin</span><span class="p">,</span>
+                                   <span class="n">FunctionMemoryMonitor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Record process memory on python function events.</span>
+
+<span class="sd">    The class hooks on the setprofile function to receive function events and</span>
+<span class="sd">    record while inside the provided functions the current process memory</span>
+<span class="sd">    when they happen.</span>
+
+<span class="sd">    Public</span>
+<span class="sd">    ------</span>
+<span class="sd">    functions : FunctionSet</span>
+<span class="sd">        A set of function or method objects inside which recording will</span>
+<span class="sd">        take place.</span>
+
+<span class="sd">    Private</span>
+<span class="sd">    -------</span>
+<span class="sd">    _recorder : object</span>
+<span class="sd">        A recorder object that implements the</span>
+<span class="sd">        :class:`~pikos.recorder.AbstractRecorder` interface.</span>
+
+<span class="sd">    _profiler : object</span>
+<span class="sd">        An instance of the</span>
+<span class="sd">        :class:`~pikos._internal.profiler_functions.ProfilerFunctions` utility</span>
+<span class="sd">        class that is used to set and unset the setprofile function as</span>
+<span class="sd">        required</span>
+<span class="sd">        by the monitor.</span>
+
+<span class="sd">    _index : int</span>
+<span class="sd">        The current zero based record index. Each function event will</span>
+<span class="sd">        increase the index by one.</span>
+
+<span class="sd">    _call_tracker : object</span>
+<span class="sd">        An instance of the :class:`~pikos._internal.keep_track` utility class</span>
+<span class="sd">        to keep track of recursive calls to the monitor&#39;s :meth:`__enter__`</span>
+<span class="sd">        and :meth:`__exit__` methods.</span>
+
+<span class="sd">    _process : object</span>
+<span class="sd">       An instance of :class:`psutil.Process` for the current process,</span>
+<span class="sd">       used to get memory information in a platform independent way.</span>
+
+<span class="sd">    _code_trackers : dictionary</span>
+<span class="sd">        A dictionary of KeepTrack instances associated with the code object</span>
+<span class="sd">        of each function in `functions`. It is used to keep track and check</span>
+<span class="sd">        that we are inside the execution of one these functions when we</span>
+<span class="sd">        record data.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

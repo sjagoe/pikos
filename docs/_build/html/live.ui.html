@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ui Package &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="index.html" />
+    <link rel="up" title="pikos.live Package" href="live.html" />
+    <link rel="prev" title="models Package" href="live.models.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="live.models.html" title="models Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="live.html" accesskey="U">pikos.live Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="ui-package">
+<h1>ui Package<a class="headerlink" href="#ui-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pikos.live.ui.barplot">
+<span id="barplot-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">barplot</span></tt> Module<a class="headerlink" href="#module-pikos.live.ui.barplot" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.ui.barplot.SelectableBarPlot">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.barplot.</tt><tt class="descname">SelectableBarPlot</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/barplot.html#SelectableBarPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.barplot.SelectableBarPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">chaco.barplot.BarPlot</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.ui.barplot.SelectableBarPlot._draw_plot">
+<tt class="descname">_draw_plot</tt><big>(</big><em>gc</em>, <em>view_bounds=None</em>, <em>mode='normal'</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/barplot.html#SelectableBarPlot._draw_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.barplot.SelectableBarPlot._draw_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws the &#8216;plot&#8217; layer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.barplot.SelectableBarPlot.map_index">
+<tt class="descname">map_index</tt><big>(</big><em>screen_pt</em>, <em>threshold=2.0</em>, <em>outside_returns_none=True</em>, <em>index_only=False</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/barplot.html#SelectableBarPlot.map_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.barplot.SelectableBarPlot.map_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps a screen space point to an index into the plot&#8217;s index array(s).</p>
+<p>Overrides the BarPlot implementation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pikos.live.ui.barplot.BarSelectTool">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.barplot.</tt><tt class="descname">BarSelectTool</tt><big>(</big><em>component=None</em>, <em>**kwtraits</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/barplot.html#BarSelectTool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.barplot.BarSelectTool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">chaco.tools.select_tool.SelectTool</span></tt></p>
+<p>A tool for inspecting scatter plots.</p>
+<p>It writes the index of the point under the cursor to the metadata of the
+index and value data sources, and allows clicking to select the point.
+Other components can listen for metadata updates on the data sources.</p>
+<p>By default, it writes the index of the point under the cursor to the &#8220;hover&#8221;
+key in metadata, and the index of a clicked point to &#8220;selection&#8221;.</p>
+<dl class="method">
+<dt id="pikos.live.ui.barplot.BarSelectTool.normal_mouse_move">
+<tt class="descname">normal_mouse_move</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/barplot.html#BarSelectTool.normal_mouse_move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.barplot.BarSelectTool.normal_mouse_move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the mouse moving when the tool is in the &#8216;normal&#8217; state.</p>
+<p>If the cursor is within <strong>threshold</strong> of a data point, the method
+writes the index to the plot&#8217;s data sources&#8217; &#8220;hover&#8221; metadata.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.barplot.BarSelectTool._get_selection_state">
+<tt class="descname">_get_selection_state</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/barplot.html#BarSelectTool._get_selection_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.barplot.BarSelectTool._get_selection_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.barplot.BarSelectTool._get_selection_token">
+<tt class="descname">_get_selection_token</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/barplot.html#BarSelectTool._get_selection_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.barplot.BarSelectTool._get_selection_token" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.barplot.BarSelectTool._deselect">
+<tt class="descname">_deselect</tt><big>(</big><em>index=None</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/barplot.html#BarSelectTool._deselect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.barplot.BarSelectTool._deselect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deselects a particular index.  If no index is given, then
+deselects all points.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.barplot.BarSelectTool._select">
+<tt class="descname">_select</tt><big>(</big><em>index</em>, <em>append=True</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/barplot.html#BarSelectTool._select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.barplot.BarSelectTool._select" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.ui.base_view">
+<span id="base-view-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">base_view</span></tt> Module<a class="headerlink" href="#module-pikos.live.ui.base_view" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.ui.base_view.DisableTrackingPlot">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.base_view.</tt><tt class="descname">DisableTrackingPlot</tt><big>(</big><em>data=None</em>, <em>**kwtraits</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/base_view.html#DisableTrackingPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.base_view.DisableTrackingPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">chaco.plot.Plot</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.ui.base_view.DisableTrackingPlot.dispatch">
+<tt class="descname">dispatch</tt><big>(</big><em>event</em>, <em>suffix</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/base_view.html#DisableTrackingPlot.dispatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.base_view.DisableTrackingPlot.dispatch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pikos.live.ui.base_view.DetailsAdapter">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.base_view.</tt><tt class="descname">DetailsAdapter</tt><a class="reference internal" href="_modules/pikos/live/ui/base_view.html#DetailsAdapter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.base_view.DetailsAdapter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traitsui.tabular_adapter.TabularAdapter</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.ui.base_view.DetailsAdapter.get_width">
+<tt class="descname">get_width</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/base_view.html#DetailsAdapter.get_width"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.base_view.DetailsAdapter.get_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pikos.live.ui.base_view.BaseView">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.base_view.</tt><tt class="descname">BaseView</tt><big>(</big><em>model=None</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/base_view.html#BaseView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.base_view.BaseView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traitsui.handler.ModelView</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.ui.base_view.BaseView._reset_view_button_fired">
+<tt class="descname">_reset_view_button_fired</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/base_view.html#BaseView._reset_view_button_fired"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.base_view.BaseView._reset_view_button_fired" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.base_view.BaseView._model_updated">
+<tt class="descname">_model_updated</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/base_view.html#BaseView._model_updated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.base_view.BaseView._model_updated" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.base_view.BaseView._on_model_index_item_change">
+<tt class="descname">_on_model_index_item_change</tt><big>(</big><em>index_item</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/base_view.html#BaseView._on_model_index_item_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.base_view.BaseView._on_model_index_item_change" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.base_view.BaseView._on_model_value_item_change">
+<tt class="descname">_on_model_value_item_change</tt><big>(</big><em>value_item</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/base_view.html#BaseView._on_model_value_item_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.base_view.BaseView._on_model_value_item_change" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.ui.cprofile_view">
+<span id="cprofile-view-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">cprofile_view</span></tt> Module<a class="headerlink" href="#module-pikos.live.ui.cprofile_view" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.ui.cprofile_view.TableItem">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.cprofile_view.</tt><tt class="descname">TableItem</tt><big>(</big><em>id</em>, <em>filename</em>, <em>line_number</em>, <em>function_name</em>, <em>callcount</em>, <em>per_call</em>, <em>total_time</em>, <em>cumulative_time</em>, <em>**traits</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#TableItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.TableItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pikos.live.ui.cprofile_view.CProfileTabularAdapter">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.cprofile_view.</tt><tt class="descname">CProfileTabularAdapter</tt><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileTabularAdapter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileTabularAdapter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traitsui.tabular_adapter.TabularAdapter</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pikos.live.ui.cprofile_view.CProfileTableView">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.cprofile_view.</tt><tt class="descname">CProfileTableView</tt><big>(</big><em>model=None</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileTableView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileTableView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traitsui.handler.ModelView</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileTableView._column_clicked_changed">
+<tt class="descname">_column_clicked_changed</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileTableView._column_clicked_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileTableView._column_clicked_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileTableView._adapter_default">
+<tt class="descname">_adapter_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileTableView._adapter_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileTableView._adapter_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileTableView._get_data_items">
+<tt class="descname">_get_data_items</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileTableView._get_data_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileTableView._get_data_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileTableView.default_traits_view">
+<tt class="descname">default_traits_view</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileTableView.default_traits_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileTableView.default_traits_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pikos.live.ui.cprofile_view.CProfileView">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.cprofile_view.</tt><tt class="descname">CProfileView</tt><big>(</big><em>model=None</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pikos.live.ui.base_view.BaseView" title="pikos.live.ui.base_view.BaseView"><tt class="xref py py-class docutils literal"><span class="pre">pikos.live.ui.base_view.BaseView</span></tt></a></p>
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileView._plot_default">
+<tt class="descname">_plot_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileView._plot_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileView._plot_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileView._on_model_update_fired">
+<tt class="descname">_on_model_update_fired</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileView._on_model_update_fired"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileView._on_model_update_fired" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileView._format_key">
+<tt class="descname">_format_key</tt><big>(</big><em>key</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileView._format_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileView._format_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileView._on_model_plot_keys_changed">
+<tt class="descname">_on_model_plot_keys_changed</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileView._on_model_plot_keys_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileView._on_model_plot_keys_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileView._sort_values_button_fired">
+<tt class="descname">_sort_values_button_fired</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileView._sort_values_button_fired"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileView._sort_values_button_fired" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileView._metadata_changed">
+<tt class="descname">_metadata_changed</tt><big>(</big><em>new</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileView._metadata_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileView._metadata_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pikos.live.ui.cprofile_view.CProfileMixedView">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.cprofile_view.</tt><tt class="descname">CProfileMixedView</tt><big>(</big><em>model=None</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileMixedView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileMixedView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traitsui.handler.ModelView</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileMixedView._table_view_default">
+<tt class="descname">_table_view_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileMixedView._table_view_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileMixedView._table_view_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.cprofile_view.CProfileMixedView._plot_view_default">
+<tt class="descname">_plot_view_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/cprofile_view.html#CProfileMixedView._plot_view_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.cprofile_view.CProfileMixedView._plot_view_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.ui.memory_view">
+<span id="memory-view-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">memory_view</span></tt> Module<a class="headerlink" href="#module-pikos.live.ui.memory_view" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.ui.memory_view.MemoryView">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.memory_view.</tt><tt class="descname">MemoryView</tt><big>(</big><em>model=None</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/memory_view.html#MemoryView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.memory_view.MemoryView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pikos.live.ui.base_view.BaseView" title="pikos.live.ui.base_view.BaseView"><tt class="xref py py-class docutils literal"><span class="pre">pikos.live.ui.base_view.BaseView</span></tt></a></p>
+<dl class="method">
+<dt id="pikos.live.ui.memory_view.MemoryView._plot_default">
+<tt class="descname">_plot_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/memory_view.html#MemoryView._plot_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.memory_view.MemoryView._plot_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.memory_view.MemoryView._reset_view_button_fired">
+<tt class="descname">_reset_view_button_fired</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/memory_view.html#MemoryView._reset_view_button_fired"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.memory_view.MemoryView._reset_view_button_fired" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.memory_view.MemoryView._metadata_changed">
+<tt class="descname">_metadata_changed</tt><big>(</big><em>new</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/memory_view.html#MemoryView._metadata_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.memory_view.MemoryView._metadata_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.memory_view.MemoryView._last_n_points_changed">
+<tt class="descname">_last_n_points_changed</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/memory_view.html#MemoryView._last_n_points_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.memory_view.MemoryView._last_n_points_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.memory_view.MemoryView._follow_plot_changed">
+<tt class="descname">_follow_plot_changed</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/memory_view.html#MemoryView._follow_plot_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.memory_view.MemoryView._follow_plot_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pikos.live.ui.pikos_task_pane">
+<span id="pikos-task-pane-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">pikos_task_pane</span></tt> Module<a class="headerlink" href="#module-pikos.live.ui.pikos_task_pane" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pikos.live.ui.pikos_task_pane.IntroTab">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.pikos_task_pane.</tt><tt class="descname">IntroTab</tt><a class="reference internal" href="_modules/pikos/live/ui/pikos_task_pane.html#IntroTab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.pikos_task_pane.IntroTab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pikos.live.ui.pikos_task_pane.PikosTaskPane">
+<em class="property">class </em><tt class="descclassname">pikos.live.ui.pikos_task_pane.</tt><tt class="descname">PikosTaskPane</tt><a class="reference internal" href="_modules/pikos/live/ui/pikos_task_pane.html#PikosTaskPane"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.pikos_task_pane.PikosTaskPane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyface.tasks.traits_task_pane.TraitsTaskPane</span></tt></p>
+<dl class="method">
+<dt id="pikos.live.ui.pikos_task_pane.PikosTaskPane._tabs_default">
+<tt class="descname">_tabs_default</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/pikos_task_pane.html#PikosTaskPane._tabs_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.pikos_task_pane.PikosTaskPane._tabs_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.pikos_task_pane.PikosTaskPane._make_new_tab_title">
+<tt class="descname">_make_new_tab_title</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/pikos_task_pane.html#PikosTaskPane._make_new_tab_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.pikos_task_pane.PikosTaskPane._make_new_tab_title" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.live.ui.pikos_task_pane.PikosTaskPane.add_tab">
+<tt class="descname">add_tab</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="_modules/pikos/live/ui/pikos_task_pane.html#PikosTaskPane.add_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.live.ui.pikos_task_pane.PikosTaskPane.add_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ui Package</a><ul>
+<li><a class="reference internal" href="#module-pikos.live.ui.barplot"><tt class="docutils literal"><span class="pre">barplot</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.ui.base_view"><tt class="docutils literal"><span class="pre">base_view</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.ui.cprofile_view"><tt class="docutils literal"><span class="pre">cprofile_view</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.ui.memory_view"><tt class="docutils literal"><span class="pre">memory_view</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pikos.live.ui.pikos_task_pane"><tt class="docutils literal"><span class="pre">pikos_task_pane</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="live.models.html"
+                        title="previous chapter">models Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/live.ui.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="live.models.html" title="models Package"
+             >previous</a> |</li>
+        <li><a href="index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="live.html" >pikos.live Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

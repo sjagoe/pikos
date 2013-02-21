@@ -1,0 +1,170 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pikos.live.models.base_model &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pikos.live.models.base_model</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Enum</span><span class="p">,</span> \
+    <span class="n">Tuple</span><span class="p">,</span> <span class="n">Either</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">chaco.api</span> <span class="kn">import</span> <span class="n">ArrayPlotData</span>
+
+<span class="c"># from pikos.recorders.zeromq_recorder import RecordingStopped</span>
+
+
+<span class="n">Details</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;Details&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;field&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="ModelRegistrationError"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.ModelRegistrationError">[docs]</a><span class="k">class</span> <span class="nc">ModelRegistrationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span> <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="BaseModel"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel">[docs]</a><span class="k">class</span> <span class="nc">BaseModel</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+
+    <span class="n">pid</span> <span class="o">=</span> <span class="n">Int</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">Str</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="n">Tuple</span>
+    <span class="n">plottable_fields</span> <span class="o">=</span> <span class="n">Tuple</span>
+    <span class="n">plottable_item_indices</span> <span class="o">=</span> <span class="n">Either</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">)</span>
+
+    <span class="n">plot_data</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">ArrayPlotData</span><span class="p">)</span>
+
+    <span class="n">index_item</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="s">&#39;plottable_fields&#39;</span><span class="p">)</span>
+    <span class="n">value_item</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="s">&#39;plottable_fields&#39;</span><span class="p">)</span>
+
+    <span class="n">updated</span> <span class="o">=</span> <span class="n">Event</span>
+
+    <span class="n">TRANSFORMS</span> <span class="o">=</span> <span class="n">Dict</span>
+    <span class="n">UNITS</span> <span class="o">=</span> <span class="n">Dict</span>
+
+<div class="viewcode-block" id="BaseModel._plot_data_default"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel._plot_data_default">[docs]</a>    <span class="k">def</span> <span class="nf">_plot_data_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ArrayPlotData</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">y</span><span class="o">=</span><span class="p">[],</span>
+            <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseModel._plottable_item_indices_changed"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel._plottable_item_indices_changed">[docs]</a>    <span class="k">def</span> <span class="nf">_plottable_item_indices_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plottable_fields</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">new</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="BaseModel._plottable_fields_changed"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel._plottable_fields_changed">[docs]</a>    <span class="k">def</span> <span class="nf">_plottable_fields_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index_item</span> <span class="o">=</span> <span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value_item</span> <span class="o">=</span> <span class="n">new</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_index</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_value</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">__update_plot_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">value_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_data</span><span class="o">.</span><span class="n">list_data</span><span class="p">():</span>
+            <span class="n">new_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_data</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">value_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_data</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">new_points</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseModel._update_index"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel._update_index">[docs]</a>    <span class="k">def</span> <span class="nf">_update_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__update_plot_values</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_item</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseModel._update_value"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel._update_value">[docs]</a>    <span class="k">def</span> <span class="nf">_update_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__update_plot_values</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_item</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseModel._index_item_changed"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel._index_item_changed">[docs]</a>    <span class="k">def</span> <span class="nf">_index_item_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_index</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="BaseModel._value_item_changed"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel._value_item_changed">[docs]</a>    <span class="k">def</span> <span class="nf">_value_item_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_value</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="BaseModel._add_data_item"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel._add_data_item">[docs]</a>    <span class="k">def</span> <span class="nf">_add_data_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="BaseModel._calculate_plottable_item_indices"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel._calculate_plottable_item_indices">[docs]</a>    <span class="k">def</span> <span class="nf">_calculate_plottable_item_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plottable_item_indices</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">float</span><span class="p">)])</span>
+</div>
+<div class="viewcode-block" id="BaseModel.add_data"><a class="viewcode-back" href="../../../../live.models.html#pikos.live.models.base_model.BaseModel.add_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

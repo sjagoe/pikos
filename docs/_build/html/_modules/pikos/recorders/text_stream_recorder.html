@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pikos.recorders.text_stream_recorder &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pikos.recorders.text_stream_recorder</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Package: Pikos toolkit</span>
+<span class="c">#  File: recorders/text_stream_recorder.py</span>
+<span class="c">#  License: LICENSE.TXT</span>
+<span class="c">#</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">pikos.recorders.abstract_recorder</span> <span class="kn">import</span> <span class="n">AbstractRecorder</span><span class="p">,</span> <span class="n">RecorderError</span>
+
+
+<div class="viewcode-block" id="TextStreamRecorder"><a class="viewcode-back" href="../../../recorders.html#pikos.recorders.text_stream_recorder.TextStreamRecorder">[docs]</a><span class="k">class</span> <span class="nc">TextStreamRecorder</span><span class="p">(</span><span class="n">AbstractRecorder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The TextStreamRecorder is simple recorder that formats and writes the</span>
+<span class="sd">    records directly to a stream.</span>
+
+<span class="sd">    Private</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    _stream : TextIOBase</span>
+<span class="sd">        A text stream what supports the TextIOBase interface. The Recorder</span>
+<span class="sd">        will write the values as a single line.</span>
+
+<span class="sd">    _filter : callable</span>
+<span class="sd">        Used to check if the set `record` should be `recorded`. The function</span>
+<span class="sd">        accepts a tuple of the `record` values and return True is the input</span>
+<span class="sd">        should be recorded.</span>
+
+<span class="sd">    _template : str</span>
+<span class="sd">        A string (using the `Format Specification Mini-Language`) to format</span>
+<span class="sd">        the set of values in a line. It is constructed when the `prepare`</span>
+<span class="sd">        method is called.</span>
+
+<span class="sd">    _auto_flush : bool</span>
+<span class="sd">        A bool to enable/disable automatic flushing of the string after each</span>
+<span class="sd">        record process.</span>
+
+<span class="sd">    _ready : bool</span>
+<span class="sd">        Signify that the Recorder is ready to accept data.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TextStreamRecorder.__init__"><a class="viewcode-back" href="../../../recorders.html#pikos.recorders.text_stream_recorder.TextStreamRecorder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_stream</span><span class="p">,</span> <span class="n">filter_</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">formatted</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                 <span class="n">auto_flush</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Class initialization.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text_stream : TextIOBase</span>
+<span class="sd">            A text stream what supports the TextIOBase interface.</span>
+
+<span class="sd">        filter_ : callable</span>
+<span class="sd">            A callable function that accepts a data tuple and returns True</span>
+<span class="sd">            if the input sould be recorded.</span>
+
+<span class="sd">        formatted : Bool</span>
+<span class="sd">            Use the predefined formatting in the records. Default value is</span>
+<span class="sd">            false.</span>
+
+<span class="sd">        auto_flush : Bool</span>
+<span class="sd">            When set the stream buffer is always flushed after each record</span>
+<span class="sd">            process. Default value is False.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">filter_</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">filter_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span> <span class="o">=</span> <span class="n">text_stream</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_formatted</span> <span class="o">=</span> <span class="n">formatted</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_auto_flush</span> <span class="o">=</span> <span class="n">auto_flush</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="TextStreamRecorder.prepare"><a class="viewcode-back" href="../../../recorders.html#pikos.recorders.text_stream_recorder.TextStreamRecorder.prepare">[docs]</a>    <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Prepare the recorder to accept data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : NamedTuple</span>
+<span class="sd">            An example data record to prepare the recorder and write the</span>
+<span class="sd">            header to the stream</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_writeheader</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="TextStreamRecorder.finalize"><a class="viewcode-back" href="../../../recorders.html#pikos.recorders.text_stream_recorder.TextStreamRecorder.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Finalize the recorder</span>
+
+<span class="sd">        A do nothing method.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RecorderError :</span>
+<span class="sd">            Raised if the method is called without the recorder been ready to</span>
+<span class="sd">            accept data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Method called while recorder has not been prepared yet&#39;</span>
+            <span class="k">raise</span> <span class="n">RecorderError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TextStreamRecorder.record"><a class="viewcode-back" href="../../../recorders.html#pikos.recorders.text_stream_recorder.TextStreamRecorder.record">[docs]</a>    <span class="k">def</span> <span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Rerord the data entry when the filter function returns True.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : NamedTuple</span>
+<span class="sd">            The record entry.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RecorderError :</span>
+<span class="sd">            Raised if the method is called without the recorder been ready to</span>
+<span class="sd">            accept data.</span>
+
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Given the value of :attr:`_auto_flush` the recorder will flush the</span>
+<span class="sd">        stream buffers after each record.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_flush</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Method called while recorder is not ready to record&#39;</span>
+            <span class="k">raise</span> <span class="n">RecorderError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_writeheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Write the header to the stream.</span>
+
+<span class="sd">        The header is created and sent to the stream followed by the separator</span>
+<span class="sd">        line. The stream buffers are flushed if necessary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : class</span>
+<span class="sd">            The class of the data entry record.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatted</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">header</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+            <span class="n">header</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+
+        <span class="n">separator</span> <span class="o">=</span> <span class="s">&#39;-&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_flush</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Format the data entry to a line.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : NamedTuple</span>
+<span class="sd">            The record entry.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        line : str</span>
+<span class="sd">            The string representation of the data entry.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatted</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">line</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+        <span class="k">return</span> <span class="n">line</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

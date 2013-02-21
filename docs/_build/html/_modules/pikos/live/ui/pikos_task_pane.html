@@ -1,0 +1,146 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pikos.live.ui.pikos_task_pane &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pikos.live.ui.pikos_task_pane</h1><div class="highlight"><pre>
+<span class="c"># Enthought library imports.</span>
+<span class="kn">from</span> <span class="nn">chaco.chaco_plot_editor</span> <span class="kn">import</span> <span class="n">ChacoPlotItem</span>
+<span class="kn">from</span> <span class="nn">pyface.tasks.api</span> <span class="kn">import</span> <span class="n">TraitsTaskPane</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> \
+     <span class="n">Unicode</span><span class="p">,</span> <span class="n">on_trait_change</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Str</span>
+<span class="kn">from</span> <span class="nn">traitsui.api</span> <span class="kn">import</span> <span class="n">EnumEditor</span><span class="p">,</span> <span class="n">HGroup</span><span class="p">,</span> <span class="n">UItem</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">View</span><span class="p">,</span> <span class="n">ListEditor</span>
+
+<span class="kn">from</span> <span class="nn">pikos.live.utils</span> <span class="kn">import</span> <span class="n">get_view_for_profile</span>
+
+
+<div class="viewcode-block" id="IntroTab"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.pikos_task_pane.IntroTab">[docs]</a><span class="k">class</span> <span class="nc">IntroTab</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="n">pid</span> <span class="o">=</span> <span class="n">Int</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">Str</span><span class="p">(</span><span class="s">&#39;Placeholder&#39;</span><span class="p">)</span>
+    <span class="n">traits_view</span> <span class="o">=</span> <span class="n">View</span><span class="p">(</span>
+        <span class="n">Label</span><span class="p">(</span><span class="s">&#39;A new tab will be created for each profiled process started&#39;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="PikosTaskPane"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.pikos_task_pane.PikosTaskPane">[docs]</a><span class="k">class</span> <span class="nc">PikosTaskPane</span><span class="p">(</span><span class="n">TraitsTaskPane</span><span class="p">):</span>
+
+    <span class="c">#### &#39;ITaskPane&#39; interface ################################################</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="s">&#39;pikos.live.ui.pikos_task_pane&#39;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Pikos Task Pane&#39;</span>
+
+    <span class="c">#### &#39;MemoryPane&#39; interface ###############################################</span>
+
+    <span class="n">tabs</span> <span class="o">=</span> <span class="n">List</span>
+
+<div class="viewcode-block" id="PikosTaskPane._tabs_default"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.pikos_task_pane.PikosTaskPane._tabs_default">[docs]</a>    <span class="k">def</span> <span class="nf">_tabs_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">IntroTab</span><span class="p">()]</span>
+</div>
+<div class="viewcode-block" id="PikosTaskPane._make_new_tab_title"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.pikos_task_pane.PikosTaskPane._make_new_tab_title">[docs]</a>    <span class="k">def</span> <span class="nf">_make_new_tab_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PikosTaskPane.add_tab"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.pikos_task_pane.PikosTaskPane.add_tab">[docs]</a>    <span class="k">def</span> <span class="nf">add_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_new_tab_title</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">view_class</span> <span class="o">=</span> <span class="n">get_view_for_profile</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">profile</span><span class="p">)</span>
+        <span class="n">tab</span> <span class="o">=</span> <span class="n">view_class</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">pid</span><span class="p">),</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
+</div>
+    <span class="n">traits_view</span> <span class="o">=</span> <span class="n">View</span><span class="p">(</span>
+        <span class="n">UItem</span><span class="p">(</span>
+            <span class="s">&#39;tabs@&#39;</span><span class="p">,</span>
+            <span class="n">editor</span><span class="o">=</span><span class="n">ListEditor</span><span class="p">(</span>
+                <span class="n">use_notebook</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                <span class="n">deletable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                <span class="n">page_name</span><span class="o">=</span><span class="s">&#39;.title&#39;</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+        <span class="n">resizable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

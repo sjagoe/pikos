@@ -1,0 +1,231 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>External monitors &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="index.html" />
+    <link rel="up" title="Library Reference" href="reference.html" />
+    <link rel="next" title="pikos.live Package" href="live.html" />
+    <link rel="prev" title="filters" href="filters.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="live.html" title="pikos.live Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="filters.html" title="filters"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="reference.html" accesskey="U">Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="external-monitors">
+<h1>External monitors<a class="headerlink" href="#external-monitors" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pikos.external.python_cprofiler.PythonCProfiler">
+<em class="property">class </em><tt class="descclassname">pikos.external.python_cprofiler.</tt><tt class="descname">PythonCProfiler</tt><big>(</big><em>*args</em>, <em>**kwrds</em><big>)</big><a class="reference internal" href="_modules/pikos/external/python_cprofiler.html#PythonCProfiler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.python_cprofiler.PythonCProfiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">cProfile.Profile</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">pikos.monitors.monitor.Monitor</span></tt></p>
+<p>The normal python <tt class="xref py py-class docutils literal"><span class="pre">Profile</span></tt> subclassed and adapted to
+work with the pikos Monitor decorator.</p>
+<p>The class fully supports the <tt class="docutils literal"><span class="pre">Monitor</span></tt> decorator for functions and
+generators but does not support recorders.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Due to the function wrapping a small overhead is expected especially if the
+decorated function is recursive calls.  The <tt class="docutils literal"><span class="pre">wrapper</span></tt> function and the
+<tt class="docutils literal"><span class="pre">__enter__</span></tt> and <tt class="docutils literal"><span class="pre">__exit__</span></tt> methods of the context manager might also
+appear in the list of functions that have been called.</p>
+</div>
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="pikos.external.yappi_profiler.YappiProfiler">
+<em class="property">class </em><tt class="descclassname">pikos.external.yappi_profiler.</tt><tt class="descname">YappiProfiler</tt><big>(</big><em>recorder=None</em>, <em>builtins=False</em><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pikos.monitors.monitor.Monitor</span></tt></p>
+<p>A pikos compatible profiler class using the yappi library.</p>
+<p class="rubric">Private</p>
+<dl class="attribute">
+<dt id="YappiProfiler._buildins">
+<tt class="descname">_buildins</tt><em class="property"> = bool</em><a class="headerlink" href="#YappiProfiler._buildins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean to enable.disable profiling of the buildins.</p>
+</dd></dl>
+
+<p>The class partially supports the <tt class="docutils literal"><span class="pre">Monitor</span></tt> decorator for functions (not
+generators) but does not support recorders.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The class mirrors the module interface. Please refer to the online
+documentation of the yappi module for information and usage of the
+interface (<a class="reference external" href="http://code.google.com/p/yappi/">http://code.google.com/p/yappi/</a>).</p>
+</div>
+<dl class="method">
+<dt id="pikos.external.yappi_profiler.YappiProfiler.start">
+<tt class="descname">start</tt><big>(</big><em>builtins=None</em><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.external.yappi_profiler.YappiProfiler.stop">
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler.stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.external.yappi_profiler.YappiProfiler.enum_stats">
+<tt class="descname">enum_stats</tt><big>(</big><em>fenum</em><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler.enum_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler.enum_stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.external.yappi_profiler.YappiProfiler.enum_thread_stats">
+<tt class="descname">enum_thread_stats</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler.enum_thread_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler.enum_thread_stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.external.yappi_profiler.YappiProfiler.get_stats">
+<tt class="descname">get_stats</tt><big>(</big><em>*args</em>, <em>**kwrds</em><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler.get_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler.get_stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.external.yappi_profiler.YappiProfiler.print_stats">
+<tt class="descname">print_stats</tt><big>(</big><em>*args</em>, <em>**kwrds</em><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler.print_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler.print_stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.external.yappi_profiler.YappiProfiler.clear_stats">
+<tt class="descname">clear_stats</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler.clear_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler.clear_stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.external.yappi_profiler.YappiProfiler.is_running">
+<tt class="descname">is_running</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler.is_running"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler.is_running" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pikos.external.yappi_profiler.YappiProfiler.clock_type">
+<tt class="descname">clock_type</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pikos/external/yappi_profiler.html#YappiProfiler.clock_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.yappi_profiler.YappiProfiler.clock_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="pikos.external.line_profiler.LineProfiler">
+<em class="property">class </em><tt class="descclassname">pikos.external.line_profiler.</tt><tt class="descname">LineProfiler</tt><a class="reference internal" href="_modules/pikos/external/line_profiler.html#LineProfiler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.line_profiler.LineProfiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">_line_profiler.LineProfiler</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">pikos.monitors.monitor.Monitor</span></tt></p>
+<p>A class wrapper for CLineProfiler.</p>
+<p>The CLineProfiler is already a context manager so it is compatible with
+the pikos Monitor class for functions. However it does not support
+recorders.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The LineProfiler current requires a list of functions at initialization
+that will be profiled. These functions do not have to be same as decorated
+function with the Pikos monitor. Please refer to
+<cite>&lt;http://packages.python.org/line_profiler/ for more information&gt;_</cite>
+on the line_profiler.</p>
+</div>
+<dl class="method">
+<dt id="pikos.external.line_profiler.LineProfiler.print_stats">
+<tt class="descname">print_stats</tt><big>(</big><em>stream=None</em><big>)</big><a class="reference internal" href="_modules/pikos/external/line_profiler.html#LineProfiler.print_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pikos.external.line_profiler.LineProfiler.print_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out the results of the timing so far.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="filters.html"
+                        title="previous chapter">filters</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="live.html"
+                        title="next chapter">pikos.live Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/external.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="live.html" title="pikos.live Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="filters.html" title="filters"
+             >previous</a> |</li>
+        <li><a href="index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="reference.html" >Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

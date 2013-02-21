@@ -1,0 +1,167 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pikos.live.ui.base_view &mdash; pikos  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pikos  documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pikos.live.ui.base_view</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Button</span><span class="p">,</span> \
+    <span class="n">WeakRef</span><span class="p">,</span> <span class="n">on_trait_change</span>
+<span class="kn">from</span> <span class="nn">traitsui.api</span> <span class="kn">import</span> <span class="n">ModelView</span>
+<span class="kn">from</span> <span class="nn">traitsui.tabular_adapter</span> <span class="kn">import</span> <span class="n">TabularAdapter</span>
+<span class="kn">from</span> <span class="nn">chaco.api</span> <span class="kn">import</span> <span class="n">Plot</span>
+<span class="kn">from</span> <span class="nn">chaco.tools.api</span> <span class="kn">import</span> <span class="n">ZoomTool</span><span class="p">,</span> <span class="n">PanTool</span>
+
+
+<div class="viewcode-block" id="DisableTrackingPlot"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.base_view.DisableTrackingPlot">[docs]</a><span class="k">class</span> <span class="nc">DisableTrackingPlot</span><span class="p">(</span><span class="n">Plot</span><span class="p">):</span>
+
+    <span class="n">live_plot</span> <span class="o">=</span> <span class="n">WeakRef</span><span class="p">(</span><span class="s">&#39;BaseView&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DisableTrackingPlot.dispatch"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.base_view.DisableTrackingPlot.dispatch">[docs]</a>    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">suffix</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;mouse&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suffix</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">live_plot</span><span class="o">.</span><span class="n">follow_plot</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DisableTrackingPlot</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="DetailsAdapter"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.base_view.DetailsAdapter">[docs]</a><span class="k">class</span> <span class="nc">DetailsAdapter</span><span class="p">(</span><span class="n">TabularAdapter</span><span class="p">):</span>
+
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s">&#39;Field&#39;</span><span class="p">,</span> <span class="s">&#39;field&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;Value&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="DetailsAdapter.get_width"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.base_view.DetailsAdapter.get_width">[docs]</a>    <span class="k">def</span> <span class="nf">get_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">150</span>
+
+</div></div>
+<div class="viewcode-block" id="BaseView"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.base_view.BaseView">[docs]</a><span class="k">class</span> <span class="nc">BaseView</span><span class="p">(</span><span class="n">ModelView</span><span class="p">):</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="n">reset_view_button</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="s">&#39;Reset View&#39;</span><span class="p">)</span>
+
+    <span class="n">plot</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">Plot</span><span class="p">)</span>
+
+    <span class="n">zoom_tool</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">ZoomTool</span><span class="p">)</span>
+    <span class="n">pan_tool</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">PanTool</span><span class="p">)</span>
+
+    <span class="c"># Handlers</span>
+
+<div class="viewcode-block" id="BaseView._reset_view_button_fired"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.base_view.BaseView._reset_view_button_fired">[docs]</a>    <span class="k">def</span> <span class="nf">_reset_view_button_fired</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">low_setting</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">high_setting</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">y_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">low_setting</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">y_mapper</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">high_setting</span> <span class="o">=</span> <span class="s">&#39;auto&#39;</span>
+</div>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;model.updated&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="BaseView._model_updated"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.base_view.BaseView._model_updated">[docs]</a>    <span class="k">def</span> <span class="nf">_model_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">invalidate_and_redraw</span><span class="p">()</span>
+</div>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;model.index_item&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="BaseView._on_model_index_item_change"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.base_view.BaseView._on_model_index_item_change">[docs]</a>    <span class="k">def</span> <span class="nf">_on_model_index_item_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">index_item</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">index_item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">UNITS</span><span class="p">:</span>
+            <span class="n">index_title</span> <span class="o">=</span> <span class="s">&#39;{0} ({1})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">index_item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">UNITS</span><span class="p">[</span><span class="n">index_item</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">index_title</span> <span class="o">=</span> <span class="n">index_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">x_axis</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">index_title</span>
+</div>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;model.value_item&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="BaseView._on_model_value_item_change"><a class="viewcode-back" href="../../../../live.ui.html#pikos.live.ui.base_view.BaseView._on_model_value_item_change">[docs]</a>    <span class="k">def</span> <span class="nf">_on_model_value_item_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value_item</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">value_item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">UNITS</span><span class="p">:</span>
+            <span class="n">value_title</span> <span class="o">=</span> <span class="s">&#39;{0} ({1})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">value_item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">UNITS</span><span class="p">[</span><span class="n">value_item</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value_title</span> <span class="o">=</span> <span class="n">value_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">y_axis</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">value_title</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pikos  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Author.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
