@@ -17,8 +17,10 @@ from pikos._internal.profile_function_manager import ProfileFunctionManager
 from pikos._internal.keep_track import KeepTrack
 from pikos.monitors.monitor import Monitor
 
-FUNCTION_TIME_RECORD = ('index', 'type', 'function', 'lineNo', 'time', 'filename')
-FUNCTION_TIME_RECORD_TEMPLATE = '{:<8} {:<11} {:<30} {:<5} {.8f} {}{newline}'
+FUNCTION_TIME_RECORD = ('index', 'type', 'function', 'lineNo', 'event_time',
+                        'last_handler_exit_time', 'filename')
+FUNCTION_TIME_RECORD_TEMPLATE = ('{:<8} {:<11} {:<30} {:<5} {.8f} {.8f} {}'
+                                 '{newline}')
 
 
 class FunctionTimeRecord(namedtuple('FunctionTimeRecord', FUNCTION_TIME_RECORD)):
@@ -36,7 +38,7 @@ class FunctionTimeRecord(namedtuple('FunctionTimeRecord', FUNCTION_TIME_RECORD))
         return FUNCTION_TIME_RECORD_TEMPLATE.format(*self, newline=os.linesep)
 
 
-class FunctionMonitor(Monitor):
+class FunctionTimeMonitor(Monitor):
     """ Record python function events.
 
     The class hooks on the setprofile function to receive function events and
@@ -80,8 +82,7 @@ class FunctionMonitor(Monitor):
         self._profiler = ProfileFunctionManager()
         self._index = 0
         self._call_tracker = KeepTrack()
-        self._time_dict = dict()
-        #{(filename, lineno, function): [time_c0, time_r0, time_c1, time_r1]}
+        self._last_handler_exit = None
 
     def __enter__(self):
         """ Enter the monitor context.
@@ -106,24 +107,24 @@ class FunctionMonitor(Monitor):
             self._recorder.finalize()
 
     def on_function_event(self, frame, event, arg):
-        """ Record the current function event.
+        """Record the current function event.
 
-        Called on function events, it will retrieve the necessary information
-        from the `frame`, create a :class:`FunctionRecord` and send it to the
-        recorder.
+        Called on function events, it will retrieve the necessary
+        information from the `frame`, take measurements, create a
+        :class:`FunctionTimeRecord` and send it to the recorder.
 
         """
+        event_time = timeit.default_timer()
         filename, lineno, function, _, _ = \
             inspect.getframeinfo(frame, context=0)
         if event.startswith('c_'):
             function = arg.__name__
-        if event.endswith('call'):
-            self._time_dict[(filename, lineno, function)] = \
-                timeit.default_timer()
-        elif event.endswith('return'):
-            delta_t = timeit.default_timer() - \
-                self._time_dict[(filename, lineno, function)]
-            record = FunctionTimeRecord(self._index, event,
-                                        function, lineno, delta_t, filename)
-            self._recorder.record(record)
-            self._index += 1
+        # FIXME: a zero here is pobably not quite right
+        last_handler_exit = self._last_handler_exit \
+            if self._last_handler_exit is not None else 0.0
+        record = FunctionTimeRecord(
+            self._index, event, function, lineno, event_time,
+            last_handler_exit, filename)
+        self._recorder.record(record)
+        self._index += 1
+        self._last_handler_exit = timeit.default_timer()
