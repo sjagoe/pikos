@@ -92,7 +92,7 @@ class FunctionTimeMonitor(Monitor):
 
         """
         if self._call_tracker('ping'):
-            self._recorder.prepare(FunctionRecord)
+            self._recorder.prepare(FunctionTimeRecord)
             self._profiler.replace(self.on_function_event)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
