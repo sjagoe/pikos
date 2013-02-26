@@ -1,4 +1,7 @@
+import itertools
 import unittest
+
+import mock
 
 from pikos.monitors.function_time_monitor import FunctionTimeMonitor
 from pikos.recorders.list_recorder import ListRecorder
@@ -8,6 +11,7 @@ from pikos.tests.compat import TestCase
 
 class TestFunctionTimeMonitor(TestCase, TestAssistant):
 
+    @mock.patch('timeit.default_timer', new=itertools.count(0).next)
     def test_function(self):
         recorder = ListRecorder()
         logger = FunctionTimeMonitor(recorder)
@@ -35,6 +39,13 @@ class TestFunctionTimeMonitor(TestCase, TestAssistant):
         # The wrapper of the function should not be logged
         self.assertFieldValueNotExist(records, ('function',), ('wrapper',))
 
+        # Check that the time is recorded in the correct places
+        self.assertEqual([r.event_time for r in records],
+                         range(0, len(records)*2, 2))
+        self.assertEqual([r.last_handler_exit_time for r in records],
+                         [0] + range(1, len(records)*2 - 1, 2))
+
+    @mock.patch('timeit.default_timer', new=itertools.count(0).next)
     def test_recursive(self):
         recorder = ListRecorder()
         logger = FunctionTimeMonitor(recorder)
@@ -59,6 +70,13 @@ class TestFunctionTimeMonitor(TestCase, TestAssistant):
         # In recursive calls the wrapper of the function is logged
         # self.assertFieldValueNotExist(records, ('function',), ('wrapper',))
 
+        # Check that the time is recorded in the correct places
+        self.assertEqual([r.event_time for r in records],
+                         range(0, len(records)*2, 2))
+        self.assertEqual([r.last_handler_exit_time for r in records],
+                         [0] + range(1, len(records)*2 - 1, 2))
+
+    @mock.patch('timeit.default_timer', new=itertools.count(0).next)
     def test_generator(self):
         recorder = ListRecorder()
         logger = FunctionTimeMonitor(recorder)
@@ -88,6 +106,12 @@ class TestFunctionTimeMonitor(TestCase, TestAssistant):
         self.assertFieldValueNotExist(records, ('function',), ('boo',))
         # The wrapper of the generator should not be logged
         self.assertFieldValueNotExist(records, ('function',), ('wrapper',))
+
+        # Check that the time is recorded in the correct places
+        self.assertEqual([r.event_time for r in records],
+                         range(0, len(records)*2, 2))
+        self.assertEqual([r.last_handler_exit_time for r in records],
+                         [0] + range(1, len(records)*2 - 1, 2))
 
 if __name__ == '__main__':
     unittest.main()
