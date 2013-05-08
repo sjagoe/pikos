@@ -6,10 +6,13 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import os
 from setuptools import setup, find_packages, Extension, Feature
+
 
 with open('README.txt', 'r') as readme:
     README_TEXT = readme.read()
+
 
 real_time_lsprof = Feature(
     'optional real time lsrof using zmq',
