@@ -9,8 +9,7 @@
 import os
 from setuptools import setup, find_packages, Extension, Feature
 
-
-with open('README.txt', 'r') as readme:
+with open('README.rst', 'r') as readme:
     README_TEXT = readme.read()
 
 
