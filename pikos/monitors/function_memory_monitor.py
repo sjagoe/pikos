@@ -11,6 +11,8 @@ from __future__ import absolute_import
 import inspect
 import os
 from collections import namedtuple
+import threading
+from timeit import default_timer
 
 import psutil
 
@@ -19,11 +21,11 @@ from pikos._internal.keep_track import KeepTrack
 from pikos.monitors.monitor import Monitor
 
 FUNCTION_MEMORY_RECORD = ('index', 'type', 'function', 'RSS', 'VMS', 'lineNo',
-                          'filename')
-FUNCTION_MEMORY_RECORD_TEMPLATE = ('{:>8} | {:<11} | {:<12} | {:>15} | {:>15} '
-                                   '| {:>6} | {}{newline}')
-FUNCTION_MEMORY_HEADER_TEMPLATE = ('{:<8} | {:<11} | {:<12} | {:<15} | {:<15} '
-                                   '| {:>6} | {}{newline}')
+                          'threadname', 'time', 'filename')
+FUNCTION_MEMORY_RECORD_TEMPLATE = ('{:>8} | {:<11} | {:<42} | {:>15} | {:>15} '
+                                   '| {:>6} | {:<40} | {} | {}{newline}')
+FUNCTION_MEMORY_HEADER_TEMPLATE = ('{:<8} | {:<11} | {:<42} | {:<15} | {:<15} '
+                                   '| {:>6} | {:<40} | {} | {}{newline}')
 
 
 class FunctionMemoryRecord(namedtuple('FunctionMemoryRecord',
@@ -127,12 +129,14 @@ class FunctionMemoryMonitor(Monitor):
         and send it to the recorder.
 
         """
+        threadname = threading.current_thread().name
         usage = self._process.get_memory_info()
         filename, lineno, function, _, _ = \
             inspect.getframeinfo(frame, context=0)
         if event.startswith('c_'):
             function = arg.__name__
         record = FunctionMemoryRecord(self._index, event, function, usage[0],
-                                      usage[1], lineno, filename)
+                                      usage[1], lineno, threadname,
+                                      default_timer(), filename)
         self._recorder.record(record)
         self._index += 1
