@@ -44,7 +44,7 @@ class ZmqProvider(HasTraits):
         self._handshake_socket.bind(self.handshake_string)
         self._data_socket = self._zmq_context.socket(zmq.SUB)
         self._data_socket.setsockopt(zmq.SUBSCRIBE, '')
-        self._data_socket.connect(self.data_string)
+        self._data_socket.bind(self.data_string)
 
         self._poller.register(self._handshake_socket, zmq.POLLIN)
         self._poller.register(self._data_socket, zmq.POLLIN)
